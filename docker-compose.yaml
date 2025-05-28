@@ -1,4 +1,13 @@
-FROM ubuntu:latest
-LABEL authors="darin"
+services:
+  mongo:
+    image: mongo:7
+    container_name: storyStack-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: storyStackDb
+    volumes:
+      - mongo_data:/data/db
 
-ENTRYPOINT ["top", "-b"]
+volumes:
+  mongo_data:

@@ -7,13 +7,12 @@ const MONGO_URI =  process.env.URI;
 
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
-        console.log('MongoDB підключено');
+        console.log('DB connected');
 
-        // Запуск сервера після підключення до бази
         app.listen(PORT, () => {
-            console.log(`Сервер запущено на порті ${PORT}`);
+            console.log(`Server connected on ${PORT}`);
         });
     })
     .catch(err => {
-        console.error('Помилка підключення до MongoDB', err);
+        console.error('DB error', err);
     });

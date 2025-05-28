@@ -11,7 +11,7 @@ const BookGenreEnum = [
 
 
 const BookTypeEnum = ['novel','novella', 'short-story', 'poetry', 'essay', 'comic',
-    'manga', 'memoir', 'textbook', 'reference', 'journal',
+    'manga', 'memoir', 'textbook', 'reference', 'journal'
 ];
 
 const ReadingStatusEnum = ['reading', 'completed', 'planned', 'onHold', 'dropped'];
