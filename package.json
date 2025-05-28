@@ -1,6 +1,8 @@
 {
   "devDependencies": {
-    "@types/node": "^22.15.21"
+    "@types/node": "^22.15.21",
+    "eslint": "^9.27.0",
+    "prettier": "^3.5.3"
   },
   "dependencies": {
     "mongoose": "^8.15.0"
