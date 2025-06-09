@@ -66,5 +66,16 @@
     "planned": "Planned",
     "onHold": "On Hold",
     "dropped": "Dropped"
+  },
+  "HEADERS": {
+    "HOME": "Home",
+    "ABOUT": "About",
+    "THEME": "Theme",
+    "LANGUAGE": "Language"
+
+  },
+  "ACTIONS": {
+    "SIGN_IN": "Sign In",
+    "SIGN_UP": "Sign Up"
   }
 }

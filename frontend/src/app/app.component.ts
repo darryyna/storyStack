@@ -1,12 +1,37 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: false,
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  title = 'frontend';
+export class AppComponent implements OnInit {
+  public isMobileView = false;
+  public selectedLanguage: string = 'uk';
+
+  constructor(
+    private readonly translateService: TranslateService
+  ) {}
+
+  ngOnInit(): void {
+    this.setLocale();
+    this.checkIfMobile(window);
+  }
+
+  @HostListener('window:resize', ['$event.target'])
+  onResize(event: Window): void {
+    this.checkIfMobile(event);
+  }
+
+  private checkIfMobile(window: Window): void {
+    this.isMobileView = window.innerWidth < 800;
+  }
+
+  private setLocale(): void {
+    this.selectedLanguage = localStorage.getItem('preffered-lang') ?? 'uk';
+    this.translateService.setDefaultLang('uk');
+    this.translateService.use(this.selectedLanguage);
+  }
 }

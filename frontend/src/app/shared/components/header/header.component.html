@@ -1,0 +1,42 @@
+<header class="header">
+  <div class="header-content">
+    <img [src]="logoSrc" alt="StoryStack logo" class="logo" />
+
+    <ng-container *ngTemplateOutlet="isMobile ? mobileViewTmpl : fullViewTmpl"></ng-container>
+  </div>
+</header>
+
+<ng-template #fullViewTmpl>
+  <nav class="header-nav" aria-label="Main navigation">
+    <a href="#" class="nav-item">{{ 'HEADERS.HOME' | translate }}</a>
+    <a href="#" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
+    <span class="nav-item">
+    <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
+      <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
+    </button>
+  </span>
+    <select id="language" class="language-select" (change)="changeLanguage($event)">
+      <option value="uk" [selected]="translate.currentLang === 'uk'">UK</option>
+      <option value="en" [selected]="translate.currentLang === 'en'">EN</option>
+    </select>
+    <button class="signup-btn">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
+  </nav>
+</ng-template>
+
+<ng-template #mobileViewTmpl>
+  <img class="burger-btn" (click)="toggleMenu()" src="/assets/icons/burger-menu-icon.svg" alt="Menu" />
+  <nav class="mobile-nav" *ngIf="menuOpen" aria-label="Mobile navigation">
+    <a href="#" class="nav-item">{{ 'HEADERS.HOME' | translate }}</a>
+    <a href="#" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
+    <span class="nav-item">
+    <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
+      <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
+    </button>
+  </span>
+    <select id="languageMobile" class="language-select" (change)="changeLanguage($event)">
+      <option value="uk" [selected]="translate.currentLang === 'uk'">UK</option>
+      <option value="en" [selected]="translate.currentLang === 'en'">EN</option>
+    </select>
+    <button class="signup-btn">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
+  </nav>
+</ng-template>
