@@ -71,11 +71,14 @@
     "HOME": "Home",
     "ABOUT": "About",
     "THEME": "Theme",
-    "LANGUAGE": "Language"
+    "LANGUAGE": "Language",
+    "HERO-TITLE": "Your personal library with smart recommendations",
+    "HERO-SUBTITLE": "Track what you read, set goals, write reviews, and discover your next favorite book — all in one place."
 
   },
   "ACTIONS": {
     "SIGN_IN": "Sign In",
-    "SIGN_UP": "Sign Up"
+    "SIGN_UP": "Sign Up",
+    "START": "Start"
   }
 }

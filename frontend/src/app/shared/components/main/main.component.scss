@@ -1,0 +1,60 @@
+@use '../../styles/button.scss';
+
+.hero-section {
+  background: url("../../../../assets/images/hero-section-bg.png") no-repeat center center;
+  background-size: cover;
+  height: 600px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  margin-top: -155px; /* needs fix cause it's kostyl */
+  position: relative;
+  z-index: 1;
+}
+
+.hero-content {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  color: var(--primary-soft);
+}
+
+.hero-title {
+  font-size: 24px; // mobile default
+  font-weight: 700;
+  margin-top: 200px;
+  margin-bottom: 20px;
+
+  // tablet
+  @media (min-width: 768px) {
+    font-size: 28px;
+  }
+
+  // desktop
+  @media (min-width: 1024px) {
+    font-size: 32px;
+  }
+}
+
+.hero-desc {
+  font-size: 16px; // mobile default
+  margin-bottom: 50px;
+  width: 90%; // адаптивна ширина
+  max-width: 1000px;
+  overflow-wrap: break-word;
+
+  // tablet
+  @media (min-width: 768px) {
+    font-size: 20px;
+    width: 95%;
+  }
+
+  // desktop
+  @media (min-width: 1024px) {
+    font-size: 25px;
+    width: 1000px;
+  }
+}
