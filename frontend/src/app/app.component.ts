@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
   }
 
   private setLocale(): void {
-    this.selectedLanguage = localStorage.getItem('preffered-lang') ?? 'uk';
+    this.selectedLanguage = localStorage.getItem('ui-culture') ?? 'uk';
     this.translateService.setDefaultLang('uk');
     this.translateService.use(this.selectedLanguage);
   }

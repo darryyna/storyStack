@@ -73,12 +73,26 @@
     "THEME": "Theme",
     "LANGUAGE": "Language",
     "HERO-TITLE": "Your personal library with smart recommendations",
-    "HERO-SUBTITLE": "Track what you read, set goals, write reviews, and discover your next favorite book — all in one place."
+    "HERO-SUBTITLE": "Track what you read, set goals, write reviews, and discover your next favorite book — all in one place.",
+    "ADVANTAGES_TITLE": "Unlock reading potential",
+    "QA-FORM-TITLE": "Have questions or suggestions?",
+    "LOGO": "StoryStack."
 
+  },
+  "PARAGRAPHS": {
+    "ADVANTAGES-1": "Stay motivated by tracking reading activity, progress, and current page count in real time",
+    "ADVANTAGES-2": "Set your yearly reading goals and measure progress with clear stats and visual insights",
+    "ADVANTAGES-3": "Add custom tags to organize books by genre, mood, difficulty, or any category fits your style",
+    "QA-FORM-DESC": "We are always happy to hear from you! Leave your email and we will contact as soon as possible.",
+    "SITE-RIGHTS": "All rights reserved."
   },
   "ACTIONS": {
     "SIGN_IN": "Sign In",
     "SIGN_UP": "Sign Up",
-    "START": "Start"
+    "START": "Start",
+    "SEND": "Send"
+  },
+  "PLACEHOLDERS": {
+    "QA-FORM-NAME": "Your email address"
   }
 }

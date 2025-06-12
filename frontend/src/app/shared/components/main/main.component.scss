@@ -8,7 +8,7 @@
   display: flex;
   justify-content: center;
 
-  margin-top: -155px; /* needs fix cause it's kostyl */
+  margin-top: -155px;
   position: relative;
   z-index: 1;
 }
@@ -23,38 +23,175 @@
 }
 
 .hero-title {
-  font-size: 24px; // mobile default
+  font-size: 24px;
   font-weight: 700;
   margin-top: 200px;
   margin-bottom: 20px;
 
-  // tablet
   @media (min-width: 768px) {
     font-size: 28px;
   }
 
-  // desktop
   @media (min-width: 1024px) {
     font-size: 32px;
   }
 }
 
 .hero-desc {
-  font-size: 16px; // mobile default
+  font-size: 16px;
   margin-bottom: 50px;
-  width: 90%; // адаптивна ширина
+  width: 90%;
   max-width: 1000px;
   overflow-wrap: break-word;
 
-  // tablet
   @media (min-width: 768px) {
     font-size: 20px;
     width: 95%;
   }
 
-  // desktop
   @media (min-width: 1024px) {
     font-size: 25px;
     width: 1000px;
   }
+}
+
+.advantages-title {
+  font-size: 30px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 45px;
+  text-transform: uppercase;
+  color: var(--primary-base);
+
+  @media (min-width: 768px) {
+    font-size: 30px;
+    margin-left: 40px;
+    text-align: left;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: 32px;
+    margin-left: 40px;
+    text-align: left;
+  }
+}
+
+.section-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  @media (min-width: 800px) {
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 20px
+  }
+}
+
+.list-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  position: relative;
+}
+
+.list-icon {
+  width: 50%;
+  height: 50%;
+  margin-bottom: 10px;
+
+  @media (min-width: 768px) {
+    width: 30%;
+    height: 30%;
+  }
+}
+
+.list-item p {
+  max-width: 350px;
+  text-align: center;
+  overflow-wrap: break-word;
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--primary-base);
+
+  @media (min-width: 768px) {
+    font-size: 20px;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: 28px;
+  }
+}
+
+.underline::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -20px;
+  width: 90%;
+  height: 1px;
+  background-color: var(--primary-base);
+}
+
+.qa-section {
+  margin-top: 80px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+  background-color: rgba(77, 39, 25, 0.2);
+  width: 95%;
+  height: 230px;
+}
+
+.qa-wrapper {
+  margin-left: 30px;
+}
+
+.qa-section h2 {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--primary-base);
+  text-transform: uppercase;
+}
+
+.qa-section p {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  color: var(--primary-base);
+}
+
+.qa-section input {
+  background: none;
+  padding: 17px;
+  width: 400px;
+  font-size: 16px;
+  border: 2px solid var(--primary-base);
+  border-radius: 5px 0 0 5px;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.input-section{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
+
+.btn {
+  border-radius: 0;
+  height: 56px;
+  width: 15%;
 }
