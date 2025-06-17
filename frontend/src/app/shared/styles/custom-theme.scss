@@ -92,9 +92,9 @@ $dark-theme: mat.m2-define-dark-theme((
 
 :root {
   // light theme
-  --primary-base: #817c7c;
+  --primary-base: #686262;
   --primary-hover: #353432;
-  --primary-soft: #dfdfdf;
+  --primary-soft: #eadcd4;
   --background-default: #1c1c1c;
   --background-surface: #f5ece6;
   --text-primary: #1c1c1c;
@@ -117,25 +117,6 @@ $dark-theme: mat.m2-define-dark-theme((
   --text-primary: #f5f5f5;
   --text-secondary: #b0b0b0;
   --border-default: #4d4d4d;
-  --state-success: #22c55e;
-  --state-error: #ef4444;
-  --state-warning: #facc15;
-  --disabled-base: #555555;
 }
-
-
-.bg-primary-base { background-color: var(--primary-base) !important; }
-.bg-primary-hover { background-color: var(--primary-hover) !important; }
-.bg-primary-soft { background-color: var(--primary-soft) !important; }
-.bg-surface { background-color: var(--background-surface) !important; }
-
-.text-primary-color { color: var(--text-primary) !important; }
-.text-secondary-color { color: var(--text-secondary) !important; }
-
-.border-default { border-color: var(--border-default) !important; }
-
-.state-success { color: var(--state-success) !important; }
-.state-error { color: var(--state-error) !important; }
-.state-warning { color: var(--state-warning) !important; }
 
 

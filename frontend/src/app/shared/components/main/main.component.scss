@@ -191,7 +191,11 @@
 }
 
 .btn {
-  border-radius: 0;
   height: 56px;
   width: 15%;
+}
+
+.send-btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }

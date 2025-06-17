@@ -2,7 +2,7 @@
   <div class="hero-content">
     <h1 class="hero-title"> {{ 'HEADERS.HERO-TITLE' | translate | uppercase}}</h1>
     <p class="hero-desc">{{ 'HEADERS.HERO-SUBTITLE' | translate | uppercase}}</p>
-    <a href="#" class="btn"> {{ 'ACTIONS.START' | translate | uppercase }}</a>
+    <button routerLink="/login"  class="btn"> {{ 'ACTIONS.START' | translate | uppercase }}</button>
   </div>
 </section>
 <section>
@@ -27,8 +27,8 @@
   <h2 class="qa-title">{{ 'HEADERS.QA-FORM-TITLE' | translate }}</h2>
   <p>{{ 'PARAGRAPHS.QA-FORM-DESC' | translate}} </p>
   <div class="input-section">
-   <input type="text" class="input-field" placeholder="{{ 'PLACEHOLDERS.QA-FORM-NAME' | translate }}" />
-    <button class="btn">{{ 'ACTIONS.SEND' | translate | uppercase }}</button>
+   <input type="text" class="input-field" placeholder="{{ 'PLACEHOLDERS.FORM-EMAIL' | translate }}" />
+    <button class="btn send-btn">{{ 'ACTIONS.SEND' | translate | uppercase }}</button>
 </div>
   </div>
 </section>

@@ -84,15 +84,20 @@
     "ADVANTAGES-2": "Set your yearly reading goals and measure progress with clear stats and visual insights",
     "ADVANTAGES-3": "Add custom tags to organize books by genre, mood, difficulty, or any category fits your style",
     "QA-FORM-DESC": "We are always happy to hear from you! Leave your email and we will contact as soon as possible.",
-    "SITE-RIGHTS": "All rights reserved."
+    "SITE-RIGHTS": "All rights reserved.",
+    "PRIVACY-POLICY": "I accept the Terms of Use & Privacy Policy"
   },
   "ACTIONS": {
     "SIGN_IN": "Sign In",
     "SIGN_UP": "Sign Up",
     "START": "Start",
-    "SEND": "Send"
+    "SEND": "Send",
+    "ALREADY_HAVE_AN_ACCOUNT": "Already have an account?",
+    "DONT_HAVE_AN_ACCOUNT": "Don't have an account?"
   },
   "PLACEHOLDERS": {
-    "QA-FORM-NAME": "Your email address"
+    "FORM-EMAIL": "Email address",
+    "FORM-PASSWORD": "Password",
+    "FORM-CONFIRM-PASSWORD": "Confirm Password"
   }
 }

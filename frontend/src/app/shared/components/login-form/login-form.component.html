@@ -1,0 +1,35 @@
+<div class="wrapper">
+<div class="form-wrapper">
+  <div class="switcher-buttons">
+    <button class="switcher-button" [class.active]="activeTab === 'login'" (click)="setActiveTab('login')"> {{ 'ACTIONS.SIGN_IN' | translate}} </button>
+    <button class="switcher-button" [class.active]="activeTab === 'signup'" (click)="setActiveTab('signup')">{{ 'ACTIONS.SIGN_UP' | translate}}</button>
+  </div>
+  <div class="switcher-content">
+    <ng-container *ngTemplateOutlet="activeTab === 'login' ? loginTmpl : signupTmpl"></ng-container>
+  </div>
+</div>
+</div>
+
+<ng-template #loginTmpl>
+  <form>
+  <input type="email" placeholder="{{ 'PLACEHOLDERS.FORM-EMAIL' | translate }}">
+  <input type="password" placeholder="{{ 'PLACEHOLDERS.FORM-PASSWORD' | translate }}">
+  <button>{{ 'ACTIONS.SIGN_IN' | translate }} </button>
+  <p> {{ 'ACTIONS.DONT_HAVE_AN_ACCOUNT' | translate }} <span (click)="setActiveTab('signup')">{{ 'ACTIONS.SIGN_UP' | translate }}</span> </p>
+  </form>
+</ng-template>
+
+<ng-template #signupTmpl>
+  <form>
+  <input type="email" placeholder="{{ 'PLACEHOLDERS.FORM-EMAIL' | translate }}">
+  <input type="password" placeholder="{{ 'PLACEHOLDERS.FORM-PASSWORD' | translate }}">
+    <input type="password" placeholder="{{ 'PLACEHOLDERS.FORM-CONFIRM-PASSWORD' | translate }}">
+    <div class="checkbox-wrapper">
+    <mat-checkbox></mat-checkbox> <p> {{ 'PARAGRAPHS.PRIVACY-POLICY' | translate}} </p>
+  </div>
+  <button>{{ 'ACTIONS.SIGN_UP' | translate }}</button>
+  <p> {{ 'ACTIONS.ALREADY_HAVE_AN_ACCOUNT' | translate }} <span (click)="setActiveTab('login')">{{ 'ACTIONS.SIGN_IN' | translate }}</span> </p>
+  </form>
+</ng-template>
+
+

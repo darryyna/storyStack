@@ -1,0 +1,144 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: var(--primary-soft);
+  color: var(--primary-base);
+  border-radius: 20px;
+  width: 400px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.switcher-buttons {
+  display: flex;
+  background-color: transparent;
+  border-radius: 25px;
+  overflow: hidden;
+  margin-bottom: 30px;
+  width: 100%;
+  max-width: 300px;
+  border: 2px solid var(--primary-base);
+}
+
+.switcher-button {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  background-color: transparent;
+  color: var(--primary-base);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.switcher-button.active {
+  background-color: var(--primary-base);
+  color: var(--primary-soft);
+}
+
+.switcher-content {
+  width: 100%;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 15px 20px;
+  border: 2px solid #d4c4c4;
+  border-radius: 10px;
+  background-color: transparent;
+  color: var(--primary-base);
+  font-size: 16px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-color: var(--primary-base);
+}
+
+.checkbox-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+  margin: 10px 0;
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.checkbox-container p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--primary-base);
+  cursor: pointer;
+}
+
+button[type="submit"],
+form > button {
+  width: 100%;
+  padding: 15px;
+  background-color: var(--primary-base);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+form > p {
+  text-align: center;
+  margin: 15px 0 0 0;
+  font-size: 14px;
+  color: var(--primary-base);
+}
+
+form > p span {
+  color: var(--primary-base);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+form > p span:hover {
+  color: var(--primary-base);
+}
+
+@media (max-width: 480px) {
+  .form-wrapper {
+    width: 90%;
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .switcher-buttons {
+    max-width: 100%;
+  }
+}

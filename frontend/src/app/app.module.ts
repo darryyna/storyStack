@@ -12,6 +12,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MainComponent } from './shared/components/main/main.component';
 import { AppRoutingModule } from './app.routes';
 import { FooterComponent } from './shared/components/footer/footer.component';
+import { LoginFormComponent } from './shared/components/login-form/login-form.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { NgxsModule } from '@ngxs/store';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 
 export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -22,7 +28,8 @@ export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
     AppComponent,
     HeaderComponent,
     MainComponent,
-    FooterComponent
+    FooterComponent,
+    LoginFormComponent
   ],
   imports: [
     BrowserModule,
@@ -39,6 +46,13 @@ export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
       },
     }),
     RouterOutlet,
+    MatCheckbox,
+    NgxsModule.forRoot([], { developmentMode: /** !environment.production */ false }),
+    NgxsReduxDevtoolsPluginModule.forRoot(),
+    NgxsLoggerPluginModule.forRoot(),
+    NgxsStoragePluginModule.forRoot({
+      keys: '*'
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]

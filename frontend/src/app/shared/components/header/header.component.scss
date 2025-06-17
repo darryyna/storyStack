@@ -27,6 +27,7 @@ html, body {
   height: auto;
   max-height: 40px;
   object-fit: contain;
+  cursor: pointer;
 
   @media (min-width: 768px) {
     width: 180px;
@@ -98,12 +99,6 @@ html, body {
   &:hover {
     color: #ffffff;
     border-bottom-color: var(--primary-soft);
-  }
-
-  &:focus {
-    outline: 2px solid var(--primary-soft);
-    outline-offset: 2px;
-    border-radius: 2px;
   }
 
   @media (min-width: 768px) {

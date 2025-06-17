@@ -1,13 +1,13 @@
 <header class="header">
   <div class="header-content">
-    <img [src]="logoSrc" alt="StoryStack logo" class="logo" />
+    <img [src]="logoSrc" alt="StoryStack logo" class="logo" routerLink="/" />
     <ng-container *ngTemplateOutlet="isMobile ? mobileViewTmpl : fullViewTmpl"></ng-container>
   </div>
 </header>
 
 <ng-template #fullViewTmpl>
   <nav class="header-nav" aria-label="Main navigation">
-    <a href="#" class="nav-item">{{ 'HEADERS.HOME' | translate }}</a>
+    <a routerLink="/" class="nav-item" >{{ 'HEADERS.HOME' | translate }}</a>
     <a href="#" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
     <span class="nav-item">
     <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
@@ -18,7 +18,7 @@
       <option value="uk" [selected]="translate.currentLang === 'uk'">UK</option>
       <option value="en" [selected]="translate.currentLang === 'en'">EN</option>
     </select>
-    <button class="signup-btn">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
+    <button class="signup-btn" routerLink="/login">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
   </nav>
 </ng-template>
 
