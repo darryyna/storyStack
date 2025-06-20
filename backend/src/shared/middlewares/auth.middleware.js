@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
   if (!token) return res.sendStatus(401);
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-    if (err) return res.sendStatus(403);
+    if (err) return res.status(403).json({ error: 'Invalid or expired token' });
     req.userId = decoded.userId;
     next();
   });

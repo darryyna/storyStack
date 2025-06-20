@@ -4,13 +4,13 @@ const jwt = require('jsonwebtoken');
 
 const generateAccessToken = (userId) => {
   return jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: process.env.ACCESS_TOKEN_EXPIRE
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRE,
   });
 };
 
 const generateRefreshToken = (userId) => {
   return jwt.sign({ userId }, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: process.env.REFRESH_TOKEN_EXPIRE
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRE,
   });
 };
 
@@ -39,10 +39,10 @@ exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
-    if (!user) return res.status(401).json({ error: 'Невірні облікові дані' });
+    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ error: 'Невірні облікові дані' });
+    if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
 
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
@@ -51,7 +51,7 @@ exports.login = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: 'Strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.json({ accessToken });
@@ -60,15 +60,25 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.refreshToken = (req, res) => {
-  const token = req.cookies.refreshToken;
-  if (!token) return res.sendStatus(401);
+exports.refreshToken = async (req, res) => {
+  try {
+    const token = req.cookies.refreshToken;
+    if (!token) return res.sendStatus(401);
+    if (!token) return res.status(401).json({ error: 'Refresh token required' });
 
-  jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-    if (err) return res.sendStatus(403);
-    const newAccessToken = generateAccessToken(decoded.userId);
-    res.json({ accessToken: newAccessToken });
-  });
+    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+      if (err) return res.sendStatus(403);
+      const newAccessToken = generateAccessToken(decoded.userId);
+      res.json({ accessToken: newAccessToken });
+    });
+    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+      if (err) return res.status(403).json({ error: 'Invalid refresh token' });
+      const newAccessToken = generateAccessToken(decoded.userId);
+      res.json({ accessToken: newAccessToken });
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Token refresh failed', details: err.message });
+  }
 };
 
 exports.logout = (req, res) => {
