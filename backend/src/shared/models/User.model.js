@@ -9,7 +9,9 @@ const UserSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        minlength: 6
+
     },
 }, {
     timestamps: true // createdAt && updatedAt fields
