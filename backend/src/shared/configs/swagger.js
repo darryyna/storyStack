@@ -12,6 +12,7 @@ const options = {
     servers: [
       {
         url: 'http://localhost:3000',
+        description: 'Development server',
       },
     ],
     components: {
@@ -23,9 +24,22 @@ const options = {
           description: 'Enter your JWT access token here (e.g., Bearer YOUR_TOKEN)'
         }
       }
-    }
+    },
+    tags: [
+      {
+        name: 'Auth',
+        description: 'Authentication endpoints'
+      },
+      {
+        name: 'Protected',
+        description: 'Protected endpoints requiring authentication'
+      }
+    ]
   },
-  apis: [path.join(__dirname, '../routes/*.js')],
+  apis: [
+    path.join(__dirname, '../routes/*.js'),
+    path.join(__dirname, '../controllers/*.js')
+  ],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
