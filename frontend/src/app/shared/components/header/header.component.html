@@ -10,17 +10,32 @@
     <a routerLink="/" class="nav-item" >{{ 'HEADERS.HOME' | translate }}</a>
     <a href="#" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
     <span class="nav-item">
-    <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
-      <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
-    </button>
-  </span>
+      <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
+        <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
+      </button>
+    </span>
     <select id="language" class="language-select" (change)="changeLanguage($event)">
       <option value="uk" [selected]="translate.currentLang === 'uk'">UK</option>
       <option value="en" [selected]="translate.currentLang === 'en'">EN</option>
     </select>
-    <button class="signup-btn" routerLink="/login">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
+
+    <ng-container *ngIf="isAuthenticated$ | async; else showSignUpFull">
+      <div class="user-info" (click)="toggleUserMenu()" tabindex="0" (blur)="closeUserMenu()">
+        <img src="assets/icons/user.png" alt="User avatar" />
+        <span class="username">{{ (currentUser$ | async)?.username }}</span>
+
+        <div class="user-dropdown" *ngIf="userMenuOpen">
+          <button class="dropdown-item" (click)="onLogout()">Вийти</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #showSignUpFull>
+      <button class="signup-btn" routerLink="/login">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
+    </ng-template>
+
   </nav>
 </ng-template>
+
 
 <ng-template #mobileViewTmpl>
   <img class="burger-btn" (click)="toggleMenu()" src="/assets/icons/burger-menu-icon.svg" alt="Menu" />
@@ -28,14 +43,27 @@
     <a href="#" class="nav-item">{{ 'HEADERS.HOME' | translate }}</a>
     <a href="#" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
     <span class="nav-item">
-    <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
-      <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
-    </button>
-  </span>
+      <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
+        <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
+      </button>
+    </span>
     <select id="languageMobile" class="language-select" (change)="changeLanguage($event)">
       <option value="uk" [selected]="translate.currentLang === 'uk'">UK</option>
       <option value="en" [selected]="translate.currentLang === 'en'">EN</option>
     </select>
-    <button class="signup-btn">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
+
+    <ng-container *ngIf="isAuthenticated$ | async; else showSignUpMobile">
+      <div class="user-info" (click)="toggleUserMenu()" tabindex="0" (blur)="closeUserMenu()">
+        <img src="assets/icons/user.png" alt="User avatar" />
+        <span class="username">{{ (currentUser$ | async)?.username }}</span>
+
+        <div class="user-dropdown" *ngIf="userMenuOpen">
+          <button class="dropdown-item" (click)="onLogout()">Вийти</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #showSignUpMobile>
+      <button class="signup-btn" routerLink="/login">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
+    </ng-template>
   </nav>
 </ng-template>

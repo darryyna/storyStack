@@ -57,8 +57,7 @@ form {
   width: 100%;
 }
 
-input[type="email"],
-input[type="password"] {
+input {
   width: 100%;
   padding: 15px 20px;
   border: 2px solid #d4c4c4;
@@ -71,8 +70,7 @@ input[type="password"] {
   transition: border-color 0.3s ease;
 }
 
-input[type="email"]:focus,
-input[type="password"]:focus {
+input:focus {
   border-color: var(--primary-base);
 }
 

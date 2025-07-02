@@ -10,8 +10,14 @@ const PORT = process.env.PORT;
 const MONGO_URI =  process.env.MONGO_URI;
 const swaggerSpec = require('./src/shared/configs/swagger');
 const { serve, setup } = require('swagger-ui-express');
+const cors = require('cors');
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+  origin: 'http://localhost:4200',
+  credentials: true,
+}));
+
 
 
 app.use('/api/auth', authRoutes);

@@ -11,25 +11,48 @@
 </div>
 
 <ng-template #loginTmpl>
-  <form>
-  <input type="email" placeholder="{{ 'PLACEHOLDERS.FORM-EMAIL' | translate }}">
-  <input type="password" placeholder="{{ 'PLACEHOLDERS.FORM-PASSWORD' | translate }}">
-  <button>{{ 'ACTIONS.SIGN_IN' | translate }} </button>
-  <p> {{ 'ACTIONS.DONT_HAVE_AN_ACCOUNT' | translate }} <span (click)="setActiveTab('signup')">{{ 'ACTIONS.SIGN_UP' | translate }}</span> </p>
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <input formControlName="username" placeholder="{{ 'PLACEHOLDERS.FORM-USERNAME' | translate }}">
+    <input type="password" formControlName="password" placeholder="{{ 'PLACEHOLDERS.FORM-PASSWORD' | translate }}">
+    <button type="submit">{{ 'ACTIONS.SIGN_IN' | translate }}</button>
   </form>
 </ng-template>
 
 <ng-template #signupTmpl>
-  <form>
-  <input type="email" placeholder="{{ 'PLACEHOLDERS.FORM-EMAIL' | translate }}">
-  <input type="password" placeholder="{{ 'PLACEHOLDERS.FORM-PASSWORD' | translate }}">
-    <input type="password" placeholder="{{ 'PLACEHOLDERS.FORM-CONFIRM-PASSWORD' | translate }}">
+  <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+
+    <input
+      type="email"
+      formControlName="email"
+      placeholder="{{ 'PLACEHOLDERS.FORM-EMAIL' | translate }}">
+
+    <input
+      type="text"
+      formControlName="username"
+      placeholder="{{ 'PLACEHOLDERS.FORM-USERNAME' | translate }}">
+
+    <input
+      type="password"
+      formControlName="password"
+      placeholder="{{ 'PLACEHOLDERS.FORM-PASSWORD' | translate }}">
+
+    <input
+      type="password"
+      formControlName="confirmPassword"
+      placeholder="{{ 'PLACEHOLDERS.FORM-CONFIRM-PASSWORD' | translate }}">
     <div class="checkbox-wrapper">
-    <mat-checkbox></mat-checkbox> <p> {{ 'PARAGRAPHS.PRIVACY-POLICY' | translate}} </p>
-  </div>
-  <button>{{ 'ACTIONS.SIGN_UP' | translate }}</button>
-  <p> {{ 'ACTIONS.ALREADY_HAVE_AN_ACCOUNT' | translate }} <span (click)="setActiveTab('login')">{{ 'ACTIONS.SIGN_IN' | translate }}</span> </p>
+      <mat-checkbox formControlName="agreeToTerms"></mat-checkbox>
+      <p>{{ 'PARAGRAPHS.PRIVACY-POLICY' | translate }}</p>
+    </div>
+    <button type="submit" [disabled]="registerForm.invalid">
+      {{ 'ACTIONS.SIGN_UP' | translate }}
+    </button>
+    <p>
+      {{ 'ACTIONS.ALREADY_HAVE_AN_ACCOUNT' | translate }}
+      <span (click)="setActiveTab('login')">{{ 'ACTIONS.SIGN_IN' | translate }}</span>
+    </p>
   </form>
+
 </ng-template>
 
 

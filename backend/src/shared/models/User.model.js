@@ -13,8 +13,16 @@ const UserSchema = new mongoose.Schema({
         minlength: 6
 
     },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        lowercase: true,
+        match: [/^\S+@\S+\.\S+$/, 'Invalid email format']
+    },
 }, {
     timestamps: true // createdAt && updatedAt fields
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.models.User || mongoose.model('User', UserSchema);

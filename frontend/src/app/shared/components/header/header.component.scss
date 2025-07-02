@@ -52,6 +52,60 @@ html, body {
   }
 }
 
+.user-info {
+  flex-direction: row;
+  position: relative;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+
+  img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 0.5rem;
+  }
+}
+
+.user-dropdown {
+  margin-top: 7px;
+  position: absolute;
+  top: 100%;
+  left: 2px;
+  right: 0;
+  background: var(--primary-soft);
+  border: 1px solid var(--primary-soft);
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 4px 0;
+  min-width: 120px;
+  z-index: 1000;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dropdown-item:hover {
+  background-color: #eee;
+}
+
+.username {
+  font-size: 15px;
+  color: var(--primary-soft);
+  cursor: pointer;
+}
+
+
+
 .mobile-nav {
   position: absolute;
   top: 100%;
