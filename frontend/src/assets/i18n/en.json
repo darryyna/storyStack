@@ -97,6 +97,7 @@
   },
   "PLACEHOLDERS": {
     "FORM-EMAIL": "Email address",
+    "FORM-USERNAME": "Username",
     "FORM-PASSWORD": "Password",
     "FORM-CONFIRM-PASSWORD": "Confirm Password"
   }

@@ -96,6 +96,7 @@
   },
   "PLACEHOLDERS": {
     "FORM-EMAIL": "Електронна адреса",
+    "FORM-USERNAME": "Юзернейм",
     "FORM-PASSWORD": "Пароль",
     "FORM-CONFIRM-PASSWORD": "Підтвердіть пароль"
   }

@@ -3,6 +3,7 @@ const router = express.Router();
 const authController = require('../controllers/auth.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const rateLimit = require('express-rate-limit');
+const User = require('../models/User.model');
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -153,8 +154,22 @@ router.post('/logout', authController.logout);
  *       401:
  *         description: Unauthorized (e.g., missing or invalid access token)
  */
-router.get('/protected', authMiddleware, (req, res) => {
-  res.json({ message: 'Logged in user test', userId: req.userId });
+
+router.get('/protected', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select('username');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      message: 'Logged in user test',
+      userId: req.userId,
+      username: user.username
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', details: error.message });
+  }
 });
 
 module.exports = router;

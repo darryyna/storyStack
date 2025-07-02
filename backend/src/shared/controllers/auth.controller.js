@@ -17,19 +17,35 @@ const generateRefreshToken = (userId) => {
 
 exports.register = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, email, password } = req.body;
 
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Username and password are required' });
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'Username, email and password are required' });
     }
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
+
+    const existingUserByUsername = await User.findOne({ username });
+    if (existingUserByUsername) {
       return res.status(409).json({ error: 'Username already taken' });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    await User.create({ username, password: hashedPassword });
 
-    res.status(201).json({ message: 'User is created' });
+    const existingUserByEmail = await User.findOne({ email });
+    if (existingUserByEmail) {
+      return res.status(409).json({ error: 'Email already taken' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({ username, email, password: hashedPassword });
+    const accessToken = generateAccessToken(newUser._id);
+    const refreshToken = generateRefreshToken(newUser._id);
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'Strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 днів
+    });
+    res.status(201).json({ message: 'User is created', accessToken });
   } catch (err) {
     res.status(400).json({ error: 'Error while registering', details: err.message });
   }
@@ -49,7 +65,7 @@ exports.login = async (req, res) => {
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: 'Strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -63,14 +79,7 @@ exports.login = async (req, res) => {
 exports.refreshToken = async (req, res) => {
   try {
     const token = req.cookies.refreshToken;
-    if (!token) return res.sendStatus(401);
     if (!token) return res.status(401).json({ error: 'Refresh token required' });
-
-    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-      if (err) return res.sendStatus(403);
-      const newAccessToken = generateAccessToken(decoded.userId);
-      res.json({ accessToken: newAccessToken });
-    });
     jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
       if (err) return res.status(403).json({ error: 'Invalid refresh token' });
       const newAccessToken = generateAccessToken(decoded.userId);
@@ -84,7 +93,7 @@ exports.refreshToken = async (req, res) => {
 exports.logout = (req, res) => {
   res.clearCookie('refreshToken', {
     httpOnly: true,
-    secure: true,
+    secure: false,
     sameSite: 'Strict',
   });
   res.json({ message: 'Logout from the system' });
