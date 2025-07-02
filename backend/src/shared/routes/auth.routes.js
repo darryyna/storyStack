@@ -3,7 +3,7 @@ const router = express.Router();
 const authController = require('../controllers/auth.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const rateLimit = require('express-rate-limit');
-const User = require('../models/user.model');
+const User = require('../models/User.model');
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,

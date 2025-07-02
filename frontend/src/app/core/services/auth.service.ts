@@ -2,13 +2,14 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { AuthResponse, LoginRequest, ProtectedUserResponse } from 'src/app/shared/models/user.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:3000/api/auth';
+  private readonly baseUrl = `${environment.apiUrl}/auth`;
 
   private tokenSubject = new BehaviorSubject<string | null>(this.getStoredToken());
   public token$ = this.tokenSubject.asObservable();
@@ -24,7 +25,7 @@ export class AuthService {
   }
 
   register(userData: LoginRequest): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.baseUrl}/register`, userData);
+    return this.http.post<{ message: string }>(`${this.baseUrl}/register`, userData, { withCredentials: true });
   }
 
   getProtectedData(): Observable<ProtectedUserResponse> {

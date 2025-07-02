@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Store, Select } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { AuthState } from '../../store/registration.state';
 import { LoginUser, RegisterUser } from '../../store/registration.actions';
 import { Router } from '@angular/router';
@@ -46,11 +46,12 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   onLogin(): void {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
-      this.store.dispatch(new LoginUser({ username, password })).subscribe(() => {
-        if (this.store.selectSnapshot(AuthState.isAuthenticated)) {
-          this.router.navigate(['/']);
-        }
-      });
+      this.store.dispatch(new LoginUser({ username, password }))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          if (this.store.selectSnapshot(AuthState.isAuthenticated)) {
+            this.router.navigate(['/']);}
+        });
     } else {
       this.markFormGroupTouched(this.loginForm);
     }
@@ -59,9 +60,14 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   onRegister(): void {
     if (this.registerForm.valid) {
       const { username, email, password } = this.registerForm.value;
-      this.store.dispatch(new RegisterUser({ username, email, password }));
-      this.registerForm.reset();
-      this.router.navigate(['/']);
+      this.store.dispatch(new RegisterUser({ username, email, password }))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          if (this.store.selectSnapshot(AuthState.isAuthenticated)) {
+            this.registerForm.reset();
+            this.router.navigate(['/']);
+          }
+        });
     } else {
       this.markFormGroupTouched(this.registerForm);
     }

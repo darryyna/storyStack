@@ -79,7 +79,6 @@ exports.login = async (req, res) => {
 exports.refreshToken = async (req, res) => {
   try {
     const token = req.cookies.refreshToken;
-    if (!token) return res.sendStatus(401);
     if (!token) return res.status(401).json({ error: 'Refresh token required' });
     jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
       if (err) return res.status(403).json({ error: 'Invalid refresh token' });

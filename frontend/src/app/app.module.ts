@@ -59,8 +59,7 @@ export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
     NgxsLoggerPluginModule.forRoot(),
     NgxsStoragePluginModule.forRoot({
       keys: '*',
-    }),
-    ReactiveFormsModule,
+    })
   ],
   providers: [
     {
