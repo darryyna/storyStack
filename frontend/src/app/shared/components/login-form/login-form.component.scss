@@ -70,7 +70,8 @@ input {
   transition: border-color 0.3s ease;
 }
 
-input:focus {
+input[type="email"]:focus,
+input[type="password"]:focus {
   border-color: var(--primary-base);
 }
 
