@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: flex-start;
   background-color: var(--primary-soft);
-  color: var(--primary-base);
+  color: var(--specific-text-color);
   border-radius: 20px;
   width: 400px;
   padding: 30px;
@@ -63,7 +63,7 @@ input {
   border: 2px solid #d4c4c4;
   border-radius: 10px;
   background-color: transparent;
-  color: var(--primary-base);
+  color: var(--specific-text-color);
   font-size: 16px;
   box-sizing: border-box;
   outline: none;
@@ -88,12 +88,13 @@ input[type="password"]:focus {
   height: 18px;
   margin: 0;
   cursor: pointer;
+  color: var(--specific-text-color);
 }
 
 .checkbox-container p {
   margin: 0;
   font-size: 14px;
-  color: var(--primary-base);
+  color: var(--specific-text-color);
   cursor: pointer;
 }
 

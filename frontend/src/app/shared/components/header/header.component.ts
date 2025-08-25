@@ -26,12 +26,6 @@ export class HeaderComponent {
   constructor(protected translate: TranslateService, protected themeService: ThemeService,
               protected store: Store, protected router: Router) {}
 
-  public get logoSrc(): string {
-    return this.themeService.getCurrentTheme() === 'dark-theme'
-      ? '/assets/images/dark-logo.png'
-      : '/assets/images/light-logo.png';
-  }
-
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
   }
