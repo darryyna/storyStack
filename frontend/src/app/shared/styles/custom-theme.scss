@@ -92,12 +92,14 @@ $dark-theme: mat.m2-define-dark-theme((
 
 :root {
   // light theme
-  --primary-base: #686262;
+  --primary-base: #4D2719;
   --primary-hover: #353432;
   --primary-soft: #eadcd4;
+  --header-specific-color: #4D2719;
+  --secondary-text-color: #4D2719;
   --background-default: #1c1c1c;
   --background-surface: #f5ece6;
-  --text-primary: #1c1c1c;
+  --text-primary: #eadcd4;
   --text-secondary: #6b6b6b;
   --border-default: #d5c4ba;
   --state-success: #22c55e;
@@ -109,12 +111,14 @@ $dark-theme: mat.m2-define-dark-theme((
 .dark-theme {
   // dark theme
   @include mat.all-component-themes($dark-theme);
-  --primary-base: #4d2719;
+  --primary-base: #8a8278;
   --primary-hover: #3b1e13;
-  --primary-soft: #eadcd4;
+  --primary-soft: #ffffff;
+  --header-specific-color: rgba(138, 130, 120, 0.6);
+  --secondary-text-color: #eadcd4;
   --background-default: #faf9f8;
-  --background-surface: #f5ece6;
-  --text-primary: #f5f5f5;
+  --background-surface: #4d2719;
+  --text-primary: #ffffff;
   --text-secondary: #b0b0b0;
   --border-default: #4d4d4d;
 }
