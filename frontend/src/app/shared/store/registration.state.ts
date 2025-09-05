@@ -18,9 +18,7 @@ import { AuthService } from '../../core/services/auth.service';
 
 export interface AuthStateModel {
   isAuthenticated: boolean;
-  isLoading: boolean;
-  isLoginLoading: boolean;
-  isRegisterLoading: boolean;
+  isAuthLoading: boolean;
   user?: User;
   error?: string;
 }
@@ -29,9 +27,7 @@ export interface AuthStateModel {
   name: 'auth',
   defaults: {
     isAuthenticated: false,
-    isLoading: false,
-    isLoginLoading: false,
-    isRegisterLoading: false,
+    isAuthLoading: false,
     user: undefined,
     error: undefined
   }
@@ -46,18 +42,8 @@ export class AuthState {
   }
 
   @Selector()
-  static isLoading(state: AuthStateModel): boolean {
-    return state.isLoading;
-  }
-
-  @Selector()
-  static isLoginLoading(state: AuthStateModel): boolean {
-    return state.isLoginLoading;
-  }
-
-  @Selector()
-  static isRegisterLoading(state: AuthStateModel): boolean {
-    return state.isRegisterLoading;
+  static isAuthLoading(state: AuthStateModel): boolean {
+    return state.isAuthLoading;
   }
 
   @Selector()
@@ -72,7 +58,7 @@ export class AuthState {
 
   @Action(LoginUser)
   loginUser(ctx: StateContext<AuthStateModel>, action: LoginUser) {
-    ctx.patchState({ isLoginLoading: true, error: undefined });
+    ctx.patchState({ isAuthLoading: true, error: undefined });
 
     return this.authService.login(action.payload).pipe(
       tap(response => {
@@ -89,7 +75,7 @@ export class AuthState {
   loginUserSuccess(ctx: StateContext<AuthStateModel>) {
     ctx.patchState({
       isAuthenticated: true,
-      isLoginLoading: false,
+      isAuthLoading: false,
       error: undefined,
     });
 
@@ -112,14 +98,14 @@ export class AuthState {
   loginUserFailure(ctx: StateContext<AuthStateModel>, action: LoginUserFailure) {
     ctx.patchState({
       isAuthenticated: false,
-      isLoginLoading: false,
+      isAuthLoading: false,
       error: action.payload.error
     });
   }
 
   @Action(RegisterUser)
   registerUser(ctx: StateContext<AuthStateModel>, action: RegisterUser) {
-    ctx.patchState({ isRegisterLoading: true, error: undefined });
+    ctx.patchState({ isAuthLoading: true, error: undefined });
 
     return this.authService.register(action.payload).pipe(
       tap(() => {
@@ -135,7 +121,7 @@ export class AuthState {
   @Action(RegisterUserSuccess)
   registerUserSuccess(ctx: StateContext<AuthStateModel>, action: RegisterUserSuccess) {
     ctx.patchState({
-      isRegisterLoading: false,
+      isAuthLoading: false,
       error: undefined
     });
     return ctx.dispatch(new LoginUser({ username: action.payload.username, password: action.payload.password }));
@@ -144,13 +130,14 @@ export class AuthState {
   @Action(RegisterUserFailure)
   registerUserFailure(ctx: StateContext<AuthStateModel>, action: RegisterUserFailure) {
     ctx.patchState({
-      isRegisterLoading: false,
+      isAuthLoading: false,
       error: action.payload.error
     });
   }
 
   @Action(LogoutUser)
   logoutUser(ctx: StateContext<AuthStateModel>) {
+    ctx.patchState({ isAuthLoading: true });
     return this.authService.logout().pipe(
       tap(() => {
         ctx.dispatch(new LogoutUserSuccess());
@@ -166,9 +153,7 @@ export class AuthState {
   logoutUserSuccess(ctx: StateContext<AuthStateModel>) {
     ctx.setState({
       isAuthenticated: false,
-      isLoading: false,
-      isLoginLoading: false,
-      isRegisterLoading: false,
+      isAuthLoading: false,
       user: undefined,
       error: undefined
     });

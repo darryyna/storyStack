@@ -22,6 +22,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthState } from './shared/store/registration.state';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { LoaderComponent } from './shared/components/loader/loader.component';
+import { MatProgressBar } from '@angular/material/progress-bar';
 
 export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -33,7 +35,8 @@ export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
     HeaderComponent,
     MainComponent,
     FooterComponent,
-    LoginFormComponent
+    LoginFormComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,
@@ -59,7 +62,8 @@ export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
     NgxsLoggerPluginModule.forRoot(),
     NgxsStoragePluginModule.forRoot({
       keys: '*',
-    })
+    }),
+    MatProgressBar,
   ],
   providers: [
     {

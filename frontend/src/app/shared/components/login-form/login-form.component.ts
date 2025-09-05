@@ -21,10 +21,8 @@ export class LoginFormComponent implements OnInit, OnDestroy {
 
   @Select(AuthState.isAuthenticated)
   isAuthenticated$!: Observable<boolean>;
-  @Select(AuthState.isLoginLoading)
-  isLoginLoading$!: Observable<boolean>;
-  @Select(AuthState.isRegisterLoading)
-  isRegisterLoading$!: Observable<boolean>;
+  @Select(AuthState.isAuthLoading)
+  isAuthStateLoading$!: Observable<boolean>;
 
   constructor(private readonly store: Store, private readonly fb: FormBuilder, private readonly router: Router) {}
 
