@@ -1,69 +1,85 @@
 <header class="header">
   <div class="header-content">
     <img src="/assets/images/light-logo.png" alt="StoryStack logo" class="logo" routerLink="/" />
-    <ng-container *ngTemplateOutlet="isMobile ? mobileViewTmpl : fullViewTmpl"></ng-container>
+    @if (isMobile()) {
+      <img class="burger-btn" (click)="toggleMenu()" src="/assets/icons/burger-menu-icon.svg" alt="Menu" aria-label="Toggle menu" />
+      @if (menuOpen) {
+        <nav class="mobile-nav" aria-label="Mobile navigation">
+          <a routerLink="/" class="nav-item">{{ 'HEADERS.HOME' | translate }}</a>
+          <a href="#" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
+          <span class="nav-item theme-toggle">
+            <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
+              <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
+            </button>
+          </span>
+          <div class="custom-language-select"
+               (click)="toggleLanguageMenu()"
+               tabindex="0"
+               aria-haspopup="listbox"
+               [attr.aria-expanded]="languageMenuOpen"
+               aria-label="Select language">
+            <span class="selected-lang">{{ translate.currentLang | uppercase }}</span>
+            <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+            @if (languageMenuOpen) {
+              <ul class="language-dropdown" role="listbox">
+                <li class="language-option" role="option" [attr.aria-selected]="translate.currentLang === 'uk'" (click)="changeLanguage('uk')">UK</li>
+                <li class="language-option" role="option" [attr.aria-selected]="translate.currentLang === 'en'" (click)="changeLanguage('en')">EN</li>
+              </ul>
+            }
+          </div>
+          @if (isAuthenticated()) {
+            <div class="user-info" (click)="toggleUserMenu()" tabindex="0" (blur)="closeUserMenu()" aria-haspopup="true">
+              <img src="../../../../assets/icons/user.png" alt="User avatar" class="user-avatar" />
+              <span class="username">{{ currentUser()?.username }}</span>
+              @if (userMenuOpen) {
+                <div class="user-dropdown">
+                  <button class="dropdown-item" (click)="onLogout()">{{ 'DROPDOWN_ITEMS.EXIT' | translate }}</button>
+                </div>
+              }
+            </div>
+          } @else {
+            <button class="signup-btn" routerLink="/login">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
+          }
+        </nav>
+      }
+    } @else {
+      <nav class="header-nav" aria-label="Main navigation">
+        <a routerLink="/" class="nav-item">{{ 'HEADERS.HOME' | translate }}</a>
+        <a href="#" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
+        <span class="nav-item theme-toggle">
+          <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
+            <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
+          </button>
+        </span>
+        <div class="custom-language-select"
+             (click)="toggleLanguageMenu()"
+             tabindex="0"
+             aria-haspopup="listbox"
+             [attr.aria-expanded]="languageMenuOpen"
+             aria-label="Select language">
+          <span class="selected-lang">{{ translate.currentLang | uppercase }}</span>
+          <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+          @if (languageMenuOpen) {
+            <ul class="language-dropdown" role="listbox">
+              <li class="language-option" role="option" [attr.aria-selected]="translate.currentLang === 'uk'" (click)="changeLanguage('uk')">UK</li>
+              <li class="language-option" role="option" [attr.aria-selected]="translate.currentLang === 'en'" (click)="changeLanguage('en')">EN</li>
+            </ul>
+          }
+        </div>
+        @if (isAuthenticated()) {
+          <div class="user-info" (click)="toggleUserMenu()" tabindex="0" (blur)="closeUserMenu()" aria-haspopup="true">
+            <img src="../../../../assets/icons/user.png" alt="User avatar" class="user-avatar" />
+            <span class="username">{{ currentUser()?.username }}</span>
+            @if (userMenuOpen) {
+              <div class="user-dropdown">
+                <button class="dropdown-item" (click)="onLogout()">{{ 'DROPDOWN_ITEMS.EXIT' | translate }}</button>
+              </div>
+            }
+          </div>
+        } @else {
+          <button class="signup-btn" routerLink="/login">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
+        }
+      </nav>
+    }
   </div>
 </header>
-
-<ng-template #fullViewTmpl>
-  <nav class="header-nav" aria-label="Main navigation">
-    <a routerLink="/" class="nav-item" >{{ 'HEADERS.HOME' | translate }}</a>
-    <a href="#" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
-    <span class="nav-item">
-      <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
-        <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
-      </button>
-    </span>
-    <select id="language" class="language-select" (change)="changeLanguage($event)">
-      <option value="uk" [selected]="translate.currentLang === 'uk'">UK</option>
-      <option value="en" [selected]="translate.currentLang === 'en'">EN</option>
-    </select>
-
-    <ng-container *ngIf="isAuthenticated$ | async; else showSignUpFull">
-      <div class="user-info" (click)="toggleUserMenu()" tabindex="0" (blur)="closeUserMenu()">
-        <img src="assets/icons/user.png" alt="User avatar" />
-        <span class="username">{{ (currentUser$ | async)?.username }}</span>
-
-        <div class="user-dropdown" *ngIf="userMenuOpen">
-          <button class="dropdown-item" (click)="onLogout()">Вийти</button>
-        </div>
-      </div>
-    </ng-container>
-    <ng-template #showSignUpFull>
-      <button class="signup-btn" routerLink="/login">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
-    </ng-template>
-
-  </nav>
-</ng-template>
-
-
-<ng-template #mobileViewTmpl>
-  <img class="burger-btn" (click)="toggleMenu()" src="/assets/icons/burger-menu-icon.svg" alt="Menu" />
-  <nav class="mobile-nav" *ngIf="menuOpen" aria-label="Mobile navigation">
-    <a href="#" class="nav-item">{{ 'HEADERS.HOME' | translate }}</a>
-    <a href="#" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
-    <span class="nav-item">
-      <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
-        <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
-      </button>
-    </span>
-    <select id="languageMobile" class="language-select" (change)="changeLanguage($event)">
-      <option value="uk" [selected]="translate.currentLang === 'uk'">UK</option>
-      <option value="en" [selected]="translate.currentLang === 'en'">EN</option>
-    </select>
-
-    <ng-container *ngIf="isAuthenticated$ | async; else showSignUpMobile">
-      <div class="user-info" (click)="toggleUserMenu()" tabindex="0" (blur)="closeUserMenu()">
-        <img src="assets/icons/user.png" alt="User avatar" />
-        <span class="username">{{ (currentUser$ | async)?.username }}</span>
-
-        <div class="user-dropdown" *ngIf="userMenuOpen">
-          <button class="dropdown-item" (click)="onLogout()">Вийти</button>
-        </div>
-      </div>
-    </ng-container>
-    <ng-template #showSignUpMobile>
-      <button class="signup-btn" routerLink="/login">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
-    </ng-template>
-  </nav>
-</ng-template>

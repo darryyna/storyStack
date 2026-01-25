@@ -1,33 +1,18 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { combineLatest, delay, map, Observable, Subject, takeUntil } from 'rxjs';
-import { AuthState } from '../../store/registration.state';
-import { Select } from '@ngxs/store';
+import { Component, inject } from '@angular/core';
+import { Store, select } from '@ngrx/store';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { selectIsAuthLoading } from '../../store/auth/auth.selectors';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-loader',
-  standalone: false,
+  standalone: true,
+  imports: [MatProgressBarModule],
   templateUrl: './loader.component.html',
-  styleUrl: './loader.component.scss'
+  styleUrls: ['./loader.component.scss']
 })
-export class LoaderComponent implements OnInit, OnDestroy {
+export class LoaderComponent {
+  private readonly store = inject(Store);
 
-  @Select(AuthState.isAuthLoading)
-  public isAuthStateLoading$!: Observable<boolean>;
-
-  public isAppLoading$!: Observable<boolean>;
-  private destroy$: Subject<boolean> = new Subject<boolean>();
-
-  public ngOnInit(): void {
-    this.isAppLoading$ = combineLatest([
-      this.isAuthStateLoading$
-    ]).pipe(delay(0),
-      map((isLoading: boolean[]) => isLoading.some(Boolean)),
-      takeUntil(this.destroy$)
-    )
-  }
-
-  public ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
-  }
+  isAuthStateLoading = toSignal(this.store.pipe(select(selectIsAuthLoading)), { initialValue: true });
 }

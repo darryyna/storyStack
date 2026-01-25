@@ -1,78 +1,57 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { AuthResponse, LoginRequest, ProtectedUserResponse } from 'src/app/shared/models/user.model';
+import { AuthResponse, LoginRequest } from 'src/app/shared/models/user.model';
 import { environment } from '../../../environments/environment';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl}/auth`;
 
-  private tokenSubject = new BehaviorSubject<string | null>(this.getStoredToken());
-  public token$ = this.tokenSubject.asObservable();
+  private accessTokenSubject = new BehaviorSubject<string | null>(null);
+  accessToken$ = this.accessTokenSubject.asObservable();
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, credentials, {
-      withCredentials: true
-    }).pipe(
-      tap((response) => {
-        this.setToken(response.accessToken);
+    return this.http
+      .post<AuthResponse>(`${this.baseUrl}/login`, credentials, {
+        withCredentials: true
       })
-    );
+      .pipe(
+        tap(res => this.accessTokenSubject.next(res.accessToken))
+      );
   }
 
-  register(userData: LoginRequest): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.baseUrl}/register`, userData, { withCredentials: true });
-  }
-
-  getProtectedData(): Observable<ProtectedUserResponse> {
-    return this.http.get<ProtectedUserResponse>(`${this.baseUrl}/protected`, {
-      withCredentials: true
-    });
-  }
-
-  logout(): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.baseUrl}/logout`, {}, {
-      withCredentials: true
-    }).pipe(
-      tap(() => {
-        this.clearToken();
-      })
+  register(data: LoginRequest) {
+    return this.http.post<{ message: string }>(
+      `${this.baseUrl}/register`,
+      data,
+      { withCredentials: true }
     );
   }
 
   refreshToken(): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/refresh`, {}, {
-      withCredentials: true
-    }).pipe(
-      tap(response => {
-        this.setToken(response.accessToken);
+    return this.http
+      .post<AuthResponse>(`${this.baseUrl}/refresh`, {}, {
+        withCredentials: true
       })
-    );
-  }
-  private setToken(token: string): void {
-    localStorage.setItem('accessToken', token);
-    this.tokenSubject.next(token);
+      .pipe(
+        tap(res => this.accessTokenSubject.next(res.accessToken))
+      );
   }
 
-  private getStoredToken(): string | null {
-    return localStorage.getItem('accessToken');
+  logout() {
+    return this.http
+      .post(`${this.baseUrl}/logout`, {}, { withCredentials: true })
+      .pipe(tap(() => this.accessTokenSubject.next(null)));
   }
 
-  private clearToken(): void {
-    localStorage.removeItem('accessToken');
-    this.tokenSubject.next(null);
+  getAccessToken(): string | null {
+    return this.accessTokenSubject.value;
   }
 
   isAuthenticated(): boolean {
-    return !!this.tokenSubject.value;
-  }
-
-  getToken(): string | null {
-    return this.tokenSubject.value;
+    return !!this.accessTokenSubject.value;
   }
 }
 

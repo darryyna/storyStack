@@ -1,42 +1,44 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { Store, Select } from '@ngxs/store';
-import { Observable, Subject, takeUntil } from 'rxjs';
-import { AuthState } from '../../store/registration.state';
-import { LoginUser, RegisterUser } from '../../store/registration.actions';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
+import { Store, select } from '@ngrx/store';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+import { selectIsAuthenticated, selectIsAuthLoading } from '../../store/auth/auth.selectors';
+import { loginUser, registerUser } from '../../store/auth/auth.actions';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [TranslateModule, ReactiveFormsModule, MatCheckboxModule, MatButtonModule],
 })
-export class LoginFormComponent implements OnInit, OnDestroy {
-  private readonly destroy$ = new Subject<void>();
+export class LoginFormComponent implements OnInit {
+  loginForm!: FormGroup;
+  registerForm!: FormGroup;
+  activeTab = signal<'login' | 'signup'>('login');
 
-  public loginForm!: FormGroup;
-  public registerForm!: FormGroup;
-  public activeTab: 'login' | 'signup' = 'login';
+  private readonly store = inject(Store);
+  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
 
-  @Select(AuthState.isAuthenticated)
-  isAuthenticated$!: Observable<boolean>;
-  @Select(AuthState.isAuthLoading)
-  isAuthStateLoading$!: Observable<boolean>;
-
-  constructor(private readonly store: Store, private readonly fb: FormBuilder, private readonly router: Router) {}
+  isAuthenticated = toSignal(this.store.pipe(select(selectIsAuthenticated)), { initialValue: false });
+  isAuthStateLoading = toSignal(this.store.pipe(select(selectIsAuthLoading)), { initialValue: false });
 
   ngOnInit(): void {
     this.initializeForms();
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.store.pipe(
+      select(selectIsAuthenticated),
+      filter(Boolean)
+    ).subscribe(() => this.router.navigate(['/']));
   }
 
   setActiveTab(tab: 'login' | 'signup'): void {
-    this.activeTab = tab;
+    this.activeTab.set(tab);
     this.loginForm.markAsUntouched();
     this.registerForm.markAsUntouched();
   }
@@ -44,12 +46,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   onLogin(): void {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
-      this.store.dispatch(new LoginUser({ username, password }))
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(() => {
-          if (this.store.selectSnapshot(AuthState.isAuthenticated)) {
-            this.router.navigate(['/']);}
-        });
+      this.store.dispatch(loginUser({ payload: { username, password } }));
     } else {
       this.markFormGroupTouched(this.loginForm);
     }
@@ -58,14 +55,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   onRegister(): void {
     if (this.registerForm.valid) {
       const { username, email, password } = this.registerForm.value;
-      this.store.dispatch(new RegisterUser({ username, email, password }))
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(() => {
-          if (this.store.selectSnapshot(AuthState.isAuthenticated)) {
-            this.registerForm.reset();
-            this.router.navigate(['/']);
-          }
-        });
+      this.store.dispatch(registerUser({ payload: { username, email, password } }));
     } else {
       this.markFormGroupTouched(this.registerForm);
     }
@@ -88,7 +78,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  private passwordMatchValidator(control: AbstractControl): {[key: string]: boolean} | null {
+  private passwordMatchValidator(control: AbstractControl): { [key: string]: boolean } | null {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
 

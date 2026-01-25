@@ -1,3 +1,5 @@
-<div class="loader-wrapper" *ngIf="isAuthStateLoading$ | async">
-  <mat-progress-bar color="primary" mode="indeterminate"></mat-progress-bar>
-</div>
+@if (isAuthStateLoading()) {
+  <div class="loader-wrapper">
+    <mat-progress-bar color="primary" mode="indeterminate"></mat-progress-bar>
+  </div>
+}

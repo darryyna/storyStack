@@ -1,40 +1,49 @@
-import { Component, HostBinding, Input } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { Component, ElementRef, HostBinding, HostListener, input, inject } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ThemeService } from '../../../core/services/theme.service';
-import { Select, Store } from '@ngxs/store';
-import { AuthState } from '../../store/registration.state';
-import { Observable } from 'rxjs';
+import { Store, select } from '@ngrx/store';
+import { Router, RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { User } from '../../models/user.model';
-import { LogoutUser } from '../../store/registration.actions';
-import { Router } from '@angular/router';
+import { selectCurrentUser, selectIsAuthenticated } from '../../store/auth/auth.selectors';
+import { logoutUser } from '../../store/auth/auth.actions';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { UpperCasePipe } from '@angular/common';
+
 
 @Component({
   selector: 'app-header',
-  standalone: false,
+  standalone: true,
+  imports: [TranslateModule, MatIconModule, MatButtonModule, RouterModule, UpperCasePipe],
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-  @Select(AuthState.isAuthenticated) isAuthenticated$!: Observable<boolean>;
-  @Select(AuthState.getUser) currentUser$!: Observable<User | undefined>;
-
-  @Input() isMobile = false;
+  isMobile = input<boolean>(false);
   @HostBinding('class') className = '';
+
+  protected readonly translate = inject(TranslateService);
+  protected readonly themeService = inject(ThemeService);
+  private readonly store = inject(Store);
+  private readonly router = inject(Router);
+  private readonly elementRef = inject(ElementRef);
+
+  isAuthenticated = toSignal(this.store.pipe(select(selectIsAuthenticated)), { initialValue: false });
+  currentUser = toSignal(this.store.pipe(select(selectCurrentUser)), { initialValue: undefined as User | undefined });
+
   menuOpen = false;
   userMenuOpen = false;
-
-  constructor(protected translate: TranslateService, protected themeService: ThemeService,
-              protected store: Store, protected router: Router) {}
+  languageMenuOpen = false;
 
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
   }
 
-  changeLanguage(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    const lang = target.value;
+  changeLanguage(lang: string): void {
     localStorage.setItem('ui-culture', lang);
     this.translate.use(lang);
+    this.languageMenuOpen = false;
   }
 
   toggleDarkTheme(): void {
@@ -52,8 +61,19 @@ export class HeaderComponent {
   }
 
   onLogout(): void {
-    this.store.dispatch(new LogoutUser());
+    this.store.dispatch(logoutUser());
     this.router.navigate(['/']);
     this.userMenuOpen = false;
+  }
+
+  toggleLanguageMenu(): void {
+    this.languageMenuOpen = !this.languageMenuOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.languageMenuOpen = false;
+    }
   }
 }

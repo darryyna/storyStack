@@ -100,5 +100,10 @@
     "FORM-USERNAME": "Username",
     "FORM-PASSWORD": "Password",
     "FORM-CONFIRM-PASSWORD": "Confirm Password"
+  },
+  "DROPDOWN_ITEMS":{
+    "EXIT": "Exit",
+    "PERSONAL_CABINET": "Personal cabinet",
+    "SETTINGS": "Settings"
   }
 }

@@ -1,14 +1,21 @@
-import { Component } from '@angular/core';
-import { Select } from '@ngxs/store';
-import { AuthState } from '../../store/registration.state';
-import { Observable } from 'rxjs';
+import { Component, inject } from '@angular/core';
+import { Store, select } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
+import { selectIsAuthenticated } from '../../store/auth/auth.selectors';
+import { RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-main',
-  standalone: false,
+  standalone: true,
+  imports: [TranslateModule, RouterLink],
   templateUrl: './main.component.html',
-  styleUrl: './main.component.scss'
+  styleUrls: ['./main.component.scss']
 })
 export class MainComponent {
-  @Select(AuthState.isAuthenticated) isAuthenticated$!: Observable<boolean>;
+  private readonly store = inject(Store);
+
+  isAuthenticated = toSignal(this.store.pipe(select(selectIsAuthenticated)), { initialValue: false });
+
+  protected readonly advantagesItems = ['PARAGRAPHS.ADVANTAGES-1', 'PARAGRAPHS.ADVANTAGES-2', 'PARAGRAPHS.ADVANTAGES-3'] as const;
 }

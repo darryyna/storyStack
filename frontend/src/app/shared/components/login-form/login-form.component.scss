@@ -1,49 +1,60 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
 .wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 40px;
+
+  width: 100%;
+  margin: 20px;
 }
 
 .form-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  background-color: var(--primary-soft);
-  color: var(--specific-text-color);
-  border-radius: 20px;
-  width: 400px;
-  padding: 30px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background: var(--background-surface);
+  border-radius: 24px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 420px;
+
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-default);
+  backdrop-filter: blur(10px);
+  transition: all 0.4s ease;
 }
+
 
 .switcher-buttons {
   display: flex;
-  background-color: transparent;
-  border-radius: 25px;
+  background: var(--background-elevated);
+  border-radius: 50px;
   overflow: hidden;
-  margin-bottom: 30px;
-  width: 100%;
-  max-width: 300px;
-  border: 2px solid var(--primary-base);
+  margin-bottom: 40px;
+  border: 1px solid var(--border-subtle);
 }
 
 .switcher-button {
   flex: 1;
-  padding: 12px 20px;
+  padding: 14px 24px;
   border: none;
-  background-color: transparent;
-  color: var(--primary-base);
+  background: transparent;
+  color: var(--text-secondary);
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-}
+  transition: all 0.4s ease;
 
-.switcher-button.active {
-  background-color: var(--primary-base);
-  color: var(--primary-soft);
+  &:hover {
+    color: var(--text-primary);
+  }
+
+  &.active {
+    background: var(--primary-base);
+    color: var(--primary-soft);
+    box-shadow: 0 4px 16px rgba(74, 111, 143, 0.3);
+  }
 }
 
 .switcher-content {
@@ -53,92 +64,121 @@
 form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  width: 100%;
+  gap: 20px;
 }
 
 input {
-  width: 100%;
-  padding: 15px 20px;
-  border: 2px solid #d4c4c4;
-  border-radius: 10px;
-  background-color: transparent;
-  color: var(--specific-text-color);
+  padding: 18px 20px;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  background: var(--background-elevated);
+  color: var(--text-primary);
   font-size: 16px;
-  box-sizing: border-box;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
+  transition: all 0.3s ease;
 
-input[type="email"]:focus,
-input[type="password"]:focus {
-  border-color: var(--primary-base);
+  &::placeholder {
+    color: var(--text-muted);
+  }
+
+  &:focus {
+    border-color: var(--primary-base);
+    box-shadow: 0 0 0 3px rgba(74, 111, 143, 0.25);
+    outline: none;
+  }
 }
 
 .checkbox-wrapper {
   display: flex;
-  flex-direction: row;
   align-items: center;
-  gap: 2px;
-  margin: 10px 0;
-}
+  gap: 12px;
+  margin: 8px 0 16px;
 
-.checkbox-container input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  margin: 0;
-  cursor: pointer;
-  color: var(--specific-text-color);
-}
+  mat-checkbox {
+    color: var(--text-primary);
 
-.checkbox-container p {
-  margin: 0;
-  font-size: 14px;
-  color: var(--specific-text-color);
-  cursor: pointer;
+    ::ng-deep .mat-checkbox-frame {
+      border-color: var(--border-default);
+    }
+
+    ::ng-deep .mat-checkbox-checked .mat-checkbox-background {
+      background-color: var(--primary-base);
+    }
+  }
+
+  p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+
+    a {
+      color: var(--accent-base);
+      text-decoration: underline;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--accent-hover);
+      }
+    }
+  }
 }
 
 button[type="submit"],
 form > button {
   width: 100%;
-  padding: 15px;
-  background-color: var(--primary-base);
-  color: white;
+  padding: 18px;
+  background: var(--primary-base);
+  color: var(--primary-soft);
   border: none;
-  border-radius: 8px;
+  border-radius: 50px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 10px;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  margin-top: 16px;
+  box-shadow: 0 4px 16px rgba(74, 111, 143, 0.25);
+
+  &:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(74, 111, 143, 0.4);
+  }
+
+  &:disabled {
+    background: var(--disabled-base);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
 }
 
 form > p {
   text-align: center;
-  margin: 15px 0 0 0;
+  margin-top: 24px;
   font-size: 14px;
-  color: var(--primary-base);
-}
+  color: var(--text-secondary);
 
-form > p span {
-  color: var(--primary-base);
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: underline;
-}
+  span {
+    color: var(--accent-base);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
 
-form > p span:hover {
-  color: var(--primary-base);
+    &:hover {
+      color: var(--accent-hover);
+      text-decoration: none;
+    }
+  }
 }
 
 @media (max-width: 480px) {
   .form-wrapper {
-    width: 90%;
-    margin: 20px;
-    padding: 20px;
+    padding: 32px 24px;
+    border-radius: 16px;
   }
 
-  .switcher-buttons {
-    max-width: 100%;
+  .switcher-button {
+    padding: 12px 16px;
+    font-size: 15px;
   }
 }
