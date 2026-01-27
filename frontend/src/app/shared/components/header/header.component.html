@@ -22,8 +22,12 @@
             <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
             @if (languageMenuOpen) {
               <ul class="language-dropdown" role="listbox">
-                <li class="language-option" role="option" [attr.aria-selected]="translate.currentLang === 'uk'" (click)="changeLanguage('uk')">UK</li>
-                <li class="language-option" role="option" [attr.aria-selected]="translate.currentLang === 'en'" (click)="changeLanguage('en')">EN</li>
+                <li class="language-option" role="option"
+                    [attr.aria-selected]="translate.currentLang === 'ua'"
+                    (click)="changeLanguage('ua')">UA</li>
+                <li class="language-option" role="option"
+                    [attr.aria-selected]="translate.currentLang === 'en'"
+                    (click)="changeLanguage('en')">EN</li>
               </ul>
             }
           </div>
@@ -61,8 +65,12 @@
           <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
           @if (languageMenuOpen) {
             <ul class="language-dropdown" role="listbox">
-              <li class="language-option" role="option" [attr.aria-selected]="translate.currentLang === 'uk'" (click)="changeLanguage('uk')">UK</li>
-              <li class="language-option" role="option" [attr.aria-selected]="translate.currentLang === 'en'" (click)="changeLanguage('en')">EN</li>
+              <li class="language-option" role="option"
+                  [attr.aria-selected]="translate.currentLang === 'ua'"
+                  (click)="changeLanguage('ua')">UA</li>
+              <li class="language-option" role="option"
+                  [attr.aria-selected]="translate.currentLang === 'en'"
+                  (click)="changeLanguage('en')">EN</li>
             </ul>
           }
         </div>

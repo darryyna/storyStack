@@ -22,11 +22,13 @@ export class AuthService {
       );
   }
 
-  register(data: LoginRequest) {
-    return this.http.post<{ message: string }>(
+  register(data: LoginRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(
       `${this.baseUrl}/register`,
       data,
       { withCredentials: true }
+    ).pipe(
+      tap(res => this.accessTokenSubject.next(res.accessToken))
     );
   }
 

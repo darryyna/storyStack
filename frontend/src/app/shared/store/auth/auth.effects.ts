@@ -3,7 +3,6 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import * as AuthActions from './auth.actions';
 import { AuthService } from '../../../core/services/auth.service';
 import { catchError, map, mergeMap, of } from 'rxjs';
-import { filter } from 'rxjs/operators';
 
 @Injectable()
 export class AuthEffects {
@@ -43,35 +42,19 @@ export class AuthEffects {
       ofType(AuthActions.registerUser),
       mergeMap(action =>
         this.authService.register(action.payload).pipe(
-          map(() =>
-            AuthActions.registerUserSuccess({
+          map(authResponse =>
+            AuthActions.loginUserSuccess({
               user: {
-                id: '',
                 username: action.payload.username,
                 email: action.payload.email
               },
-              password: action.payload.password
+              accessToken: authResponse.accessToken
             })
           ),
           catchError(error =>
             of(AuthActions.registerUserFailure({ error: error.error?.error || 'Registration failed' }))
           )
         )
-      )
-    )
-  );
-
-  autoLoginAfterRegister$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuthActions.registerUserSuccess),
-      filter(action => !!action.password),
-      map(action =>
-        AuthActions.loginUser({
-          payload: {
-            username: action.user.username,
-            password: action.password!
-          }
-        })
       )
     )
   );
@@ -89,7 +72,7 @@ export class AuthEffects {
     )
   );
 
-  // CHECK AUTH (on app init: use httpOnly refreshToken cookie to restore session)
+  // CHECK AUTH
   checkAuthStatus$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.checkAuthStatus),

@@ -42,9 +42,9 @@ export class AppComponent implements OnInit {
   }
 
   private setLocale(): void {
-    const lang = localStorage.getItem('ui-culture') ?? 'uk';
+    const lang = localStorage.getItem('ui-culture') ?? 'ua';
     this.selectedLanguage.set(lang);
-    this.translateService.setDefaultLang('uk');
+    this.translateService.setDefaultLang('ua');
     this.translateService.use(lang);
   }
 }

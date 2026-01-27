@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { Store, select } from '@ngrx/store';
 import { Router } from '@angular/router';
@@ -7,7 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { selectIsAuthenticated, selectIsAuthLoading } from '../../store/auth/auth.selectors';
 import { loginUser, registerUser } from '../../store/auth/auth.actions';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
 
 @Component({
@@ -25,6 +25,7 @@ export class LoginFormComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   isAuthenticated = toSignal(this.store.pipe(select(selectIsAuthenticated)), { initialValue: false });
   isAuthStateLoading = toSignal(this.store.pipe(select(selectIsAuthLoading)), { initialValue: false });
@@ -33,7 +34,8 @@ export class LoginFormComponent implements OnInit {
     this.initializeForms();
     this.store.pipe(
       select(selectIsAuthenticated),
-      filter(Boolean)
+      filter(Boolean),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.router.navigate(['/']));
   }
 
