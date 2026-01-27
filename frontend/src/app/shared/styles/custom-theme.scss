@@ -1,23 +1,23 @@
 @use '@angular/material' as mat;
 @include mat.core();
 
-$custom-light: (
-  50: #f5f1eb,
-  100: #e6dccd,
-  200: #d5c5ab,
-  300: #c4ae89,
-  400: #b89d70,
-  500: #4d2719,
-  600: #3b1e13,
-  700: #31190f,
-  800: #27140c,
-  900: #1a0d08,
-  A100: #eadcd4,
-  A200: #d5c5ab,
-  A400: #b89d70,
-  A700: #31190f,
+$custom-dark-primary: (
+  50:  #f0f3f5,
+  100: #d8e0e5,
+  200: #b3c5d1,
+  300: #8ea9bd,
+  400: #6a8ea9,
+  500: #4a6f8f,
+  600: #3d5a75,
+  700: #30455b,
+  800: #233041,
+  900: #161c27,
+  A100: #b3e5fc,
+  A200: #81d4fa,
+  A400: #29b6f6,
+  A700: #0091ea,
   contrast: (
-    50: #000000,
+    50:  #000000,
     100: #000000,
     200: #000000,
     300: #000000,
@@ -34,94 +34,94 @@ $custom-light: (
   )
 );
 
-$custom-dark: (
-  50: #f4e6d7,
-  100: #e4c0a3,
-  200: #d2976b,
-  300: #c06d32,
-  400: #b34e07,
-  500: #e3b89b,
-  600: #c29a82,
-  700: #9f7c69,
-  800: #7c5e50,
-  900: #593f37,
-  A100: #f4e6d7,
-  A200: #d2976b,
-  A400: #b34e07,
-  A700: #9f7c69,
+$custom-dark-accent: (
+  50:  #f3f0ff,
+  100: #e0d9ff,
+  200: #c4b5ff,
+  300: #a891ff,
+  400: #8c6eff,
+  500: #6d4aff,
+  600: #5638d9,
+  700: #4026b3,
+  800: #2a168d,
+  900: #140f67,
   contrast: (
-    50: #000000,
+    50:  #000000,
     100: #000000,
     200: #000000,
     300: #ffffff,
     400: #ffffff,
-    500: #000000,
-    600: #000000,
+    500: #ffffff,
+    600: #ffffff,
     700: #ffffff,
     800: #ffffff,
     900: #ffffff,
-    A100: #000000,
-    A200: #000000,
-    A400: #ffffff,
-    A700: #ffffff,
   )
 );
 
-$light-palette: mat.m2-define-palette($custom-light, 500, 300, 700);
-$dark-palette: mat.m2-define-palette($custom-dark, 500, 300, 700);
-
-
-$light-theme: mat.m2-define-light-theme((
-  color: (
-    primary: $light-palette,
-    accent: $light-palette
-  ),
-  density: 0
-));
+$dark-palette-primary: mat.m2-define-palette($custom-dark-primary, 500, 300, 700);
+$dark-palette-accent:  mat.m2-define-palette($custom-dark-accent,  500, 300, 700);
 
 $dark-theme: mat.m2-define-dark-theme((
   color: (
-    primary: $dark-palette,
-    accent: $dark-palette
+    primary: $dark-palette-primary,
+    accent:  $dark-palette-accent
   ),
   density: 0
 ));
 
-@include mat.all-component-themes($light-theme);
-
+@include mat.all-component-themes($dark-theme);
 
 :root {
-  // light theme
-  --primary-base: #4D2719;
-  --primary-hover: #353432;
-  --primary-soft: #eadcd4;
-  --header-specific-color: #4D2719;
-  --secondary-text-color: #4D2719;
-  --background-default: #1c1c1c;
-  --background-surface: #f5ece6;
-  --text-primary: #eadcd4;
-  --specific-text-color: #3b1e13;
-  --border-default: #d5c4ba;
-  --state-success: #22c55e;
-  --state-error: #ef4444;
-  --state-warning: #facc15;
-  --disabled-base: #d1d5db;
+  --primary-base:    #4A6F8F;
+  --primary-hover:   #5A829F;
+  --primary-active:  #3D5A75;
+  --primary-soft:    #E0EAF2;
+  --accent-base:     #6D4AFF;
+  --accent-hover:    #8C6EFF;
+  --header-specific-color: #1A2129;
+
+  --background-default: #0F1419;
+  --background-surface: #12181E;
+  --background-section: #1A2129;
+  --background-elevated: #1E2938;
+
+  --text-primary:    #E0EAF2;
+  --text-secondary:  #A3B9CC;
+  --text-light:      #7A8FA8;
+  --text-muted:      #5C718A;
+
+  --border-default:  #2A3745;
+  --border-subtle:   #1E2938;
+  --state-success:   #34D399;
+  --state-error:     #F87171;
+  --state-warning:   #FBBF24;
+  --disabled-base:   #3A4759;
 }
 
 .dark-theme {
-  // dark theme
   @include mat.all-component-themes($dark-theme);
-  --primary-base: #8a8278;
-  --primary-hover: #3b1e13;
-  --primary-soft: #ffffff;
-  --header-specific-color: rgba(138, 130, 120, 0.6);
-  --secondary-text-color: #eadcd4;
-  --specific-text-color: #3b1e13;
-  --background-default: #faf9f8;
-  --background-surface: #4d2719;
-  --text-primary: #ffffff;
-  --text-secondary: #b0b0b0;
-  --border-default: #4d4d4d;
+
+  --primary-base:    #3A3A3A;
+  --primary-hover:   #4A4A4A;
+  --primary-active:  #2C2C2C;
+  --primary-soft:    #E6E6E6;
+  --header-specific-color: #3A3A3A;
+
+  --accent-base:     #8C6EFF;
+  --accent-hover:    #A38CFF;
+
+  --background-default: #0B0B0C;
+  --background-surface: #121212;
+  --background-section: #1A1A1A;
+  --background-elevated: #222222;
+
+  --text-primary:    #EDEDED;
+  --text-secondary:  #B3B3B3;
+  --text-light:      #8F8F8F;
+  --text-muted:      #6A6A6A;
+
+  --border-default:  #2A2A2A;
+  --border-subtle:   #1C1C1C;
+  --disabled-base:   #3A3A3A;
 }
-
-

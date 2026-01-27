@@ -1,9 +1,14 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
 .content {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background: var(--background-default);
 }
-
 .main-content {
   flex: 1;
   display: flex;

@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/auth.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
 const rateLimit = require('express-rate-limit');
-const User = require('../models/User.model');
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -129,47 +127,5 @@ router.post('/refresh', authController.refreshToken);
  *         description: Server error
  */
 router.post('/logout', authController.logout);
-
-/**
- * @swagger
- * /api/auth/protected:
- *   get:
- *     summary: Example protected route
- *     description: Accessible only with a valid access token.
- *     tags: [Protected]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Successfully accessed protected resource
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 userId:
- *                   type: string
- *       401:
- *         description: Unauthorized (e.g., missing or invalid access token)
- */
-
-router.get('/protected', authMiddleware, async (req, res) => {
-  try {
-    const user = await User.findById(req.userId).select('username');
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    res.json({
-      message: 'Logged in user test',
-      userId: req.userId,
-      username: user.username
-    });
-  } catch (error) {
-    res.status(500).json({ error: 'Server error', details: error.message });
-  }
-});
 
 module.exports = router;

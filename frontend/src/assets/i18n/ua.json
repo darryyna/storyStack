@@ -99,5 +99,10 @@
     "FORM-USERNAME": "Юзернейм",
     "FORM-PASSWORD": "Пароль",
     "FORM-CONFIRM-PASSWORD": "Підтвердіть пароль"
+  },
+  "DROPDOWN_ITEMS":{
+    "EXIT": "Вийти",
+    "PERSONAL_CABINET": "Особистий кабінет",
+    "SETTINGS": "Налаштування"
   }
 }

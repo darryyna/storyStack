@@ -1,31 +1,31 @@
-<section class="hero-section">
+<section class="hero-section" aria-label="Hero section">
   <div class="hero-content">
-    <h1 class="hero-title"> {{ 'HEADERS.HERO-TITLE' | translate | uppercase}}</h1>
-    <p class="hero-desc">{{ 'HEADERS.HERO-SUBTITLE' | translate | uppercase}}</p>
-    <button routerLink="/login"  class="btn" *ngIf="!(isAuthenticated$ | async)"> {{ 'ACTIONS.START' | translate | uppercase }}</button>
+    <h1 class="hero-title">{{ 'HEADERS.HERO-TITLE' | translate }}</h1>
+    <p class="hero-desc">{{ 'HEADERS.HERO-SUBTITLE' | translate }}</p>
+    @if (!isAuthenticated()) {
+      <button routerLink="/login" class="btn">{{ 'ACTIONS.START' | translate }}</button>
+    }
   </div>
 </section>
-<section>
+
+<section class="advantages-section" aria-label="Advantages">
   <h2 class="advantages-title">{{ 'HEADERS.ADVANTAGES_TITLE' | translate }}</h2>
-    <ul class="section-wrapper">
+  <ul class="section-wrapper">
+    @for (item of advantagesItems; track item) {
       <li class="list-item">
-          <p class="underline"> {{ 'PARAGRAPHS.ADVANTAGES-1' | translate}}</p>
+        <p>{{ item | translate }}</p>
       </li>
-      <li class="list-item">
-        <p class="underline"> {{ 'PARAGRAPHS.ADVANTAGES-2' | translate}}</p>
-      </li>
-      <li class="list-item">
-        <p class="underline"> {{ 'PARAGRAPHS.ADVANTAGES-3' | translate}}</p>
-      </li>
-    </ul>
+    }
+  </ul>
 </section>
-<section class="qa-section">
+
+<section class="qa-section" aria-label="QA form">
   <div class="qa-wrapper">
-  <h2 class="qa-title">{{ 'HEADERS.QA-FORM-TITLE' | translate }}</h2>
-  <p>{{ 'PARAGRAPHS.QA-FORM-DESC' | translate}} </p>
-  <div class="input-section">
-   <input type="text" class="input-field" placeholder="{{ 'PLACEHOLDERS.FORM-EMAIL' | translate }}" />
-    <button class="btn send-btn">{{ 'ACTIONS.SEND' | translate | uppercase }}</button>
-</div>
+    <h2 class="qa-title">{{ 'HEADERS.QA-FORM-TITLE' | translate }}</h2>
+    <p>{{ 'PARAGRAPHS.QA-FORM-DESC' | translate }}</p>
+    <div class="input-section">
+      <input type="email" class="input-field" placeholder="{{ 'PLACEHOLDERS.FORM-EMAIL' | translate }}" aria-label="Email input" />
+      <button class="btn send-btn">{{ 'ACTIONS.SEND' | translate }}</button>
+    </div>
   </div>
 </section>

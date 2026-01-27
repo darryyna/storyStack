@@ -11,7 +11,7 @@ export class AuthInterceptor implements HttpInterceptor {
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.authService.getToken();
+    const token = this.authService.getAccessToken();
 
     if (token) {
       request = this.addTokenToRequest(request, token);

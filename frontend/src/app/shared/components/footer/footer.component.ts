@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-footer',
-  standalone: false,
+  standalone: true,
+  imports: [TranslateModule],
   templateUrl: './footer.component.html',
-  styleUrl: './footer.component.scss'
+  styleUrl: './footer.component.scss',
 })
 export class FooterComponent {
-  public currentDate: Date = new Date();
+  currentDate = signal(new Date());
 }

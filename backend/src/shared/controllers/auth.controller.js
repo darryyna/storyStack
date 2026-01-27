@@ -1,6 +1,9 @@
+const { promisify } = require('util');
 const User = require('../models/User.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
+const verifyJwt = promisify(jwt.verify);
 
 const generateAccessToken = (userId) => {
   return jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
@@ -80,12 +83,20 @@ exports.refreshToken = async (req, res) => {
   try {
     const token = req.cookies.refreshToken;
     if (!token) return res.status(401).json({ error: 'Refresh token required' });
-    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-      if (err) return res.status(403).json({ error: 'Invalid refresh token' });
-      const newAccessToken = generateAccessToken(decoded.userId);
-      res.json({ accessToken: newAccessToken });
+
+    const decoded = await verifyJwt(token, process.env.REFRESH_TOKEN_SECRET);
+    const user = await User.findById(decoded.userId).select('username email');
+    if (!user) return res.status(403).json({ error: 'User not found' });
+
+    const accessToken = generateAccessToken(decoded.userId);
+    res.json({
+      accessToken,
+      user: { id: String(user._id), username: user.username, email: user.email }
     });
   } catch (err) {
+    if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+      return res.status(403).json({ error: 'Invalid refresh token' });
+    }
     res.status(500).json({ error: 'Token refresh failed', details: err.message });
   }
 };
