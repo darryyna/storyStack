@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, OnDestroy } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
 
@@ -11,17 +11,29 @@ import { RouterLink } from '@angular/router';
   templateUrl: './about-page.component.html',
   styleUrl: './about-page.component.scss'
 })
-export class AboutPageComponent implements AfterViewInit {
+export class AboutPageComponent implements AfterViewInit, OnDestroy {
+
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private observer?: IntersectionObserver;
 
   ngAfterViewInit(): void {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
+    this.observer = new IntersectionObserver(
+      entries => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
         }
-      });
-    }, { threshold: 0.15 });
+      },
+      { threshold: 0.15 }
+    );
 
-    document.querySelectorAll('section').forEach(sec => observer.observe(sec));
+    const sections = this.host.nativeElement.querySelectorAll('section');
+
+    sections.forEach((section: Element) => this.observer?.observe(section));
+  }
+
+  ngOnDestroy(): void {
+    this.observer?.disconnect();
   }
 }
