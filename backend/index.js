@@ -8,7 +8,7 @@ const authRoutes = require('./src/shared/routes/auth.routes');
 const app = express();
 const PORT = process.env.PORT;
 const MONGO_URI =  process.env.MONGO_URI;
-const swaggerSpec = require('./src/shared/configs/swagger');
+const swaggerSpec = require('./src/shared/configuration/swagger');
 const { serve, setup } = require('swagger-ui-express');
 const cors = require('cors');
 app.use(express.json());

@@ -6,7 +6,7 @@
       @if (menuOpen) {
         <nav class="mobile-nav" aria-label="Mobile navigation">
           <a routerLink="/" class="nav-item">{{ 'HEADERS.HOME' | translate }}</a>
-          <a href="#" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
+          <a routerLink="/about" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
           <span class="nav-item theme-toggle">
             <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
               <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
@@ -49,7 +49,7 @@
     } @else {
       <nav class="header-nav" aria-label="Main navigation">
         <a routerLink="/" class="nav-item">{{ 'HEADERS.HOME' | translate }}</a>
-        <a href="#" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
+        <a routerLink="/about" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
         <span class="nav-item theme-toggle">
           <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
             <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>

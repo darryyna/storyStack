@@ -76,7 +76,14 @@
     "HERO-SUBTITLE": "Track what you read, set goals, write reviews, and discover your next favorite book — all in one place.",
     "ADVANTAGES_TITLE": "Unlock reading potential",
     "QA-FORM-TITLE": "Have questions or suggestions?",
-    "LOGO": "StoryStack."
+    "LOGO": "StoryStack.",
+    "ABOUT-MISSION-TITLE": "Our mission",
+    "ABOUT-FEATURES-TITLE": "What you can do in StoryStack",
+    "ABOUT-FEATURE-1-TITLE": "Smart library",
+    "ABOUT-FEATURE-2-TITLE": "Progress & Goals",
+    "ABOUT-FEATURE-3-TITLE": "AI Recommendations",
+    "ABOUT-FEATURE-4-TITLE": "Your thoughts matter",
+    "ABOUT-WHY-TITLE": "Why readers choose StoryStack"
 
   },
   "PARAGRAPHS": {
@@ -85,7 +92,17 @@
     "ADVANTAGES-3": "Add custom tags to organize books by genre, mood, difficulty, or any category fits your style",
     "QA-FORM-DESC": "We are always happy to hear from you! Leave your email and we will contact as soon as possible.",
     "SITE-RIGHTS": "All rights reserved.",
-    "PRIVACY-POLICY": "I accept the Terms of Use & Privacy Policy"
+    "PRIVACY-POLICY": "I accept the Terms of Use & Privacy Policy",
+    "ABOUT-SUBTITLE": "StoryStack — your cozy space for books, where reading becomes a pleasant and conscious habit.",
+    "ABOUT-MISSION-DESC": "StoryStack was created for you so that every reader could easily manage their library, track progress, set goals and receive personalized book recommendations powered by modern AI — without unnecessary complexity.",
+    "ABOUT-FEATURE-1": "Add books manually or instantly via Google Books, assign statuses, rate, write notes, quotes and custom tags",
+    "ABOUT-FEATURE-2": "Track goals, see statistics,use reading calendar, current book progress with pages left — everything to stay motivated.",
+    "ABOUT-FEATURE-3": "Smart recommendations based on your tastes, ratings and tags — the AI helps discover exactly those books that you are likely to love.",
+    "ABOUT-FEATURE-4": "Detailed reviews, favorite quotes, personal impressions — your library becomes truly yours.",
+    "ABOUT-WHY-DESC": "StoryStack combines powerful functionality with a clean, modern interface and cares about your reading experience.",
+    "ABOUT-WHY-1": "Intuitive and beautiful design — reading management is a pleasure",
+    "ABOUT-WHY-2": "Complete privacy — your books, notes and ratings only for you (or friends, if you want)",
+    "ABOUT-WHY-3": "Constant updates — new features, better recommendations, integrations"
   },
   "ACTIONS": {
     "SIGN_IN": "Sign In",

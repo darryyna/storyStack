@@ -1,8 +1,2 @@
 @use 'app/shared/styles/index.scss';
 @use 'app/shared/styles/custom-theme.scss' as material-theme;
-
-/* Override user-agent body margin so footer sticks to viewport (Sign In/Sign Up layout) */
-html, body {
-  margin: 0 !important;
-  padding: 0 !important;
-}

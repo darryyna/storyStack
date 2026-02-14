@@ -105,16 +105,19 @@
   max-width: 500px;
   margin: 0 auto 20px;
   border-radius: 50px;
-  overflow: hidden;
+  /* overflow: hidden; */ // Можна прибрати, якщо закруглення будемо робити окремо для елементів
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: var(--primary-light); // Додаємо фон сюди, щоб інпут і кнопка візуально зливалися
 
   .input-field {
     flex: 1;
+    min-width: 0;
     padding: 16px 24px;
     border: none;
     background: var(--primary-light);
     font-size: 16px;
     color: var(--text-primary);
+    border-radius: 50px 0 0 50px;
 
     &::placeholder {
       color: var(--text-light);
@@ -127,7 +130,11 @@
   }
 
   .send-btn {
+    flex-shrink: 0;
+    width: auto;
+    padding: 0 30px;
     border-radius: 0 50px 50px 0;
+    white-space: nowrap;
   }
 }
 
