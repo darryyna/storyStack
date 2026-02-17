@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>{{ 'PERSONAL_CABINET.ADD_BOOK_TITLE' | translate }}</h2>
+<mat-dialog-content>
+  <div class="search-container">
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>{{ 'PERSONAL_CABINET.SEARCH_PLACEHOLDER' | translate }}</mat-label>
+      <input type="text"
+             placeholder="Search for a book"
+             matInput
+             [formControl]="searchControl"
+             [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="onBookSelected($event)">
+        @for (book of filteredBooks(); track book.id) {
+          <mat-option [value]="book">
+            <span class="book-title">{{ book.volumeInfo.title }}</span>
+                @if (book.volumeInfo.authors?.length) {
+                  <span class="book-authors"> — {{ book.volumeInfo.authors?.join(', ') }}</span>
+                }
+          </mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+
+  @if (selectedBook()) {
+    <div>
+      <img [src]="selectedBook()!.volumeInfo.imageLinks?.thumbnail || 'assets/images/book-placeholder.png'"
+           alt="Cover">
+      <div>
+        <h3>{{ selectedBook()!.volumeInfo.title }}</h3>
+        <p>{{ selectedBook()!.volumeInfo.authors?.join(', ') }}</p>
+        <p>{{ selectedBook()!.volumeInfo.description }}</p>
+      </div>
+    </div>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">{{ 'ACTIONS.CANCEL' | translate }}</button>
+  <button mat-flat-button color="primary"
+          [disabled]="!selectedBook() || isLoading()"
+          (click)="onAddBook()">
+    {{ 'ACTIONS.ADD' | translate }}
+  </button>
+</mat-dialog-actions>

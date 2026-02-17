@@ -11,7 +11,7 @@ export interface AuthState {
 
 export const initialState: AuthState = {
   isAuthenticated: false,
-  isAuthLoading: true,
+  isAuthLoading: false,
   user: undefined,
   error: undefined,
 };
@@ -21,7 +21,7 @@ export const authReducer = createReducer(
 
   // Login
   on(AuthActions.loginUser, state => ({ ...state, isAuthLoading: true, error: undefined })),
-  on(AuthActions.loginUserSuccess, (state, { user, accessToken }) => ({
+  on(AuthActions.loginUserSuccess, (state, { user }) => ({
     ...state,
     isAuthenticated: true,
     isAuthLoading: false,
@@ -42,7 +42,7 @@ on(AuthActions.loginUserFailure, (state, { error }) => ({
 
   // Logout
   on(AuthActions.logoutUser, state => ({ ...state, isAuthLoading: true })),
-  on(AuthActions.logoutUserSuccess, state => ({ ...initialState, isAuthLoading: false })),
+  on(AuthActions.logoutUserSuccess, () => ({ ...initialState, isAuthLoading: false })),
 
   // Check auth (on app init)
   on(AuthActions.checkAuthStatus, state => ({ ...state, isAuthLoading: true })),

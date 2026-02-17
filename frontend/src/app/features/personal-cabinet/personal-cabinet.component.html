@@ -1,0 +1,94 @@
+<div class="cabinet-container">
+    <header class="cabinet-header">
+        <h1>
+            {{ 'HEADERS.PERSONAL_CABINET' | translate: { username: username() } }}
+        </h1>
+        <p class="subtitle">{{ 'PERSONAL_CABINET.WELCOME' | translate }}</p>
+    </header>
+    <div class="add-book-section">
+        <div class="">
+            <h3 class="">{{
+                'PERSONAL_CABINET.ADD_BOOK_CTA_TITLE' | translate }}</h3>
+            <p class="">{{ 'PERSONAL_CABINET.ADD_BOOK_CTA_DESC' | translate }}
+            </p>
+        </div>
+        <button mat-flat-button color="primary" (click)="openAddBookModal()">
+            <mat-icon>add</mat-icon>
+            {{ 'ACTIONS.ADD' | translate }}
+        </button>
+    </div>
+
+    <div class="stats-grid">
+        @for (section of cabinetSections(); track section.type) {
+        <div class="stat-card">
+            <div class="card-content">
+                <h2 class="card-title">{{ section.title }}</h2>
+                <div class="stat-number" (click)="toggleSection(section.type)">
+                    {{ section.books.length }}
+                </div>
+                <p class="stat-label">{{ 'PERSONAL_CABINET.BOOKS' | translate }}</p>
+            </div>
+            @if (section.isOpen) {
+            <div class="book-list-container animate-fade-in-down">
+                @if (section.books.length > 0) {
+                <ul class="book-list">
+                    @for (book of section.books; track book.id) {
+                    <li class="book-item">
+                        <div class="book-info">
+                            <span class="book-title">{{ book.bookId.title }}</span>
+                            <span class="book-author">{{ book.bookId.authors?.join(', ') }}</span>
+                            @if(book.rating) {
+                            <span class="">★ {{book.rating}}</span>
+                            }
+                        </div>
+                    </li>
+                    }
+                </ul>
+                } @else {
+                <p class="empty-message">{{ 'PERSONAL_CABINET.NO_BOOKS' | translate }}</p>
+                }
+            </div>
+            }
+        </div>
+        }
+    </div>
+
+    <div class="last-pick-section">
+        <h2 class="section-title">
+            <span>{{ 'PERSONAL_CABINET.LAST_PICK_TITLE' | translate }}</span>
+            <span class="divider-line"></span>
+        </h2>
+
+        <div class="last-pick-card">
+            <div class="last-pick-info">
+                <div class="info-label">{{ 'PERSONAL_CABINET.MOST_RECENT_READ' | translate }}</div>
+                <h3 class="info-title">{{ lastPick().bookTitle }}</h3>
+                <div class="info-date">{{ 'PERSONAL_CABINET.LAST_ACTIVE' | translate }} {{ lastPick().timestamp |
+                    date:'mediumDate' }}</div>
+            </div>
+
+            <div class="last-pick-note">
+                <div class="note-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M14.017 21L14.017 18C14.017 16.0547 15.5937 14.478 17.539 14.478H21C22.657 14.478 24 13.135 24 11.478V2.978C24 1.321 22.657 0 21 0H3C1.343 0 0 1.321 0 2.978V11.478C0 13.135 1.343 14.478 3 14.478H6.461C8.40626 14.478 9.98303 16.0547 9.98303 18V21H14.017ZM19 5.978C19.5523 5.978 20 6.42571 20 6.978C20 7.53028 19.5523 7.978 19 7.978H5C4.44772 7.978 4 7.53028 4 6.978C4 6.42571 4.44772 5.978 5 5.978H19Z" />
+                    </svg>
+                </div>
+                <h4 class="note-label">{{ 'PERSONAL_CABINET.LAST_STICKY_NOTE' | translate }}</h4>
+                <p class="note-content">
+                    "{{ lastPick().lastNote }}"
+                </p>
+            </div>
+        </div>
+    </div>
+
+  <div>
+    <h2 class="section-title">
+      <span>{{ 'PERSONAL_CABINET.RECOMMENDATION' | translate }}</span>
+      <span class="divider-line"></span>
+    </h2>
+    <div class="recommendation-section">
+      <p>пока шо ми нічо не думаєм</p>
+    </div>
+  </div>
+</div>
