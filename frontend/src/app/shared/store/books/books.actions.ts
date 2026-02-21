@@ -20,10 +20,10 @@ export const addBook = createAction(
 
 export const addBookSuccess = createAction(
     '[Books] Add Book Success',
-    props<{ book: any }>() // Update type if backend returns specific UserBook
+    props<{ book: Book }>()
 );
 
 export const addBookFailure = createAction(
     '[Books] Add Book Failure',
-    props<{ error: any }>()
+    props<{ error: string }>()
 );

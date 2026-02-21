@@ -1,8 +1,10 @@
 const axios = require('axios');
 const ExternalBookId = require('../models/ExternalBookId.model');
 const UserBook = require('../models/UserBook.model');
+const { getCache, setCache } = require('../services/redis.service');
 
-const GOOGLE_BOOKS_API_URL = 'https://www.googleapis.com/books/v1/volumes';
+const googleApiUrl =  process.env.GOOGLE_BOOKS_API_URL;
+const SEARCH_CACHE_TTL = 600; // 10 minutes
 
 exports.searchBooks = async (req, res) => {
     try {
@@ -11,11 +13,20 @@ exports.searchBooks = async (req, res) => {
             return res.status(400).json({ error: 'Query parameter "q" is required' });
         }
 
-        const response = await axios.get(GOOGLE_BOOKS_API_URL, {
+        const normalizedQuery = q.trim().toLowerCase();
+        const cacheKey = `books:search:${normalizedQuery}`;
+
+        const cached = await getCache(cacheKey);
+        if (cached) {
+            return res.json(cached);
+        }
+
+        const response = await axios.get(googleApiUrl, {
             params: { q }
         });
 
         const books = response.data.items || [];
+        await setCache(cacheKey, books, SEARCH_CACHE_TTL);
         res.json(books);
     } catch (error) {
         console.error('Google Books API Error:', error.message);

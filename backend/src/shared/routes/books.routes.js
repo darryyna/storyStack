@@ -23,7 +23,7 @@ const auth = require('../middlewares/auth.middleware');
  *       500:
  *         description: Server error
  */
-router.get('/search', booksController.searchBooks);
+router.get('/search', auth, booksController.searchBooks);
 
 /**
  * @swagger
@@ -57,7 +57,7 @@ router.get('/search', booksController.searchBooks);
  *       200:
  *         description: External book added/retrieved successfully
  */
-router.post('/external', booksController.addExternalBook);
+router.post('/external', auth, booksController.addExternalBook);
 
 /**
  * @swagger

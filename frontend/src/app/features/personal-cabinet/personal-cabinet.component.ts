@@ -10,6 +10,7 @@ import { AddBookModalComponent } from './components/add-book-modal/add-book-moda
 import { BookStatus } from '../../core/models/book.model';
 import * as BooksActions from '../../shared/store/books/books.actions';
 import { selectAllBooks, selectBooksLoading } from '../../shared/store/books/books.selectors';
+import { selectCurrentUser } from '../../shared/store/auth/auth.selectors';
 
 @Component({
   selector: 'app-personal-cabinet',
@@ -22,7 +23,8 @@ export class PersonalCabinetComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly dialog = inject(MatDialog);
 
-  protected readonly username = signal('');
+  private readonly currentUser = toSignal(this.store.select(selectCurrentUser), { initialValue: undefined });
+  protected readonly username = computed(() => this.currentUser()?.username ?? '');
 
   protected readonly books = toSignal(this.store.select(selectAllBooks), { initialValue: [] });
   protected readonly isLoading = toSignal(this.store.select(selectBooksLoading), { initialValue: false });

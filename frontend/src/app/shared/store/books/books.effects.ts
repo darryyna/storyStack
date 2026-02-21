@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
+import { catchError, exhaustMap, map, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import * as BooksActions from './books.actions';
 import { BooksService } from '../../../core/services/books.service';
@@ -13,7 +13,7 @@ export class BooksEffects {
     loadBooks$ = createEffect(() =>
         this.actions$.pipe(
             ofType(BooksActions.loadBooks),
-            mergeMap(() =>
+            switchMap(() =>
                 this.booksService.getUserBooks().pipe(
                     map(books => BooksActions.loadBooksSuccess({ books })),
                     catchError(error => of(BooksActions.loadBooksFailure({ error })))
@@ -25,7 +25,7 @@ export class BooksEffects {
     addBook$ = createEffect(() =>
         this.actions$.pipe(
             ofType(BooksActions.addBook),
-            mergeMap(({ book }) =>
+            exhaustMap(({ book }) =>
                 // add external book first to get externalBookId, then add user book
                 this.booksService.addExternalBook(book).pipe(
                     switchMap(externalBook =>

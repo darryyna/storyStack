@@ -138,5 +138,12 @@
     "ADD_BOOK_TITLE": "Додати нову книгу",
     "SEARCH_PLACEHOLDER": "Пошук за назвою, автором або ISBN",
     "RECOMMENDATION": "На основі ваших смаків, ми думаємо, вам може сподобатися:"
+  },
+  "FORM_ERRORS": {
+    "REQUIRED": "Це поле обов’язкове",
+    "EMAIL": "Некоректний email",
+    "MIN_LENGTH": "Мінімальна довжина {{requiredLength}} символів",
+    "PASSWORD_MISMATCH": "Паролі не співпадають",
+    "REQUIRED_TRUE": "Потрібно прийняти умови"
   }
 }

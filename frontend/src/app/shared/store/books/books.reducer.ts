@@ -44,7 +44,7 @@ export const booksReducer = createReducer(
     })),
     on(BooksActions.addBookFailure, (state, { error }) => ({
         ...state,
-        adding: false,
+        isAdding: false,
         error
     }))
 );

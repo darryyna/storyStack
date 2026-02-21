@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./src/shared/routes/auth.routes');
 const booksRoutes = require('./src/shared/routes/books.routes');
+const { connectRedis } = require('./src/shared/services/redis.service');
 
 
 const app = express();
@@ -26,9 +27,10 @@ app.use('/api/books', booksRoutes);
 app.use('/api-docs', serve, setup(swaggerSpec));
 
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => {
+    .then(async () => {
         console.log('DB connected');
 
+        await connectRedis();
         app.listen(PORT, () => {
             console.log(`Server connected on ${PORT}`);
         });

@@ -138,5 +138,12 @@
     "ADD_BOOK_TITLE": "Add New Book",
     "SEARCH_PLACEHOLDER": "Search by title, author, or ISBN",
     "RECOMMENDATION": "Based on your preferences, we think you might like:"
+  },
+  "FORM_ERRORS": {
+    "REQUIRED": "This field is required",
+    "EMAIL": "Invalid email",
+    "MIN_LENGTH": "Minimum length is {{requiredLength}} characters",
+    "PASSWORD_MISMATCH": "Passwords do not match",
+    "REQUIRED_TRUE": "You must accept the terms"
   }
 }
