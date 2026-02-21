@@ -2,92 +2,101 @@
   <div class="header-content">
     <img src="/assets/images/light-logo.png" alt="StoryStack logo" class="logo" routerLink="/" />
     @if (isMobile()) {
-      <img class="burger-btn" (click)="toggleMenu()" src="/assets/icons/burger-menu-icon.svg" alt="Menu" aria-label="Toggle menu" />
-      @if (menuOpen) {
-        <nav class="mobile-nav" aria-label="Mobile navigation">
-          <a routerLink="/" class="nav-item">{{ 'HEADERS.HOME' | translate }}</a>
-          <a routerLink="/about" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
-          <span class="nav-item theme-toggle">
-            <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
-              <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
-            </button>
-          </span>
-          <div class="custom-language-select"
-               (click)="toggleLanguageMenu()"
-               tabindex="0"
-               aria-haspopup="listbox"
-               [attr.aria-expanded]="languageMenuOpen"
-               aria-label="Select language">
-            <span class="selected-lang">{{ translate.currentLang | uppercase }}</span>
-            <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
-            @if (languageMenuOpen) {
-              <ul class="language-dropdown" role="listbox">
-                <li class="language-option" role="option"
-                    [attr.aria-selected]="translate.currentLang === 'ua'"
-                    (click)="changeLanguage('ua')">UA</li>
-                <li class="language-option" role="option"
-                    [attr.aria-selected]="translate.currentLang === 'en'"
-                    (click)="changeLanguage('en')">EN</li>
-              </ul>
-            }
-          </div>
-          @if (isAuthenticated()) {
-            <div class="user-info" (click)="toggleUserMenu()" tabindex="0" (blur)="closeUserMenu()" aria-haspopup="true">
-              <img src="../../../../assets/icons/user.png" alt="User avatar" class="user-avatar" />
-              <span class="username">{{ currentUser()?.username }}</span>
-              @if (userMenuOpen) {
-                <div class="user-dropdown">
-                  <button class="dropdown-item" (click)="onLogout()">{{ 'DROPDOWN_ITEMS.EXIT' | translate }}</button>
-                </div>
-              }
-            </div>
-          } @else {
-            <button class="signup-btn" routerLink="/login">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
-          }
-        </nav>
-      }
-    } @else {
-      <nav class="header-nav" aria-label="Main navigation">
-        <a routerLink="/" class="nav-item">{{ 'HEADERS.HOME' | translate }}</a>
-        <a routerLink="/about" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
-        <span class="nav-item theme-toggle">
-          <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
-            <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
-          </button>
-        </span>
-        <div class="custom-language-select"
-             (click)="toggleLanguageMenu()"
-             tabindex="0"
-             aria-haspopup="listbox"
-             [attr.aria-expanded]="languageMenuOpen"
-             aria-label="Select language">
-          <span class="selected-lang">{{ translate.currentLang | uppercase }}</span>
-          <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
-          @if (languageMenuOpen) {
-            <ul class="language-dropdown" role="listbox">
-              <li class="language-option" role="option"
-                  [attr.aria-selected]="translate.currentLang === 'ua'"
-                  (click)="changeLanguage('ua')">UA</li>
-              <li class="language-option" role="option"
-                  [attr.aria-selected]="translate.currentLang === 'en'"
-                  (click)="changeLanguage('en')">EN</li>
-            </ul>
-          }
-        </div>
-        @if (isAuthenticated()) {
-          <div class="user-info" (click)="toggleUserMenu()" tabindex="0" (blur)="closeUserMenu()" aria-haspopup="true">
-            <img src="../../../../assets/icons/user.png" alt="User avatar" class="user-avatar" />
-            <span class="username">{{ currentUser()?.username }}</span>
-            @if (userMenuOpen) {
-              <div class="user-dropdown">
-                <button class="dropdown-item" (click)="onLogout()">{{ 'DROPDOWN_ITEMS.EXIT' | translate }}</button>
-              </div>
-            }
-          </div>
-        } @else {
-          <button class="signup-btn" routerLink="/login">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
+    <img class="burger-btn" (click)="toggleMenu('main')" src="/assets/icons/burger-menu-icon.svg" alt="Menu"
+      aria-label="Toggle menu" />
+    @if (isMenuOpen()) {
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a routerLink="/" class="nav-item">{{ 'HEADERS.HOME' | translate }}</a>
+      <a routerLink="/about" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
+      <span class="nav-item theme-toggle">
+        <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
+          <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
+        </button>
+      </span>
+      <div class="custom-language-select" (click)="toggleMenu('language')" tabindex="0" aria-haspopup="listbox"
+        aria-label="Select language">
+        <span class="selected-lang">{{ translate.currentLang | uppercase }}</span>
+        <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+        @if (isLanguageMenuOpen()) {
+        <ul class="language-dropdown" role="listbox">
+          <li class="language-option" role="option" [attr.aria-selected]="translate.currentLang === 'ua'"
+            (click)="changeLanguage('ua')">UA</li>
+          <li class="language-option" role="option" [attr.aria-selected]="translate.currentLang === 'en'"
+            (click)="changeLanguage('en')">EN</li>
+        </ul>
         }
-      </nav>
+      </div>
+      @if (isAuthenticated()) {
+      <div class="user-info" (click)="toggleMenu('user')" tabindex="0" (blur)="closeMenu()" aria-haspopup="true">
+        <img src="../../../../assets/icons/user.png" alt="User avatar" class="user-avatar" />
+        <span class="username">{{ currentUser()?.username }}</span>
+        @if (isUserMenuOpen()) {
+        <div class="user-dropdown" role="menu">
+          <a class="dropdown-item" (click)="navigateToCabinet()">
+            <mat-icon>account_circle</mat-icon>
+            {{ 'DROPDOWN_ITEMS.PERSONAL_CABINET' | translate }}
+          </a>
+
+          <hr class="dropdown-divider" />
+
+          <a class="dropdown-item logout-link" (click)="onLogout($event); $event.stopPropagation()" role="button">
+            <mat-icon>logout</mat-icon>
+            {{ 'DROPDOWN_ITEMS.EXIT' | translate }}
+          </a>
+        </div>
+        }
+      </div>
+      } @else {
+      <button class="signup-btn" routerLink="/login">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
+      }
+    </nav>
+    }
+    } @else {
+    <nav class="header-nav" aria-label="Main navigation">
+      <a routerLink="/" class="nav-item">{{ 'HEADERS.HOME' | translate }}</a>
+      <a routerLink="/about" class="nav-item">{{ 'HEADERS.ABOUT' | translate }}</a>
+      <span class="nav-item theme-toggle">
+        <button mat-icon-button (click)="toggleDarkTheme()" aria-label="Change theme">
+          <mat-icon>{{ themeService.getCurrentTheme() === 'dark-theme' ? 'dark_mode' : 'light_mode' }}</mat-icon>
+        </button>
+      </span>
+      <div class="custom-language-select" (click)="toggleMenu('language')" tabindex="0" aria-haspopup="listbox"
+        aria-label="Select language">
+        <span class="selected-lang">{{ translate.currentLang | uppercase }}</span>
+        <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+        @if (isLanguageMenuOpen()) {
+        <ul class="language-dropdown" role="listbox">
+          <li class="language-option" role="option" [attr.aria-selected]="translate.currentLang === 'ua'"
+            (click)="changeLanguage('ua')">UA</li>
+          <li class="language-option" role="option" [attr.aria-selected]="translate.currentLang === 'en'"
+            (click)="changeLanguage('en')">EN</li>
+        </ul>
+        }
+      </div>
+      @if (isAuthenticated()) {
+      <div class="user-info" (click)="toggleMenu('user')" tabindex="0" (blur)="closeMenu()" aria-haspopup="true">
+        <img src="../../../../assets/icons/user.png" alt="User avatar" class="user-avatar" />
+        <span class="username">{{ currentUser()?.username }}</span>
+        @if (isUserMenuOpen()) {
+        <div class="user-dropdown" role="menu">
+          <a class="dropdown-item" (click)="navigateToCabinet()">
+            <mat-icon>account_circle</mat-icon>
+            {{ 'DROPDOWN_ITEMS.PERSONAL_CABINET' | translate }}
+          </a>
+
+          <hr class="dropdown-divider" />
+
+          <a class="dropdown-item logout-link" (click)="onLogout($event); $event.stopPropagation()" role="button">
+            <mat-icon>logout</mat-icon>
+            {{ 'DROPDOWN_ITEMS.EXIT' | translate }}
+          </a>
+        </div>
+        }
+      </div>
+      } @else {
+      <button class="signup-btn" routerLink="/login">{{ 'ACTIONS.SIGN_UP' | translate }}</button>
+      }
+    </nav>
     }
   </div>
 </header>

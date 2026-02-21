@@ -83,8 +83,8 @@
     "ABOUT-FEATURE-2-TITLE": "Progress & Goals",
     "ABOUT-FEATURE-3-TITLE": "AI Recommendations",
     "ABOUT-FEATURE-4-TITLE": "Your thoughts matter",
-    "ABOUT-WHY-TITLE": "Why readers choose StoryStack"
-
+    "ABOUT-WHY-TITLE": "Why readers choose StoryStack",
+    "PERSONAL_CABINET": "Hi there, {{username}}"
   },
   "PARAGRAPHS": {
     "ADVANTAGES-1": "Stay motivated by tracking reading activity, progress, and current page count in real time",
@@ -110,7 +110,9 @@
     "START": "Start",
     "SEND": "Send",
     "ALREADY_HAVE_AN_ACCOUNT": "Already have an account?",
-    "DONT_HAVE_AN_ACCOUNT": "Don't have an account?"
+    "DONT_HAVE_AN_ACCOUNT": "Don't have an account?",
+    "ADD": "Add",
+    "CANCEL": "Cancel"
   },
   "PLACEHOLDERS": {
     "FORM-EMAIL": "Email address",
@@ -118,9 +120,34 @@
     "FORM-PASSWORD": "Password",
     "FORM-CONFIRM-PASSWORD": "Confirm Password"
   },
-  "DROPDOWN_ITEMS":{
+  "DROPDOWN_ITEMS": {
     "EXIT": "Exit",
     "PERSONAL_CABINET": "Personal cabinet",
     "SETTINGS": "Settings"
+  },
+  "PERSONAL_CABINET": {
+    "WELCOME": "Welcome back to your personal library.",
+    "BOOKS": "books",
+    "NO_BOOKS": "No books in this section yet.",
+    "LAST_PICK_TITLE": "Last Pick",
+    "MOST_RECENT_READ": "Most Recent Read",
+    "LAST_ACTIVE": "Last active:",
+    "LAST_STICKY_NOTE": "Last Sticky Note",
+    "ADD_BOOK_CTA_TITLE": "Add a new book",
+    "ADD_BOOK_CTA_DESC": "Found something interesting? Add it to your collection.",
+    "ADD_BOOK_TITLE": "Add New Book",
+    "SEARCH_PLACEHOLDER": "Search by title, author, or ISBN",
+    "SECTION_READING": "In Progress",
+    "SECTION_PLANNED": "Want to Read",
+    "SECTION_COMPLETED": "Completed",
+    "SECTION_DROPPED": "Abandoned",
+    "RECOMMENDATION": "Based on your preferences, we think you might like:"
+  },
+  "FORM_ERRORS": {
+    "REQUIRED": "This field is required",
+    "EMAIL": "Invalid email",
+    "MIN_LENGTH": "Minimum length is {{requiredLength}} characters",
+    "PASSWORD_MISMATCH": "Passwords do not match",
+    "REQUIRED_TRUE": "You must accept the terms"
   }
 }

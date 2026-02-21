@@ -64,7 +64,13 @@
 form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 input {
@@ -181,4 +187,8 @@ form > p {
     padding: 12px 16px;
     font-size: 15px;
   }
+}
+
+input.invalid {
+  border: 1px solid var(--state-error);
 }

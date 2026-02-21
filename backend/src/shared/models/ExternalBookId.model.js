@@ -7,6 +7,16 @@ const BookIdSchema = new mongoose.Schema({
         unique: true,
         trim: true
     },
+    title: {
+        type: String,
+        required: true
+    },
+    authors: [{
+        type: String
+    }],
+    thumbnail: {
+        type: String
+    }
 });
 
 BookIdSchema.virtual('id').get(function () {

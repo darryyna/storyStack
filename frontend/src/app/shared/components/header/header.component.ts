@@ -1,15 +1,15 @@
-import { Component, ElementRef, HostBinding, HostListener, input, inject } from '@angular/core';
+import { Component, HostListener, input, inject, signal, computed } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ThemeService } from '../../../core/services/theme.service';
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { User } from '../../models/user.model';
 import { selectCurrentUser, selectIsAuthenticated } from '../../store/auth/auth.selectors';
 import { logoutUser } from '../../store/auth/auth.actions';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UpperCasePipe } from '@angular/common';
+import { MenuType } from '../../helpers/ui-models';
 
 
 @Component({
@@ -20,60 +20,76 @@ import { UpperCasePipe } from '@angular/common';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-  isMobile = input<boolean>(false);
-  @HostBinding('class') className = '';
-
+  public isMobile = input<boolean>(false);
   protected readonly translate = inject(TranslateService);
   protected readonly themeService = inject(ThemeService);
   private readonly store = inject(Store);
   private readonly router = inject(Router);
-  private readonly elementRef = inject(ElementRef);
 
-  isAuthenticated = toSignal(this.store.pipe(select(selectIsAuthenticated)), { initialValue: false });
-  currentUser = toSignal(this.store.pipe(select(selectCurrentUser)), { initialValue: undefined as User | undefined });
+  protected readonly isAuthenticated = toSignal(
+    this.store.select(selectIsAuthenticated),
+    { initialValue: false }
+  );
 
-  menuOpen = false;
-  userMenuOpen = false;
-  languageMenuOpen = false;
+  protected readonly currentUser = toSignal(
+    this.store.select(selectCurrentUser),
+    { initialValue: undefined }
+  );
+  private readonly activeMenu = signal<MenuType>(null);
 
-  toggleMenu(): void {
-    this.menuOpen = !this.menuOpen;
+  // derived signals
+  protected readonly isMenuOpen = computed(
+    () => this.activeMenu() === 'main'
+  );
+  protected readonly isUserMenuOpen = computed(
+    () => this.activeMenu() === 'user'
+  );
+  protected readonly isLanguageMenuOpen = computed(
+    () => this.activeMenu() === 'language'
+  );
+  protected toggleMenu(type: MenuType): void {
+    this.activeMenu.update(current =>
+      current === type ? null : type
+    );
   }
 
-  changeLanguage(lang: string): void {
-    localStorage.setItem('ui-culture', lang);
-    this.translate.use(lang);
-    this.languageMenuOpen = false;
+  protected closeMenu(): void {
+    this.activeMenu.set(null);
   }
 
-  toggleDarkTheme(): void {
+  protected toggleDarkTheme(): void {
     this.themeService.toggleTheme();
   }
 
-  toggleUserMenu(): void {
-    this.userMenuOpen = !this.userMenuOpen;
+  protected navigateToCabinet(): void {
+    this.closeMenu();
+    this.router.navigate(['/personal-cabinet']);
   }
 
-  closeUserMenu(): void {
-    setTimeout(() => {
-      this.userMenuOpen = false;
-    }, 200);
-  }
+  protected onLogout(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
 
-  onLogout(): void {
     this.store.dispatch(logoutUser());
+    this.closeMenu();
     this.router.navigate(['/']);
-    this.userMenuOpen = false;
   }
 
-  toggleLanguageMenu(): void {
-    this.languageMenuOpen = !this.languageMenuOpen;
+  protected changeLanguage(lang: string): void {
+    localStorage.setItem('ui-culture', lang);
+    this.translate.use(lang);
+    this.closeMenu();
   }
 
   @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event): void {
-    if (!this.elementRef.nativeElement.contains(event.target)) {
-      this.languageMenuOpen = false;
+  protected onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (
+      !target.closest('.custom-language-select') &&
+      !target.closest('.user-info') &&
+      !target.closest('.burger-btn')
+    ) {
+      this.closeMenu();
     }
   }
 }

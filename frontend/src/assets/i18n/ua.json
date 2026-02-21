@@ -83,7 +83,8 @@
     "ABOUT-FEATURE-2-TITLE": "Прогрес & Цілі",
     "ABOUT-FEATURE-3-TITLE": "AI Рекомендації",
     "ABOUT-FEATURE-4-TITLE": "Ваші думки важливі",
-    "ABOUT-WHY-TITLE": "Чому читачі обирають StoryStack"
+    "ABOUT-WHY-TITLE": "Чому читачі обирають StoryStack",
+    "PERSONAL_CABINET": "Привіт, {{username}}"
   },
   "PARAGRAPHS": {
     "ADVANTAGES-1": "Залишайтеся вмотивованими, відстежуючи активність читання, прогрес і поточний підрахунок сторінок в режимі реального часу",
@@ -102,7 +103,6 @@
     "ABOUT-WHY-1": "Інтуїтивний і красивий дизайн — керувати читанням приємно",
     "ABOUT-WHY-2": "Повна приватність — ваші книги, нотатки й оцінки доступні лише вам (або друзям, якщо захочете)",
     "ABOUT-WHY-3": "Постійні оновлення — нові можливості, кращі рекомендації, інтеграції"
-
   },
   "ACTIONS": {
     "SIGN_IN": "Увійти",
@@ -110,7 +110,9 @@
     "START": "Почати",
     "SEND": "Відправити",
     "ALREADY_HAVE_AN_ACCOUNT": "Уже маєте акаунт?",
-    "DONT_HAVE_AN_ACCOUNT": "Не маєте акаунту?"
+    "DONT_HAVE_AN_ACCOUNT": "Не маєте акаунту?",
+    "ADD": "Додати",
+    "CANCEL": "Скасувати"
   },
   "PLACEHOLDERS": {
     "FORM-EMAIL": "Електронна адреса",
@@ -118,9 +120,34 @@
     "FORM-PASSWORD": "Пароль",
     "FORM-CONFIRM-PASSWORD": "Підтвердіть пароль"
   },
-  "DROPDOWN_ITEMS":{
+  "DROPDOWN_ITEMS": {
     "EXIT": "Вийти",
     "PERSONAL_CABINET": "Особистий кабінет",
     "SETTINGS": "Налаштування"
+  },
+  "PERSONAL_CABINET": {
+    "WELCOME": "Знову вітаємо у вашій особистій бібліотеці",
+    "BOOKS": "книг",
+    "NO_BOOKS": "У цьому розділі ще немає книг.",
+    "LAST_PICK_TITLE": "Останній вибір",
+    "MOST_RECENT_READ": "Останнє прочитане",
+    "LAST_ACTIVE": "Остання активність:",
+    "LAST_STICKY_NOTE": "Остання нотатка",
+    "ADD_BOOK_CTA_TITLE": "Додати нову книгу",
+    "ADD_BOOK_CTA_DESC": "Знайшли щось цікаве? Додайте до своєї колекції.",
+    "ADD_BOOK_TITLE": "Додати нову книгу",
+    "SEARCH_PLACEHOLDER": "Пошук за назвою, автором або ISBN",
+    "SECTION_READING": "Читаю",
+    "SECTION_PLANNED": "Хочу прочитати",
+    "SECTION_COMPLETED": "Прочитано",
+    "SECTION_DROPPED": "Залишено",
+    "RECOMMENDATION": "На основі ваших смаків, ми думаємо, вам може сподобатися:"
+  },
+  "FORM_ERRORS": {
+    "REQUIRED": "Це поле обов’язкове",
+    "EMAIL": "Некоректний email",
+    "MIN_LENGTH": "Мінімальна довжина {{requiredLength}} символів",
+    "PASSWORD_MISMATCH": "Паролі не співпадають",
+    "REQUIRED_TRUE": "Потрібно прийняти умови"
   }
 }

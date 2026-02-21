@@ -9,5 +9,11 @@ services:
     volumes:
       - mongo_data:/data/db
 
+  redis:
+    image: redis:alpine
+    container_name: storyStack-redis
+    ports:
+      - "6379:6379"
+
 volumes:
   mongo_data:

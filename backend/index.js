@@ -3,30 +3,34 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./src/shared/routes/auth.routes');
+const booksRoutes = require('./src/shared/routes/books.routes');
+const { connectRedis } = require('./src/shared/services/redis.service');
 
 
 const app = express();
 const PORT = process.env.PORT;
-const MONGO_URI =  process.env.MONGO_URI;
+const MONGO_URI = process.env.MONGO_URI;
 const swaggerSpec = require('./src/shared/configuration/swagger');
 const { serve, setup } = require('swagger-ui-express');
 const cors = require('cors');
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: 'http://localhost:4200',
-  credentials: true,
+    origin: 'http://localhost:4200',
+    credentials: true,
 }));
 
 
 
 app.use('/api/auth', authRoutes);
+app.use('/api/books', booksRoutes);
 app.use('/api-docs', serve, setup(swaggerSpec));
 
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => {
+    .then(async () => {
         console.log('DB connected');
 
+        await connectRedis();
         app.listen(PORT, () => {
             console.log(`Server connected on ${PORT}`);
         });

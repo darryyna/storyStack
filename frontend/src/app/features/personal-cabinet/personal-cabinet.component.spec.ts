@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PersonalCabinetComponent } from './personal-cabinet.component';
+import { provideMockStore } from '@ngrx/store/testing';
+import { MatDialog } from '@angular/material/dialog';
 
 describe('PersonalCabinetComponent', () => {
   let component: PersonalCabinetComponent;
@@ -8,7 +10,11 @@ describe('PersonalCabinetComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PersonalCabinetComponent]
+      imports: [PersonalCabinetComponent],
+      providers: [
+        provideMockStore(),
+        { provide: MatDialog, useValue: {} }
+      ]
     })
     .compileComponents();
 

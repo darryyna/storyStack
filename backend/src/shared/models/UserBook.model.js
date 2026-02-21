@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { BookEnums } = require('../enums/BookEnums');
+const BookEnums = require('../enums/BookEnums');
 
 const UserBookSchema = new mongoose.Schema({
     userId: {
