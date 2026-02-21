@@ -30,10 +30,10 @@ export class PersonalCabinetComponent implements OnInit {
   protected readonly isLoading = toSignal(this.store.select(selectBooksLoading), { initialValue: false });
 
   private readonly SECTIONS: { type: BookStatus; title: string }[] = [
-    { type: BookStatus.Reading, title: 'In Progress' },
-    { type: BookStatus.Planned, title: 'Want to Read' },
-    { type: BookStatus.Completed, title: 'Completed' },
-    { type: BookStatus.Dropped, title: 'Abandoned' },
+    { type: BookStatus.Reading, title: 'PERSONAL_CABINET.SECTION_READING' },
+    { type: BookStatus.Planned, title: 'PERSONAL_CABINET.SECTION_PLANNED' },
+    { type: BookStatus.Completed, title: 'PERSONAL_CABINET.SECTION_COMPLETED' },
+    { type: BookStatus.Dropped, title: 'PERSONAL_CABINET.SECTION_DROPPED' },
   ];
 
   private readonly openSections = signal<Set<BookStatus>>(new Set());
@@ -58,14 +58,14 @@ export class PersonalCabinetComponent implements OnInit {
 
   protected toggleSection(type: BookStatus): void {
     this.openSections.update(open => {
-        const next = new Set(open);
-        if (next.has(type)) {
-          next.delete(type);
-        } else {
-          next.add(type);
-        }
-        return next;
-      });
+      const next = new Set(open);
+      if (next.has(type)) {
+        next.delete(type);
+      } else {
+        next.add(type);
+      }
+      return next;
+    });
   }
 
   protected openAddBookModal(): void {

@@ -10,6 +10,8 @@ const auth = require('../middlewares/auth.middleware');
  *     summary: Search for books
  *     description: Search for books using Google Books API.
  *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: q
@@ -20,6 +22,8 @@ const auth = require('../middlewares/auth.middleware');
  *     responses:
  *       200:
  *         description: List of books matching query
+ *       401:
+ *         description: Unauthorized
  *       500:
  *         description: Server error
  */
@@ -32,6 +36,8 @@ router.get('/search', auth, booksController.searchBooks);
  *     summary: Add external book
  *     description: Add a book from Google Books to the internal external books cache.
  *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -56,6 +62,8 @@ router.get('/search', auth, booksController.searchBooks);
  *     responses:
  *       200:
  *         description: External book added/retrieved successfully
+ *       401:
+ *         description: Unauthorized
  */
 router.post('/external', auth, booksController.addExternalBook);
 

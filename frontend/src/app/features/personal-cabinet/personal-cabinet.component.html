@@ -22,7 +22,7 @@
         @for (section of cabinetSections(); track section.type) {
         <div class="stat-card">
             <div class="card-content">
-                <h2 class="card-title">{{ section.title }}</h2>
+                <h2 class="card-title">{{ section.title | translate }}</h2>
                 <div class="stat-number" (click)="toggleSection(section.type)">
                     {{ section.books.length }}
                 </div>
@@ -82,13 +82,13 @@
         </div>
     </div>
 
-  <div>
-    <h2 class="section-title">
-      <span>{{ 'PERSONAL_CABINET.RECOMMENDATION' | translate }}</span>
-      <span class="divider-line"></span>
-    </h2>
-    <div class="recommendation-section">
-      <p>пока шо ми нічо не думаєм</p>
+    <div>
+        <h2 class="section-title">
+            <span>{{ 'PERSONAL_CABINET.RECOMMENDATION' | translate }}</span>
+            <span class="divider-line"></span>
+        </h2>
+        <div class="recommendation-section">
+            <p>пока шо ми нічо не думаєм</p>
+        </div>
     </div>
-  </div>
 </div>

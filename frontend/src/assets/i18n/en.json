@@ -137,6 +137,10 @@
     "ADD_BOOK_CTA_DESC": "Found something interesting? Add it to your collection.",
     "ADD_BOOK_TITLE": "Add New Book",
     "SEARCH_PLACEHOLDER": "Search by title, author, or ISBN",
+    "SECTION_READING": "In Progress",
+    "SECTION_PLANNED": "Want to Read",
+    "SECTION_COMPLETED": "Completed",
+    "SECTION_DROPPED": "Abandoned",
     "RECOMMENDATION": "Based on your preferences, we think you might like:"
   },
   "FORM_ERRORS": {

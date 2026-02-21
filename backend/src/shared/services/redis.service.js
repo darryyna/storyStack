@@ -4,6 +4,7 @@ let client = null;
 
 const connectRedis = async () => {
     const url = process.env.REDIS_URL;
+    if (client) return;
 
     client = createClient({ url });
     client.on('error', (err) => console.warn('Redis Client Error:', err.message));

@@ -137,6 +137,10 @@
     "ADD_BOOK_CTA_DESC": "Знайшли щось цікаве? Додайте до своєї колекції.",
     "ADD_BOOK_TITLE": "Додати нову книгу",
     "SEARCH_PLACEHOLDER": "Пошук за назвою, автором або ISBN",
+    "SECTION_READING": "Читаю",
+    "SECTION_PLANNED": "Хочу прочитати",
+    "SECTION_COMPLETED": "Прочитано",
+    "SECTION_DROPPED": "Залишено",
     "RECOMMENDATION": "На основі ваших смаків, ми думаємо, вам може сподобатися:"
   },
   "FORM_ERRORS": {
