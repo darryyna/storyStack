@@ -29,10 +29,6 @@ const options = {
       {
         name: 'Auth',
         description: 'Authentication endpoints'
-      },
-      {
-        name: 'Protected',
-        description: 'Protected endpoints requiring authentication'
       }
     ]
   },

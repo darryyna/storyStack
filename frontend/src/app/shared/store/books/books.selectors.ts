@@ -13,6 +13,16 @@ export const selectBooksLoading = createSelector(
     (state) => state.isLoading
 );
 
+export const selectSelectedBook = createSelector(
+    selectBooksState,
+    (state) => state.selectedBook
+);
+
+export const selectLatestNote = createSelector(
+    selectBooksState,
+    (state) => state.latestNote
+);
+
 export const selectBooksAdding = createSelector(
     selectBooksState,
     (state) => state.isAdding

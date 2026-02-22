@@ -1,0 +1,112 @@
+<div class="list-container">
+    <header class="list-header">
+        <div class="header-left">
+            <button mat-icon-button class="back-btn" (click)="backToCabinet()">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <h1>My Book Collection</h1>
+        </div>
+        <button mat-stroked-button color="warn" class="reset-btn" (click)="resetFilters()">
+            {{ 'ACTIONS.RESET_FILTERS' | translate }}
+        </button>
+    </header>
+
+    <section class="filters-section">
+        <div class="filter-group">
+            <label>{{ 'FILTERS.STATUS' | translate }}</label>
+            <select [(ngModel)]="statusFilter" class="modern-select">
+                <option value="">{{ 'FILTERS.ALL_STATUSES' | translate }}</option>
+                @for (status of statuses; track status) {
+                <option [value]="status">{{ 'readingStatus.' + status | translate }}</option>
+                }
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>{{ 'FILTERS.RATING' | translate }}</label>
+            <div class="rating-filter">
+                <button *ngFor="let r of ratings" (click)="ratingFilter.set(r)" [class.active]="ratingFilter() === r"
+                    class="rating-btn">
+                    {{ r }} ★
+                </button>
+                @if (ratingFilter()) {
+                <button class="clear-rating" (click)="ratingFilter.set(null)">✕</button>
+                }
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label>{{ 'FILTERS.TAGS' | translate }}</label>
+            <input type="text" [(ngModel)]="tagFilter" [placeholder]="'PLACEHOLDERS.FILTER_TAGS' | translate"
+                class="modern-input" />
+        </div>
+    </section>
+
+    <section class="table-section" [class.loading]="isLoading()">
+        <app-loader [isLoading]="isLoading()"></app-loader>
+
+        @if (books().length > 0) {
+        <div class="modern-table-wrapper">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>{{ 'TABLE.TITLE' | translate }}</th>
+                        <th>{{ 'TABLE.AUTHOR' | translate }}</th>
+                        <th>{{ 'TABLE.STATUS' | translate }}</th>
+                        <th>{{ 'TABLE.RATING' | translate }}</th>
+                        <th>{{ 'TABLE.TAGS' | translate }}</th>
+                        <th>{{ 'TABLE.ACTIONS' | translate }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (book of books(); track book.id) {
+                    <tr class="clickable-row" (click)="viewBook(book.id)">
+                        <td class="col-title">
+                            <div class="book-title-cell">
+                                <img [src]="book.bookId.thumbnail" class="book-thumb" *ngIf="book.bookId.thumbnail" />
+                                <span>{{ book.bookId.title }}</span>
+                            </div>
+                        </td>
+                        <td>{{ book.bookId.authors?.join(', ') }}</td>
+                        <td>
+                            <span class="status-badge" [attr.data-status]="book.status">
+                                {{ 'readingStatus.' + book.status | translate }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="rating-cell" *ngIf="book.rating">★ {{ book.rating }}</span>
+                            <span *ngIf="!book.rating">-</span>
+                        </td>
+                        <td>
+                            <div class="tags-list">
+                                @for (tag of book.tags; track tag) {
+                                <span class="tag-badge">{{ tag }}</span>
+                                }
+                                <span *ngIf="!book.tags?.length">-</span>
+                            </div>
+                        </td>
+                        <td class="col-actions">
+                            <button class="action-btn delete" (click)="deleteBook(book.id, $event)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        } @else if (!isLoading()) {
+        <div class="empty-state">
+            <mat-icon>book</mat-icon>
+            <p>{{ 'BOOKS_LIST.NO_BOOKS_FOUND' | translate }}</p>
+        </div>
+        }
+    </section>
+</div>
+
+<ng-template #confirmDeleteModal let-data>
+    <app-modal-window [title]="'PERSONAL_CABINET.DELETE_CONFIRM_TITLE'"
+        [description]="'PERSONAL_CABINET.DELETE_CONFIRM_DESC'" (confirmed)="onConfirmDelete(data.id)"
+        (cancelled)="onCancelDelete()">
+    </app-modal-window>
+</ng-template>

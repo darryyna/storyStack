@@ -101,18 +101,76 @@
   gap: 14px;
 
   .book-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .book-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
     .book-title {
-      display: block;
       font-size: 15px;
       font-weight: 500;
       color: var(--text-primary);
     }
 
     .book-author {
-      display: block;
       font-size: 12px;
       color: var(--text-muted);
     }
+
+    .book-rating {
+      font-size: 13px;
+      color: var(--accent-base);
+      font-weight: 600;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      opacity: 0.2;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+
+      img {
+        width: 20px;
+        height: 20px;
+        filter: grayscale(1) brightness(2);
+      }
+
+      &:hover {
+        opacity: 1;
+        transform: scale(1.1);
+
+        img {
+          filter: none;
+        }
+      }
+    }
+  }
+}
+
+.see-all-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px;
+  background-color: rgba(109, 74, 255, 0.05);
+  border: 1px solid rgba(109, 74, 255, 0.2);
+  border-radius: 8px;
+  color: var(--accent-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: rgba(109, 74, 255, 0.1);
+    border-color: var(--accent-base);
   }
 }
 
@@ -145,7 +203,6 @@
   position: relative;
   overflow: hidden;
 
-  // Декоративний ефект як у вашому Hero
   &::before {
     content: '';
     position: absolute;
@@ -226,8 +283,15 @@
 }
 
 @keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .add-book-section {
@@ -254,7 +318,7 @@
     background-color: rgba(255, 255, 255, 0.08);
   }
 
-  > div {
+  >div {
     display: flex;
     flex-direction: column;
     gap: 6px;

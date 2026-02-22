@@ -2,7 +2,7 @@
   <div class="header-content">
     <img src="/assets/images/light-logo.png" alt="StoryStack logo" class="logo" routerLink="/" />
     @if (isMobile()) {
-    <img class="burger-btn" (click)="toggleMenu('main')" src="/assets/icons/burger-menu-icon.svg" alt="Menu"
+    <img class="burger-btn" (click)="toggleMenu('main')" src="/assets/icons/burger-menu-icon.png" alt="Menu"
       aria-label="Toggle menu" />
     @if (isMenuOpen()) {
     <nav class="mobile-nav" aria-label="Mobile navigation">
@@ -28,7 +28,6 @@
       </div>
       @if (isAuthenticated()) {
       <div class="user-info" (click)="toggleMenu('user')" tabindex="0" (blur)="closeMenu()" aria-haspopup="true">
-        <img src="../../../../assets/icons/user.png" alt="User avatar" class="user-avatar" />
         <span class="username">{{ currentUser()?.username }}</span>
         @if (isUserMenuOpen()) {
         <div class="user-dropdown" role="menu">
@@ -75,7 +74,6 @@
       </div>
       @if (isAuthenticated()) {
       <div class="user-info" (click)="toggleMenu('user')" tabindex="0" (blur)="closeMenu()" aria-haspopup="true">
-        <img src="../../../../assets/icons/user.png" alt="User avatar" class="user-avatar" />
         <span class="username">{{ currentUser()?.username }}</span>
         @if (isUserMenuOpen()) {
         <div class="user-dropdown" role="menu">
