@@ -46,3 +46,9 @@ export interface CabinetSection {
     isOpen: boolean;
     type: BookStatus;
 }
+
+export interface BookFilters {
+    status?: string;
+    rating?: number;
+    tags?: string[];
+}

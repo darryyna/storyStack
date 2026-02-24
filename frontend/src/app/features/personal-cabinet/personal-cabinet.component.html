@@ -24,7 +24,7 @@
             <div class="card-content">
                 <h2 class="card-title">{{ section.title | translate }}</h2>
                 <div class="stat-number" (click)="toggleSection(section.type)">
-                    {{ section.books.length }}
+                    {{ section.allBooksCount }}
                 </div>
                 <p class="stat-label">{{ 'PERSONAL_CABINET.BOOKS' | translate }}</p>
             </div>
@@ -33,17 +33,27 @@
                 @if (section.books.length > 0) {
                 <ul class="book-list">
                     @for (book of section.books; track book.id) {
-                    <li class="book-item">
+                    <li class="book-item" (click)="viewBook(book.id)">
                         <div class="book-info">
                             <span class="book-title">{{ book.bookId.title }}</span>
                             <span class="book-author">{{ book.bookId.authors?.join(', ') }}</span>
+
                             @if(book.rating) {
-                            <span class="">★ {{book.rating}}</span>
+                            <span class="book-rating">★ {{book.rating}}</span>
                             }
                         </div>
+
+                        <button class="delete-btn" (click)="deleteBook(book.id, $event)">
+                            <img src="assets/icons/delete-icon.png" alt="Delete" />
+                        </button>
                     </li>
                     }
                 </ul>
+                @if (section.allBooksCount > 3) {
+                <button class="see-all-btn" (click)="viewAll(section.type)">
+                    {{ 'ACTIONS.SEE_ALL' | translate }}
+                </button>
+                }
                 } @else {
                 <p class="empty-message">{{ 'PERSONAL_CABINET.NO_BOOKS' | translate }}</p>
                 }
@@ -53,17 +63,25 @@
         }
     </div>
 
+    <ng-template #confirmDeleteModal let-data>
+        <app-modal-window [title]="'PERSONAL_CABINET.DELETE_CONFIRM_TITLE'"
+            [description]="'PERSONAL_CABINET.DELETE_CONFIRM_DESC'" (confirmed)="onConfirmDelete(data.id)"
+            (cancelled)="onCancelDelete()">
+        </app-modal-window>
+    </ng-template>
+
     <div class="last-pick-section">
         <h2 class="section-title">
             <span>{{ 'PERSONAL_CABINET.LAST_PICK_TITLE' | translate }}</span>
             <span class="divider-line"></span>
         </h2>
 
-        <div class="last-pick-card">
+        @if (latestNote(); as note) {
+        <div class="last-pick-card clickable" (click)="viewBook(note.bookId)">
             <div class="last-pick-info">
                 <div class="info-label">{{ 'PERSONAL_CABINET.MOST_RECENT_READ' | translate }}</div>
-                <h3 class="info-title">{{ lastPick().bookTitle }}</h3>
-                <div class="info-date">{{ 'PERSONAL_CABINET.LAST_ACTIVE' | translate }} {{ lastPick().timestamp |
+                <h3 class="info-title">{{ note.bookTitle }}</h3>
+                <div class="info-date">{{ 'PERSONAL_CABINET.LAST_ACTIVE' | translate }} {{ note.timestamp |
                     date:'mediumDate' }}</div>
             </div>
 
@@ -76,10 +94,15 @@
                 </div>
                 <h4 class="note-label">{{ 'PERSONAL_CABINET.LAST_STICKY_NOTE' | translate }}</h4>
                 <p class="note-content">
-                    "{{ lastPick().lastNote }}"
+                    "{{ note.lastNote }}"
                 </p>
             </div>
         </div>
+        } @else {
+        <div class="empty-state-card">
+            <p>{{ 'PERSONAL_CABINET.NO_NOTES_YET' | translate }}</p>
+        </div>
+        }
     </div>
 
     <div>

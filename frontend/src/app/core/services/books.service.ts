@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { GoogleBook, Book, BookStatus } from '../models/book.model';
+import { GoogleBook, Book, BookStatus, BookFilters } from '../models/book.model';
 import { ExternalBookResponse } from '../../shared/models/book.model';
 
 @Injectable({
@@ -30,7 +30,23 @@ export class BooksService {
         return this.http.post<Book>(`${this.apiUrl}/user-books`, { externalBookId, status });
     }
 
-    public getUserBooks(): Observable<Book[]> {
-        return this.http.get<Book[]>(`${this.apiUrl}/user-books`);
+    public getUserBooks(filters?: BookFilters): Observable<Book[]> {
+        return this.http.get<Book[]>(`${this.apiUrl}/user-books`, { params: filters as any });
+    }
+
+    public getBookById(id: string): Observable<Book> {
+        return this.http.get<Book>(`${this.apiUrl}/user-books/${id}`);
+    }
+
+    public updateBook(id: string, updates: Partial<Book>): Observable<Book> {
+        return this.http.patch<Book>(`${this.apiUrl}/user-books/${id}`, updates);
+    }
+
+    public getLatestNote(): Observable<{ bookId: string; bookTitle: string; lastNote: string; timestamp: string }> {
+        return this.http.get<{ bookId: string; bookTitle: string; lastNote: string; timestamp: string }>(`${this.apiUrl}/user-books/latest-note`);
+    }
+
+    public deleteUserBook(id: string): Observable<{ message: string }> {
+        return this.http.delete<{ message: string }>(`${this.apiUrl}/user-books/${id}`);
     }
 }

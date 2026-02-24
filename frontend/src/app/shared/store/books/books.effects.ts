@@ -13,8 +13,8 @@ export class BooksEffects {
     loadBooks$ = createEffect(() =>
         this.actions$.pipe(
             ofType(BooksActions.loadBooks),
-            switchMap(() =>
-                this.booksService.getUserBooks().pipe(
+            switchMap(({ filters }) =>
+                this.booksService.getUserBooks(filters).pipe(
                     map(books => BooksActions.loadBooksSuccess({ books })),
                     catchError(error => of(BooksActions.loadBooksFailure({ error })))
                 )
@@ -26,7 +26,6 @@ export class BooksEffects {
         this.actions$.pipe(
             ofType(BooksActions.addBook),
             exhaustMap(({ book }) =>
-                // add external book first to get externalBookId, then add user book
                 this.booksService.addExternalBook(book).pipe(
                     switchMap(externalBook =>
                         this.booksService.addUserBook(externalBook.id).pipe(
@@ -42,7 +41,69 @@ export class BooksEffects {
     addBookSuccess$ = createEffect(() =>
         this.actions$.pipe(
             ofType(BooksActions.addBookSuccess),
-            map(() => BooksActions.loadBooks())
+            map(() => BooksActions.loadBooks({}))
+        )
+    );
+
+    deleteBook$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(BooksActions.deleteBook),
+            switchMap(({ id }) =>
+                this.booksService.deleteUserBook(id).pipe(
+                    map(() => BooksActions.deleteBookSuccess({ id })),
+                    catchError(error => of(BooksActions.deleteBookFailure({ error: error.message })))
+                )
+            )
+        )
+    );
+
+    deleteBookSuccess$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(BooksActions.deleteBookSuccess),
+            map(() => BooksActions.loadBooks({}))
+        )
+    );
+
+    loadBook$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(BooksActions.loadBook),
+            switchMap(({ id }) =>
+                this.booksService.getBookById(id).pipe(
+                    map(book => BooksActions.loadBookSuccess({ book })),
+                    catchError(error => of(BooksActions.loadBookFailure({ error: error.message })))
+                )
+            )
+        )
+    );
+
+    updateBook$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(BooksActions.updateBook),
+            switchMap(({ id, updates }) =>
+                this.booksService.updateBook(id, updates).pipe(
+                    map(book => BooksActions.updateBookSuccess({ book })),
+                    catchError(error => of(BooksActions.updateBookFailure({ error: error.message })))
+                )
+            )
+        )
+    );
+
+    loadLatestNote$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(BooksActions.loadLatestNote),
+            switchMap(() =>
+                this.booksService.getLatestNote().pipe(
+                    map(note => BooksActions.loadLatestNoteSuccess({ note })),
+                    catchError(error => of(BooksActions.loadLatestNoteFailure({ error: error.message })))
+                )
+            )
+        )
+    );
+
+    refreshLatestNote$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(BooksActions.updateBookSuccess, BooksActions.addBookSuccess, BooksActions.deleteBookSuccess),
+            map(() => BooksActions.loadLatestNote())
         )
     );
 }

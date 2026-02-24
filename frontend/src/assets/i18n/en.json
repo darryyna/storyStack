@@ -112,13 +112,20 @@
     "ALREADY_HAVE_AN_ACCOUNT": "Already have an account?",
     "DONT_HAVE_AN_ACCOUNT": "Don't have an account?",
     "ADD": "Add",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+    "SEE_ALL": "See all",
+    "CONFIRM": "Confirm",
+    "RESET_FILTERS": "Reset Filters",
+    "BACK": "Back"
   },
   "PLACEHOLDERS": {
     "FORM-EMAIL": "Email address",
     "FORM-USERNAME": "Username",
     "FORM-PASSWORD": "Password",
-    "FORM-CONFIRM-PASSWORD": "Confirm Password"
+    "FORM-CONFIRM-PASSWORD": "Confirm Password",
+    "FILTER_TAGS": "Separate tags with commas",
+    "ADD_TAG": "Add a tag...",
+    "ADD_NOTE": "Write your thoughts here..."
   },
   "DROPDOWN_ITEMS": {
     "EXIT": "Exit",
@@ -141,7 +148,31 @@
     "SECTION_PLANNED": "Want to Read",
     "SECTION_COMPLETED": "Completed",
     "SECTION_DROPPED": "Abandoned",
-    "RECOMMENDATION": "Based on your preferences, we think you might like:"
+    "RECOMMENDATION": "Based on your preferences, we think you might like:",
+    "DELETE_CONFIRM_TITLE": "Delete Book",
+    "DELETE_CONFIRM_DESC": "Are you sure you want to delete this book from your library?",
+    "AUTO_SAVED": "Auto-saved",
+    "NO_NOTES_YET": "No notes yet. Start reading and write down your thoughts!"
+  },
+  "FILTERS": {
+    "STATUS": "Status",
+    "ALL_STATUSES": "All Statuses",
+    "RATING": "Rating",
+    "TAGS": "Tags"
+  },
+  "TABLE": {
+    "TITLE": "Title",
+    "AUTHOR": "Author",
+    "STATUS": "Status",
+    "RATING": "Rating",
+    "TAGS": "Tags",
+    "ACTIONS": "Actions"
+  },
+  "BOOKS_LIST": {
+    "NO_BOOKS_FOUND": "No books found matching your filters."
+  },
+  "ERRORS": {
+    "BOOK_NOT_FOUND": "Book not found."
   },
   "FORM_ERRORS": {
     "REQUIRED": "This field is required",

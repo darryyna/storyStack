@@ -112,13 +112,20 @@
     "ALREADY_HAVE_AN_ACCOUNT": "Уже маєте акаунт?",
     "DONT_HAVE_AN_ACCOUNT": "Не маєте акаунту?",
     "ADD": "Додати",
-    "CANCEL": "Скасувати"
+    "CANCEL": "Скасувати",
+    "SEE_ALL": "Дивитися всі",
+    "CONFIRM": "Підтвердити",
+    "RESET_FILTERS": "Скинути фільтри",
+    "BACK": "Назад"
   },
   "PLACEHOLDERS": {
     "FORM-EMAIL": "Електронна адреса",
     "FORM-USERNAME": "Юзернейм",
     "FORM-PASSWORD": "Пароль",
-    "FORM-CONFIRM-PASSWORD": "Підтвердіть пароль"
+    "FORM-CONFIRM-PASSWORD": "Підтвердіть пароль",
+    "FILTER_TAGS": "Розділяйте теги комами",
+    "ADD_TAG": "Додати тег...",
+    "ADD_NOTE": "Напишіть ваші думки тут..."
   },
   "DROPDOWN_ITEMS": {
     "EXIT": "Вийти",
@@ -141,7 +148,31 @@
     "SECTION_PLANNED": "Хочу прочитати",
     "SECTION_COMPLETED": "Прочитано",
     "SECTION_DROPPED": "Залишено",
-    "RECOMMENDATION": "На основі ваших смаків, ми думаємо, вам може сподобатися:"
+    "RECOMMENDATION": "На основі ваших смаків, ми думаємо, вам може сподобатися:",
+    "DELETE_CONFIRM_TITLE": "Видалити книгу",
+    "DELETE_CONFIRM_DESC": "Ви впевнені, що хочете видалити цю книгу зі своєї бібліотеки?",
+    "AUTO_SAVED": "Автозбережено",
+    "NO_NOTES_YET": "Ще немає нотаток. Почніть читати та запишіть свої думки!"
+  },
+  "FILTERS": {
+    "STATUS": "Статус",
+    "ALL_STATUSES": "Усі статуси",
+    "RATING": "Рейтинг",
+    "TAGS": "Теги"
+  },
+  "TABLE": {
+    "TITLE": "Назва",
+    "AUTHOR": "Автор",
+    "STATUS": "Статус",
+    "RATING": "Рейтинг",
+    "TAGS": "Теги",
+    "ACTIONS": "Дії"
+  },
+  "BOOKS_LIST": {
+    "NO_BOOKS_FOUND": "Книг не знайдено за вашими фільтрами."
+  },
+  "ERRORS": {
+    "BOOK_NOT_FOUND": "Книгу не знайдено."
   },
   "FORM_ERRORS": {
     "REQUIRED": "Це поле обов’язкове",

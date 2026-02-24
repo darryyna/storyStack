@@ -1,0 +1,92 @@
+<div class="details-container">
+    <app-loader [isLoading]="isLoading()"></app-loader>
+
+    @if (book(); as b) {
+    <header class="details-header">
+        <button mat-icon-button (click)="backToList()" class="back-btn">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="header-info">
+            <h1>{{ b.bookId.title }}</h1>
+            <p class="authors">{{ b.bookId.authors?.join(', ') }}</p>
+        </div>
+    </header>
+
+    <div class="details-grid">
+        <section class="card main-info-card">
+            <div class="book-cover-wrapper">
+                <img [src]="b.bookId.thumbnail" [alt]="b.bookId.title" *ngIf="b.bookId.thumbnail" class="book-cover">
+                <div class="no-cover" *ngIf="!b.bookId.thumbnail">
+                    <mat-icon>book</mat-icon>
+                </div>
+            </div>
+
+            <div class="quick-stats">
+                <div class="stat-item">
+                    <label>{{ 'TABLE.STATUS' | translate }}</label>
+                    <div class="status-selector">
+                        @for (status of statuses; track status) {
+                        <button [class.active]="b.status === status" (click)="updateStatus(status)" class="status-btn"
+                            [attr.data-status]="status">
+                            {{ 'readingStatus.' + status | translate }}
+                        </button>
+                        }
+                    </div>
+                </div>
+
+                <div class="stat-item">
+                    <label>{{ 'TABLE.RATING' | translate }}</label>
+                    <div class="rating-selector">
+                        @for (r of ratings; track r) {
+                        <button [class.active]="b.rating === r" (click)="updateRating(r)" class="rating-btn">
+                            {{ r }} ★
+                        </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card tags-card">
+            <h2 class="card-title">
+                <mat-icon>local_offer</mat-icon>
+                {{ 'TABLE.TAGS' | translate }}
+            </h2>
+            <div class="tags-container">
+                @for (tag of b.tags; track tag) {
+                <span class="tag-badge">
+                    <span class="hash">#</span>{{ tag }}
+                    <button class="remove-tag" (click)="removeTag(tag)">✕</button>
+                </span>
+                }
+            </div>
+            <div class="tag-input-wrapper">
+                <input type="text" [(ngModel)]="newTag" (keyup.enter)="addTag()"
+                    [placeholder]="'PLACEHOLDERS.ADD_TAG' | translate" class="modern-input">
+                <button mat-icon-button (click)="addTag()" [disabled]="!newTag().trim()">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+        </section>
+
+        <section class="card notes-card">
+            <h2 class="card-title">
+                <mat-icon>sticky_note_2</mat-icon>
+                {{ 'PERSONAL_CABINET.LAST_STICKY_NOTE' | translate }}
+            </h2>
+            <textarea class="notes-textarea" [ngModel]="b.notes" (ngModelChange)="updateNotes($event)"
+                [placeholder]="'PLACEHOLDERS.ADD_NOTE' | translate"></textarea>
+            <div class="notes-footer">
+                <mat-icon class="footer-icon">edit_note</mat-icon>
+                <span>{{ 'PERSONAL_CABINET.AUTO_SAVED' | translate }}</span>
+            </div>
+        </section>
+    </div>
+    } @else if (!isLoading()) {
+    <div class="error-state">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ 'ERRORS.BOOK_NOT_FOUND' | translate }}</p>
+        <button mat-stroked-button (click)="backToList()">{{ 'ACTIONS.BACK' | translate }}</button>
+    </div>
+    }
+</div>
