@@ -1,10 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
 const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
 const authRoutes = require('./src/shared/routes/auth.routes');
 const booksRoutes = require('./src/shared/routes/books.routes');
 const { connectRedis } = require('./src/shared/services/redis.service');
+const logger = require('./src/shared/configuration/logger');
 
 
 const app = express();
@@ -20,7 +23,10 @@ app.use(cors({
     credentials: true,
 }));
 
-
+app.use(morgan(':method :url :status :response-time ms', {
+    stream: { write: (message) => logger.info(message.trim()) }
+}));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/books', booksRoutes);
@@ -28,13 +34,13 @@ app.use('/api-docs', serve, setup(swaggerSpec));
 
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(async () => {
-        console.log('DB connected');
+        logger.info('DB connected');
 
         await connectRedis();
         app.listen(PORT, () => {
-            console.log(`Server connected on ${PORT}`);
+            logger.info(`Server connected on port ${PORT}`);
         });
     })
     .catch(err => {
-        console.error('DB error', err);
+        logger.error(`DB error: ${err.message}`);
     });

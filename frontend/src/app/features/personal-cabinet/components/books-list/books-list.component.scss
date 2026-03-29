@@ -316,8 +316,69 @@
     }
 }
 
-.loader {
-    text-align: center;
-    padding: 40px;
-    color: var(--accent-base);
+.table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid var(--border-subtle);
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+    }
+}
+
+.pagination-info {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--background-surface);
+    padding: 4px 8px;
+    border-radius: 12px;
+    border: 1px solid var(--border-default);
+
+    .page-indicator {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-primary);
+        min-width: 48px;
+        text-align: center;
+    }
+
+    .page-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover:not(:disabled) {
+            background: rgba(109, 74, 255, 0.1);
+            color: var(--accent-base);
+        }
+
+        &:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        mat-icon {
+            font-size: 20px;
+        }
+    }
 }

@@ -1,4 +1,5 @@
 const { createClient } = require('redis');
+const logger = require('../configuration/logger');
 
 let client = null;
 
@@ -7,12 +8,12 @@ const connectRedis = async () => {
     if (client) return;
 
     client = createClient({ url });
-    client.on('error', (err) => console.warn('Redis Client Error:', err.message));
-    client.on('connect', () => console.log('Redis connected'));
+    client.on('error', (err) => logger.warn(`Redis Client Error: ${err.message}`));
+    client.on('connect', () => logger.info('Redis connected'));
     try {
         await client.connect();
     } catch (err) {
-        console.warn('Redis connection failed, caching disabled:', err.message);
+        logger.warn(`Redis connection failed, caching disabled: ${err.message}`);
         client = null;
     }
 };
@@ -24,7 +25,7 @@ const getCache = async (key) => {
         const data = await client.get(key);
         return data ? JSON.parse(data) : null;
     } catch (err) {
-        console.warn('Redis GET error:', err.message);
+        logger.warn(`Redis GET error: ${err.message}`);
         return null;
     }
 };
@@ -35,7 +36,7 @@ const setCache = async (key, value, ttlSeconds = 600) => {
     try {
         await client.set(key, JSON.stringify(value), { EX: ttlSeconds });
     } catch (err) {
-        console.warn('Redis SET error:', err.message);
+        logger.warn(`Redis SET error: ${err.message}`);
     }
 };
 

@@ -4,6 +4,9 @@ import { Book } from '../../../core/models/book.model';
 
 export interface BooksState {
     books: Book[];
+    totalCount: number;
+    currentPage: number;
+    totalPages: number;
     selectedBook: Book | null;
     latestNote: { bookId: string; bookTitle: string; lastNote: string; timestamp: string } | null;
     isLoading: boolean;
@@ -13,6 +16,9 @@ export interface BooksState {
 
 export const initialState: BooksState = {
     books: [],
+    totalCount: 0,
+    currentPage: 1,
+    totalPages: 0,
     selectedBook: null,
     latestNote: null,
     isLoading: false,
@@ -27,9 +33,12 @@ export const booksReducer = createReducer(
         isLoading: true,
         error: ''
     })),
-    on(BooksActions.loadBooksSuccess, (state, { books }) => ({
+    on(BooksActions.loadBooksSuccess, (state, { response }) => ({
         ...state,
-        books,
+        books: response.books,
+        totalCount: response.totalCount,
+        currentPage: response.currentPage,
+        totalPages: response.totalPages,
         isLoading: false
     })),
     on(BooksActions.loadBooksFailure, (state, { error }) => ({
@@ -66,7 +75,6 @@ export const booksReducer = createReducer(
     })),
     on(BooksActions.updateBook, state => ({
         ...state,
-        isLoading: true,
         error: ''
     })),
     on(BooksActions.updateBookSuccess, (state, { book }) => ({

@@ -9,7 +9,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AddBookModalComponent } from './components/add-book-modal/add-book-modal.component';
 import { ModalWindowComponent } from '../../shared/components/modal-window/modal-window.component';
-import { BookStatus } from '../../core/models/book.model';
+import { BookStatus, SearchBook } from '../../core/models/book.model';
+import { ManualBookModalComponent } from './components/manual-book-modal/manual-book-modal.component';
 import * as BooksActions from '../../shared/store/books/books.actions';
 import { selectAllBooks, selectBooksLoading, selectLatestNote } from '../../shared/store/books/books.selectors';
 import { selectCurrentUser } from '../../shared/store/auth/auth.selectors';
@@ -45,7 +46,7 @@ export class PersonalCabinetComponent implements OnInit {
 
   protected readonly cabinetSections = computed(() =>
     this.SECTIONS.map(status => {
-      const sectionBooks = this.books().filter(book => book.status === status.type);
+      const sectionBooks = (this.books() || []).filter(book => book.status === status.type);
       return {
         ...status,
         allBooksCount: sectionBooks.length,
@@ -76,6 +77,18 @@ export class PersonalCabinetComponent implements OnInit {
     this.dialog.open(AddBookModalComponent, {
       width: '600px',
       panelClass: 'add-book-dialog',
+    }).afterClosed().subscribe((result: SearchBook | undefined) => {
+      if (result) {
+        this.openReviewModal(result);
+      }
+    });
+  }
+
+  protected openReviewModal(book: SearchBook): void {
+    this.dialog.open(ManualBookModalComponent, {
+        width: '600px',
+        data: book,
+        autoFocus: false
     });
   }
 

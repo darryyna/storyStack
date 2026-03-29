@@ -12,6 +12,8 @@ import { authReducer } from './app/shared/store/auth/auth.reducer';
 import { AuthEffects } from './app/shared/store/auth/auth.effects';
 import { booksReducer } from './app/shared/store/books/books.reducer';
 import { BooksEffects } from './app/shared/store/books/books.effects';
+import { uiReducer } from './app/shared/store/ui/ui.reducer';
+import { UiEffects } from './app/shared/store/ui/ui.effects';
 import { provideEffects } from '@ngrx/effects';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
@@ -33,12 +35,12 @@ bootstrapApplication(AppComponent, {
         loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] },
       }),
     ),
-    provideStore({ auth: authReducer, books: booksReducer }),
+    provideStore({ auth: authReducer, books: booksReducer, ui: uiReducer }),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode(),
       autoPause: true,
     }),
-    provideEffects([AuthEffects, BooksEffects]),
+    provideEffects([AuthEffects, BooksEffects, UiEffects]),
   ],
 });

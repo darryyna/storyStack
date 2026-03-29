@@ -180,5 +180,29 @@
     "MIN_LENGTH": "Minimum length is {{requiredLength}} characters",
     "PASSWORD_MISMATCH": "Passwords do not match",
     "REQUIRED_TRUE": "You must accept the terms"
+  },
+  "MANUAL_ENTRY": {
+    "TITLE": "Add manually",
+    "SUBTITLE": "Fill in the details for your custom book.",
+    "BOOK_TITLE": "Book Title",
+    "AUTHORS": "Authors (comma separated)",
+    "DESCRIPTION": "Description",
+    "UPLOAD_COVER": "Upload Cover Image",
+    "CHANGE_COVER": "Change Cover",
+    "REMOVE_COVER": "Remove",
+    "SAVING": "Saving...",
+    "OPTIONAL": "(Optional)"
+  },
+  "TOAST": {
+    "SUCCESS_ADD": "Book '{{title}}' successfully added to your library!",
+    "ERROR_ADD": "Failed to add book. Please try again.",
+    "SUCCESS_DELETE": "Book removed from your collection.",
+    "ERROR_DELETE": "Could not remove the book. Server error.",
+    "SUCCESS_UPDATE": "Changes saved successfully.",
+    "ERROR_UPDATE": "Failed to save changes.",
+    "INFO_UPDATE": "Updating...",
+    "WARNING_TITLE": "Action required",
+    "SUCCESS_TITLE": "Success",
+    "ERROR_TITLE": "Error"
   }
 }

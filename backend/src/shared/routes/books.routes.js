@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const booksController = require('../controllers/books.controller');
 const auth = require('../middlewares/auth.middleware');
+const upload = require('../configuration/multer.config');
 
 /**
  * @swagger
@@ -60,12 +61,22 @@ router.delete('/user-books/:id', auth, booksController.deleteUserBook);
  */
 router.get('/user-books', auth, booksController.getUserBooks);
 
+router.post('/user-books', auth, booksController.addUserBook);
+
 /**
  * @swagger
- * /api/books/user-books:
+ * /api/books/upload-cover:
  *   post:
- *     summary: Add book to user library
+ *     summary: Upload book cover image
  */
-router.post('/user-books', auth, booksController.addUserBook);
+router.post('/upload-cover', auth, upload.single('cover'), booksController.uploadCover);
+
+/**
+ * @swagger
+ * /api/books/manual:
+ *   post:
+ *     summary: Add manual book entry
+ */
+router.post('/manual', auth, booksController.addManualBook);
 
 module.exports = router;

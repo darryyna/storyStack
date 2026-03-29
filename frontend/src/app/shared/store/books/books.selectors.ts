@@ -32,3 +32,17 @@ export const selectBooksError = createSelector(
     selectBooksState,
     (state) => state.error
 );
+export const selectTotalCount = createSelector(
+    selectBooksState,
+    (state) => state.totalCount
+);
+
+export const selectCurrentPage = createSelector(
+    selectBooksState,
+    (state) => state.currentPage
+);
+
+export const selectTotalPages = createSelector(
+    selectBooksState,
+    (state) => state.totalPages
+);
