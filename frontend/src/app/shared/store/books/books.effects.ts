@@ -19,9 +19,8 @@ export class BooksEffects {
             switchMap(({ filters }) =>
                 this.booksService.getUserBooks(filters).pipe(
                     map(res => {
-                        // Backend might not be restarted yet, so handle array vs object response
-                        const response: PaginatedBooksResponse = Array.isArray(res) 
-                            ? { books: res, totalCount: res.length, currentPage: 1, totalPages: 1 } 
+                        const response: PaginatedBooksResponse = Array.isArray(res)
+                            ? { books: res, totalCount: res.length, currentPage: 1, totalPages: 1 }
                             : res as PaginatedBooksResponse;
                         return BooksActions.loadBooksSuccess({ response });
                     }),
@@ -52,10 +51,10 @@ export class BooksEffects {
             ofType(BooksActions.addBookSuccess),
             switchMap(({ book }) => [
                 BooksActions.loadBooks({}),
-                UiActions.showToast({ 
-                    toastType: UiActions.ToastType.Success, 
-                    messageKey: 'TOAST.SUCCESS_ADD', 
-                    params: { title: book.bookId?.title || '' } 
+                UiActions.showToast({
+                    toastType: UiActions.ToastType.Success,
+                    messageKey: 'TOAST.SUCCESS_ADD',
+                    params: { title: book.bookId?.title || '' }
                 })
             ])
         )
@@ -64,9 +63,9 @@ export class BooksEffects {
     addBookFailure$ = createEffect(() =>
         this.actions$.pipe(
             ofType(BooksActions.addBookFailure),
-            map(() => UiActions.showToast({ 
-                toastType: UiActions.ToastType.Error, 
-                messageKey: 'TOAST.ERROR_ADD' 
+            map(() => UiActions.showToast({
+                toastType: UiActions.ToastType.Error,
+                messageKey: 'TOAST.ERROR_ADD'
             }))
         )
     );
@@ -88,9 +87,9 @@ export class BooksEffects {
             ofType(BooksActions.deleteBookSuccess),
             switchMap(() => [
                 BooksActions.loadBooks({}),
-                UiActions.showToast({ 
-                    toastType: UiActions.ToastType.Success, 
-                    messageKey: 'TOAST.SUCCESS_DELETE' 
+                UiActions.showToast({
+                    toastType: UiActions.ToastType.Success,
+                    messageKey: 'TOAST.SUCCESS_DELETE'
                 })
             ])
         )
@@ -99,9 +98,9 @@ export class BooksEffects {
     deleteBookFailure$ = createEffect(() =>
         this.actions$.pipe(
             ofType(BooksActions.deleteBookFailure),
-            map(() => UiActions.showToast({ 
-                toastType: UiActions.ToastType.Error, 
-                messageKey: 'TOAST.ERROR_DELETE' 
+            map(() => UiActions.showToast({
+                toastType: UiActions.ToastType.Error,
+                messageKey: 'TOAST.ERROR_DELETE'
             }))
         )
     );
@@ -133,9 +132,9 @@ export class BooksEffects {
     updateBookSuccess$ = createEffect(() =>
         this.actions$.pipe(
             ofType(BooksActions.updateBookSuccess),
-            map(() => UiActions.showToast({ 
-                toastType: UiActions.ToastType.Success, 
-                messageKey: 'TOAST.SUCCESS_UPDATE' 
+            map(() => UiActions.showToast({
+                toastType: UiActions.ToastType.Success,
+                messageKey: 'TOAST.SUCCESS_UPDATE'
             }))
         )
     );
@@ -143,9 +142,9 @@ export class BooksEffects {
     updateBookFailure$ = createEffect(() =>
         this.actions$.pipe(
             ofType(BooksActions.updateBookFailure),
-            map(() => UiActions.showToast({ 
-                toastType: UiActions.ToastType.Error, 
-                messageKey: 'TOAST.ERROR_UPDATE' 
+            map(() => UiActions.showToast({
+                toastType: UiActions.ToastType.Error,
+                messageKey: 'TOAST.ERROR_UPDATE'
             }))
         )
     );

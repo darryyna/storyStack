@@ -23,12 +23,9 @@ app.use(cors({
     credentials: true,
 }));
 
-// HTTP request logging via Morgan → Winston
 app.use(morgan(':method :url :status :response-time ms', {
     stream: { write: (message) => logger.info(message.trim()) }
 }));
-
-// Static files serving for book covers
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes);

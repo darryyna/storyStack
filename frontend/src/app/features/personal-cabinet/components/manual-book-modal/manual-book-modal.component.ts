@@ -74,7 +74,7 @@ export class ManualBookModalComponent {
   }
 
   protected onSubmit(): void {
-    if (this.bookForm.invalid) {
+    if (this.bookForm.invalid || this.isSaving()) {
       return;
     }
 
@@ -89,32 +89,25 @@ export class ManualBookModalComponent {
       thumbnail: this.imagePreview() || undefined
     };
 
-    // If we have an ID from search, maintain it
     if (this.data?.id) {
-        bookData.id = this.data.id;
+      bookData.id = this.data.id;
     }
 
     const file = this.selectedFile();
-    
-    // Prepare observable for external book record creation
-    const saveExternal$ = file 
-        ? this.booksService.uploadCover(file).pipe(
-            switchMap(res => {
-                const updatedData = { ...bookData, thumbnail: res.url };
-                return bookData.id 
-                    ? this.booksService.addExternalBook(updatedData as SearchBook)
-                    : this.booksService.addManualBook(updatedData);
-            }),
-            catchError(() => {
-                 // Fallback if upload fails but we still want to save the metadata
-                 return bookData.id 
-                    ? this.booksService.addExternalBook(bookData as SearchBook)
-                    : this.booksService.addManualBook(bookData);
-            })
-          )
-        : (bookData.id 
-            ? this.booksService.addExternalBook(bookData as SearchBook)
-            : this.booksService.addManualBook(bookData));
+
+    const saveExternal$ = file
+      ? this.booksService.uploadCover(file).pipe(
+        catchError(() => of({ url: bookData.thumbnail })), // Fallback to current thumbnail if upload fails
+        switchMap(res => {
+          const updatedData = { ...bookData, thumbnail: (res as { url: string | undefined }).url };
+          return bookData.id
+            ? this.booksService.addExternalBook(updatedData as SearchBook)
+            : this.booksService.addManualBook(updatedData);
+        })
+      )
+      : (bookData.id
+        ? this.booksService.addExternalBook(bookData as SearchBook)
+        : this.booksService.addManualBook(bookData));
 
     saveExternal$.pipe(
       switchMap(externalBook => this.booksService.addUserBook(externalBook.id)),
@@ -125,8 +118,7 @@ export class ManualBookModalComponent {
         this.dialogRef.close(true);
       },
       error: (err) => {
-        console.error('Failed to add book', err);
-        // Handle error (maybe show a toast?)
+        this.store.dispatch(BooksActions.addBookFailure({ error: err.message || 'Failed to add book' }));
       }
     });
   }

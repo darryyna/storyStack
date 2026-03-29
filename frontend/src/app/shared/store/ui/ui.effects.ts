@@ -10,7 +10,7 @@ export class UiEffects {
     hideToastAfterDelay$ = createEffect(() =>
         this.actions$.pipe(
             ofType(UiActions.showToast),
-            delay(3000), // Change to 3000ms as requested
+            delay(3000),
             map(() => UiActions.hideToast())
         )
     );
