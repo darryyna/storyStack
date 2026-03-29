@@ -1,13 +1,12 @@
-export interface GoogleBook {
+export type BookSource = 'google' | 'openlibrary';
+
+export interface SearchBook {
     id: string;
-    volumeInfo: {
-        title: string;
-        authors?: string[];
-        description?: string;
-        imageLinks?: {
-            thumbnail: string;
-        };
-    };
+    source: BookSource;
+    title: string;
+    authors: string[];
+    thumbnail: string | null;
+    description?: string | null;
 }
 
 export const BookStatus = {
@@ -51,4 +50,13 @@ export interface BookFilters {
     status?: string;
     rating?: number;
     tags?: string[];
+    page?: number;
+    limit?: number;
+}
+
+export interface PaginatedBooksResponse {
+    books: Book[];
+    totalCount: number;
+    currentPage: number;
+    totalPages: number;
 }

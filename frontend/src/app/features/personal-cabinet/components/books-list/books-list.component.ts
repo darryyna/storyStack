@@ -2,22 +2,23 @@ import { Component, inject, signal, OnInit, effect, viewChild, TemplateRef } fro
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateModule } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { selectAllBooks, selectBooksLoading } from '../../../../shared/store/books/books.selectors';
+import { selectAllBooks, selectBooksLoading, selectTotalPages, selectCurrentPage, selectTotalCount } from '../../../../shared/store/books/books.selectors';
 import * as BooksActions from '../../../../shared/store/books/books.actions';
 import { BookStatus, BookFilters } from '../../../../core/models/book.model';
 import { ModalWindowComponent } from '../../../../shared/components/modal-window/modal-window.component';
 import { LoaderComponent } from '../../../../shared/components/loader/loader.component';
+import { ResolveUrlPipe } from '../../../../shared/pipes/resolve-url.pipe';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-books-list',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, MatButtonModule, MatIconModule, MatDialogModule, ModalWindowComponent, FormsModule, LoaderComponent],
+  imports: [CommonModule, TranslateModule, MatButtonModule, MatIconModule, MatDialogModule, ModalWindowComponent, FormsModule, LoaderComponent, ResolveUrlPipe],
   templateUrl: './books-list.component.html',
   styleUrl: './books-list.component.scss'
 })
@@ -29,6 +30,9 @@ export class BooksListComponent implements OnInit {
 
   protected readonly books = toSignal(this.store.select(selectAllBooks), { initialValue: [] });
   protected readonly isLoading = toSignal(this.store.select(selectBooksLoading), { initialValue: false });
+  protected readonly totalPages = toSignal(this.store.select(selectTotalPages), { initialValue: 0 });
+  protected readonly currentPage = toSignal(this.store.select(selectCurrentPage), { initialValue: 1 });
+  protected readonly totalCount = toSignal(this.store.select(selectTotalCount), { initialValue: 0 });
 
   protected readonly statuses = Object.values(BookStatus);
   protected readonly ratings = [1, 2, 3, 4, 5];
@@ -37,11 +41,18 @@ export class BooksListComponent implements OnInit {
   protected statusFilter = signal<string>('');
   protected ratingFilter = signal<number | null>(null);
   protected tagFilter = signal<string>('');
+  protected pageFilter = signal<number>(1);
 
   constructor() {
     effect(() => {
-      const filters: BookFilters = {};
-      const urlParams: Record<string, string | number | string[] | null> = {};
+      const filters: BookFilters = {
+        page: this.pageFilter(),
+        limit: 10
+      };
+      
+      const urlParams: Record<string, string | number | string[] | null> = {
+        page: filters.page!
+      };
 
       if (this.statusFilter()) {
         filters.status = this.statusFilter();
@@ -80,12 +91,20 @@ export class BooksListComponent implements OnInit {
     if (params['status']) this.statusFilter.set(params['status']);
     if (params['rating']) this.ratingFilter.set(Number(params['rating']));
     if (params['tags']) this.tagFilter.set(Array.isArray(params['tags']) ? params['tags'].join(', ') : params['tags']);
+    if (params['page']) this.pageFilter.set(Number(params['page']));
   }
 
   protected resetFilters(): void {
     this.statusFilter.set('');
     this.ratingFilter.set(null);
     this.tagFilter.set('');
+    this.pageFilter.set(1);
+  }
+
+  protected goToPage(page: number): void {
+      if (page >= 1 && page <= this.totalPages()) {
+          this.pageFilter.set(page);
+      }
   }
 
   private updateUrl(params: Record<string, string | number | string[] | null>): void {

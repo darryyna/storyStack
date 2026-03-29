@@ -1,41 +1,34 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
 import { BooksService } from '../../../../core/services/books.service';
-import { GoogleBook } from '../../../../core/models/book.model';
+import { SearchBook } from '../../../../core/models/book.model';
 import { debounceTime, distinctUntilChanged, switchMap, catchError, of, tap } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import * as BooksActions from '../../../../shared/store/books/books.actions';
 import { selectBooksAdding } from '../../../../shared/store/books/books.selectors';
+import { ManualBookModalComponent } from '../manual-book-modal/manual-book-modal.component';
+import { ResolveUrlPipe } from '../../../../shared/pipes/resolve-url.pipe';
 
 @Component({
   selector: 'app-add-book-modal',
   standalone: true,
   imports: [
     CommonModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatAutocompleteModule,
     ReactiveFormsModule,
-    TranslateModule
+    TranslateModule,
+    ResolveUrlPipe
   ],
   templateUrl: './add-book-modal.component.html',
   styleUrls: ['./add-book-modal.component.scss']
 })
 export class AddBookModalComponent {
   private readonly dialogRef = inject(MatDialogRef<AddBookModalComponent>);
+  private readonly dialog = inject(MatDialog);
   private readonly booksService = inject(BooksService);
   private readonly store = inject(Store);
   private readonly actions$ = inject(Actions);
@@ -53,7 +46,7 @@ export class AddBookModalComponent {
       ),
       { initialValue: [] }
     );
-  protected readonly selectedBook = signal<GoogleBook | null>(null);
+  protected readonly selectedBook = signal<SearchBook | null>(null);
   protected readonly isLoading = toSignal( this.store.select(selectBooksAdding),
     { initialValue: false });
 
@@ -73,18 +66,14 @@ export class AddBookModalComponent {
       return this.booksService.search(query).pipe(
         catchError(() => of([]))
       );
-
     }
 
-    protected displayFn(book: GoogleBook | null): string {
-      return book?.volumeInfo?.title ?? '';
+    protected displayFn(book: SearchBook | null): string {
+      return book?.title ?? '';
     }
 
-    protected onBookSelected(
-      event: MatAutocompleteSelectedEvent
-    ): void {
-      const book = event.option.value as GoogleBook;
-      this.selectedBook.set(book);
+    protected onBookClick(book: SearchBook): void {
+      this.dialogRef.close(book);
     }
 
     protected onCancel(): void {
@@ -97,5 +86,16 @@ export class AddBookModalComponent {
         return;
       }
       this.store.dispatch(BooksActions.addBook({ book }));
+    }
+
+    protected onAddManually(): void {
+      this.dialog.open(ManualBookModalComponent, {
+        width: '600px',
+        autoFocus: false
+      }).afterClosed().subscribe((result: boolean | undefined) => {
+        if (result) {
+          this.dialogRef.close(true);
+        }
+      });
     }
 }

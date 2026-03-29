@@ -1,0 +1,10 @@
+<div class="toaster-container" *ngIf="toast()">
+    <div class="toast-item" [class]="toast()!.type" [class.visible]="toast()!.visible">
+        <div class="toast-icon">
+            <mat-icon>{{ getIcon(toast()!.type) }}</mat-icon>
+        </div>
+        <div class="toast-content">
+            <span class="message">{{ toast()!.messageKey | translate:toast()!.params }}</span>
+        </div>
+    </div>
+</div>

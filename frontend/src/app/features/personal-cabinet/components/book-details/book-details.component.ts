@@ -7,16 +7,18 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import * as BooksActions from '../../../../shared/store/books/books.actions';
 import { selectSelectedBook, selectBooksLoading } from '../../../../shared/store/books/books.selectors';
 import { BookStatus } from '../../../../core/models/book.model';
 import { LoaderComponent } from '../../../../shared/components/loader/loader.component';
+import { ResolveUrlPipe } from '../../../../shared/pipes/resolve-url.pipe';
 
 @Component({
   selector: 'app-book-details',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, FormsModule, MatButtonModule, MatIconModule, MatDialogModule, LoaderComponent],
+  imports: [CommonModule, TranslatePipe, FormsModule, MatButtonModule, MatIconModule, MatDialogModule, LoaderComponent, ResolveUrlPipe],
   templateUrl: './book-details.component.html',
   styleUrl: './book-details.component.scss'
 })
@@ -32,6 +34,18 @@ export class BookDetailsComponent implements OnInit {
   protected readonly ratings = [1, 2, 3, 4, 5];
 
   protected newTag = signal('');
+  protected isSavingNotes = signal(false);
+  private readonly notesUpdate$ = new Subject<string>();
+
+  constructor() {
+    this.notesUpdate$.pipe(
+      debounceTime(1000),
+      distinctUntilChanged(),
+      takeUntilDestroyed()
+    ).subscribe(notes => {
+      this.performNotesUpdate(notes);
+    });
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -75,10 +89,18 @@ export class BookDetailsComponent implements OnInit {
     }
   }
 
-  protected updateNotes(notes: string): void {
+  protected onNotesChange(notes: string): void {
+    this.isSavingNotes.set(true);
+    this.notesUpdate$.next(notes);
+  }
+
+  private performNotesUpdate(notes: string): void {
     const currentBook = this.book();
     if (currentBook) {
       this.store.dispatch(BooksActions.updateBook({ id: currentBook.id, updates: { notes } }));
+      // In a real app we might listen to updateBookSuccess to set isSavingNotes back to false,
+      // but here we can just set a timeout or rely on the store's reactive update to clear the "saving" feel.
+      setTimeout(() => this.isSavingNotes.set(false), 500);
     }
   }
 

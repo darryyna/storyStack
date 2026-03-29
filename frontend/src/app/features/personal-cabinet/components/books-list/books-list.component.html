@@ -45,7 +45,7 @@
     <section class="table-section" [class.loading]="isLoading()">
         <app-loader [isLoading]="isLoading()"></app-loader>
 
-        @if (books().length > 0) {
+        @if ((books().length) > 0) {
         <div class="modern-table-wrapper">
             <table class="modern-table">
                 <thead>
@@ -63,7 +63,8 @@
                     <tr class="clickable-row" (click)="viewBook(book.id)">
                         <td class="col-title">
                             <div class="book-title-cell">
-                                <img [src]="book.bookId.thumbnail" class="book-thumb" *ngIf="book.bookId.thumbnail" />
+                                <img [src]="book.bookId.thumbnail | resolveUrl" class="book-thumb"
+                                    *ngIf="book.bookId.thumbnail" />
                                 <span>{{ book.bookId.title }}</span>
                             </div>
                         </td>
@@ -94,6 +95,26 @@
                     }
                 </tbody>
             </table>
+
+            @if (totalPages() > 1) {
+            <footer class="table-footer">
+                <div class="pagination-info">
+                    Showing {{ books().length || 0 }} of {{ totalCount() }} books
+                </div>
+                <div class="pagination-controls">
+                    <button class="page-btn" [disabled]="currentPage() === 1" (click)="goToPage(currentPage() - 1)">
+                        <mat-icon>chevron_left</mat-icon>
+                    </button>
+                    <span class="page-indicator">
+                        {{ currentPage() }} / {{ totalPages() }}
+                    </span>
+                    <button class="page-btn" [disabled]="currentPage() === totalPages()"
+                        (click)="goToPage(currentPage() + 1)">
+                        <mat-icon>chevron_right</mat-icon>
+                    </button>
+                </div>
+            </footer>
+            }
         </div>
         } @else if (!isLoading()) {
         <div class="empty-state">

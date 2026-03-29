@@ -4,6 +4,9 @@ import { catchError, exhaustMap, map, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import * as BooksActions from './books.actions';
 import { BooksService } from '../../../core/services/books.service';
+import { Book, SearchBook, PaginatedBooksResponse } from '../../../core/models/book.model';
+
+import * as UiActions from '../ui/ui.actions';
 
 @Injectable()
 export class BooksEffects {
@@ -15,8 +18,14 @@ export class BooksEffects {
             ofType(BooksActions.loadBooks),
             switchMap(({ filters }) =>
                 this.booksService.getUserBooks(filters).pipe(
-                    map(books => BooksActions.loadBooksSuccess({ books })),
-                    catchError(error => of(BooksActions.loadBooksFailure({ error })))
+                    map(res => {
+                        // Backend might not be restarted yet, so handle array vs object response
+                        const response: PaginatedBooksResponse = Array.isArray(res) 
+                            ? { books: res, totalCount: res.length, currentPage: 1, totalPages: 1 } 
+                            : res as PaginatedBooksResponse;
+                        return BooksActions.loadBooksSuccess({ response });
+                    }),
+                    catchError(error => of(BooksActions.loadBooksFailure({ error: error.message || 'Failed to fetch books' })))
                 )
             )
         )
@@ -41,7 +50,24 @@ export class BooksEffects {
     addBookSuccess$ = createEffect(() =>
         this.actions$.pipe(
             ofType(BooksActions.addBookSuccess),
-            map(() => BooksActions.loadBooks({}))
+            switchMap(({ book }) => [
+                BooksActions.loadBooks({}),
+                UiActions.showToast({ 
+                    toastType: UiActions.ToastType.Success, 
+                    messageKey: 'TOAST.SUCCESS_ADD', 
+                    params: { title: book.bookId?.title || '' } 
+                })
+            ])
+        )
+    );
+
+    addBookFailure$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(BooksActions.addBookFailure),
+            map(() => UiActions.showToast({ 
+                toastType: UiActions.ToastType.Error, 
+                messageKey: 'TOAST.ERROR_ADD' 
+            }))
         )
     );
 
@@ -60,7 +86,23 @@ export class BooksEffects {
     deleteBookSuccess$ = createEffect(() =>
         this.actions$.pipe(
             ofType(BooksActions.deleteBookSuccess),
-            map(() => BooksActions.loadBooks({}))
+            switchMap(() => [
+                BooksActions.loadBooks({}),
+                UiActions.showToast({ 
+                    toastType: UiActions.ToastType.Success, 
+                    messageKey: 'TOAST.SUCCESS_DELETE' 
+                })
+            ])
+        )
+    );
+
+    deleteBookFailure$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(BooksActions.deleteBookFailure),
+            map(() => UiActions.showToast({ 
+                toastType: UiActions.ToastType.Error, 
+                messageKey: 'TOAST.ERROR_DELETE' 
+            }))
         )
     );
 
@@ -85,6 +127,26 @@ export class BooksEffects {
                     catchError(error => of(BooksActions.updateBookFailure({ error: error.message })))
                 )
             )
+        )
+    );
+
+    updateBookSuccess$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(BooksActions.updateBookSuccess),
+            map(() => UiActions.showToast({ 
+                toastType: UiActions.ToastType.Success, 
+                messageKey: 'TOAST.SUCCESS_UPDATE' 
+            }))
+        )
+    );
+
+    updateBookFailure$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(BooksActions.updateBookFailure),
+            map(() => UiActions.showToast({ 
+                toastType: UiActions.ToastType.Error, 
+                messageKey: 'TOAST.ERROR_UPDATE' 
+            }))
         )
     );
 

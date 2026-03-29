@@ -5,6 +5,7 @@ import { FooterComponent } from './shared/components/footer/footer.component';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { RouterOutlet } from '@angular/router';
 import { LoaderComponent } from './shared/components/loader/loader.component';
+import { ToasterComponent } from './shared/components/toaster/toaster.component';
 import { checkAuthStatus } from './shared/store/auth/auth.actions';
 
 @Component({
@@ -15,6 +16,7 @@ import { checkAuthStatus } from './shared/store/auth/auth.actions';
     HeaderComponent,
     FooterComponent,
     LoaderComponent,
+    ToasterComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],

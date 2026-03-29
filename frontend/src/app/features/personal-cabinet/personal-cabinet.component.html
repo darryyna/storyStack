@@ -6,14 +6,13 @@
         <p class="subtitle">{{ 'PERSONAL_CABINET.WELCOME' | translate }}</p>
     </header>
     <div class="add-book-section">
-        <div class="">
-            <h3 class="">{{
+        <div>
+            <h3>{{
                 'PERSONAL_CABINET.ADD_BOOK_CTA_TITLE' | translate }}</h3>
-            <p class="">{{ 'PERSONAL_CABINET.ADD_BOOK_CTA_DESC' | translate }}
+            <p>{{ 'PERSONAL_CABINET.ADD_BOOK_CTA_DESC' | translate }}
             </p>
         </div>
-        <button mat-flat-button color="primary" (click)="openAddBookModal()">
-            <mat-icon>add</mat-icon>
+        <button class="btn btn-primary" (click)="openAddBookModal()">
             {{ 'ACTIONS.ADD' | translate }}
         </button>
     </div>

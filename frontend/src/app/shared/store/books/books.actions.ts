@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { Book, GoogleBook, BookFilters } from '../../../core/models/book.model';
+import { Book, SearchBook, BookFilters, PaginatedBooksResponse } from '../../../core/models/book.model';
 
 export const loadBooks = createAction(
     '[Books] Load Books',
@@ -8,7 +8,7 @@ export const loadBooks = createAction(
 
 export const loadBooksSuccess = createAction(
     '[Books] Load Books Success',
-    props<{ books: Book[] }>()
+    props<{ response: PaginatedBooksResponse }>()
 );
 
 export const loadBooksFailure = createAction(
@@ -18,7 +18,7 @@ export const loadBooksFailure = createAction(
 
 export const addBook = createAction(
     '[Books] Add Book',
-    props<{ book: GoogleBook }>()
+    props<{ book: SearchBook }>()
 );
 
 export const addBookSuccess = createAction(

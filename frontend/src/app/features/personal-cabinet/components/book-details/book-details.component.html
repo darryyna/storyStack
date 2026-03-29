@@ -15,7 +15,7 @@
     <div class="details-grid">
         <section class="card main-info-card">
             <div class="book-cover-wrapper">
-                <img [src]="b.bookId.thumbnail" [alt]="b.bookId.title" *ngIf="b.bookId.thumbnail" class="book-cover">
+                <img [src]="b.bookId.thumbnail | resolveUrl" [alt]="b.bookId.title" *ngIf="b.bookId.thumbnail" class="book-cover">
                 <div class="no-cover" *ngIf="!b.bookId.thumbnail">
                     <mat-icon>book</mat-icon>
                 </div>
@@ -74,11 +74,17 @@
                 <mat-icon>sticky_note_2</mat-icon>
                 {{ 'PERSONAL_CABINET.LAST_STICKY_NOTE' | translate }}
             </h2>
-            <textarea class="notes-textarea" [ngModel]="b.notes" (ngModelChange)="updateNotes($event)"
+            <textarea class="notes-textarea" [ngModel]="b.notes" (ngModelChange)="onNotesChange($event)"
                 [placeholder]="'PLACEHOLDERS.ADD_NOTE' | translate"></textarea>
             <div class="notes-footer">
-                <mat-icon class="footer-icon">edit_note</mat-icon>
-                <span>{{ 'PERSONAL_CABINET.AUTO_SAVED' | translate }}</span>
+                <div class="save-status" [class.visible]="isSavingNotes()">
+                    <mat-icon>sync</mat-icon>
+                    <span>{{ 'MANUAL_ENTRY.SAVING' | translate }}</span>
+                </div>
+                <div class="auto-saved" [class.hidden]="isSavingNotes()">
+                    <mat-icon class="footer-icon">edit_note</mat-icon>
+                    <span>{{ 'PERSONAL_CABINET.AUTO_SAVED' | translate }}</span>
+                </div>
             </div>
         </section>
     </div>

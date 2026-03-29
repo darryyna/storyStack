@@ -1,10 +1,11 @@
-const axios = require('axios');
 const ExternalBookId = require('../models/ExternalBookId.model');
 const UserBook = require('../models/UserBook.model');
 const { getCache, setCache } = require('../services/redis.service');
+const googleBooksService = require('../services/googleBooks.service');
+const openLibraryService = require('../services/openLibrary.service');
 const { isValidObjectId } = require('../helpers/idValidationCheck');
+const logger = require('../configuration/logger');
 
-const googleApiUrl = process.env.GOOGLE_BOOKS_API_URL;
 const SEARCH_CACHE_TTL = 600; // 10 minutes
 
 exports.searchBooks = async (req, res) => {
@@ -19,28 +20,40 @@ exports.searchBooks = async (req, res) => {
 
         const cached = await getCache(cacheKey);
         if (cached) {
+            logger.info(`Cache hit for search query: "${q}"`);
             return res.json(cached);
         }
 
-      const response = await axios.get(googleApiUrl, {
-        params: {
-          q,
-          key: process.env.GOOGLE_API_KEY
+        // Primary: Google Books API
+        let books = [];
+        try {
+            books = await googleBooksService.search(q);
+            logger.info(`Google Books returned ${books.length} results for "${q}"`);
+        } catch (googleError) {
+            logger.warn(`Google Books API failed for "${q}", falling back to OpenLibrary: ${googleError.message}`);
         }
-      });
 
-        const books = response.data.items || [];
+        // Fallback: OpenLibrary (if Google returned no results or errored)
+        if (books.length === 0) {
+            try {
+                books = await openLibraryService.search(q);
+                logger.info(`OpenLibrary returned ${books.length} results for "${q}"`);
+            } catch (olError) {
+                logger.error(`OpenLibrary API also failed for "${q}": ${olError.message}`);
+            }
+        }
+
         await setCache(cacheKey, books, SEARCH_CACHE_TTL);
         res.json(books);
     } catch (error) {
-        console.error('Google Books API Error:', error.message);
-        res.status(500).json({ error: 'Failed to fetch books from Google API' });
+        logger.error(`Search Books Error: ${error.message}`);
+        res.status(500).json({ error: 'Failed to search books' });
     }
 };
 
 exports.addExternalBook = async (req, res) => {
     try {
-        const { sourceId, title, authors, thumbnail } = req.body;
+        const { sourceId, title, authors, thumbnail, description } = req.body;
 
         if (!sourceId || !title) {
             return res.status(400).json({ error: 'sourceId and title are required' });
@@ -53,7 +66,8 @@ exports.addExternalBook = async (req, res) => {
                 sourceId,
                 title,
                 authors: authors || [],
-                thumbnail
+                thumbnail,
+                description
             });
             await externalBook.save();
         }
@@ -63,10 +77,11 @@ exports.addExternalBook = async (req, res) => {
             sourceId: externalBook.sourceId,
             title: externalBook.title,
             authors: externalBook.authors,
-            thumbnail: externalBook.thumbnail
+            thumbnail: externalBook.thumbnail,
+            description: externalBook.description
         });
     } catch (error) {
-        console.error('Add External Book Error:', error);
+        logger.error(`Add External Book Error: ${error.message}`);
         res.status(500).json({ error: 'Failed to add external book' });
     }
 };
@@ -117,7 +132,7 @@ exports.addUserBook = async (req, res) => {
     res.status(201).json(userBook);
 
   } catch (error) {
-    console.error('Add User Book Error:', error);
+    logger.error(`Add User Book Error: ${error.message}`);
     res.status(500).json({
       error: 'Failed to add book to user library'
     });
@@ -127,7 +142,7 @@ exports.addUserBook = async (req, res) => {
 exports.getUserBooks = async (req, res) => {
     try {
         const userId = req.userId;
-        const { status, rating, tags } = req.query;
+        const { status, rating, tags, page = 1, limit = 10 } = req.query;
 
         const filter = { userId };
 
@@ -146,10 +161,25 @@ exports.getUserBooks = async (req, res) => {
             filter.tags = { $in: Array.isArray(tags) ? tags : [tags] };
         }
 
-        const userBooks = await UserBook.find(filter).populate('bookId');
-        res.json(userBooks);
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+        
+        // Fetch total count for pagination metadata
+        const totalCount = await UserBook.countDocuments(filter);
+        
+        const userBooks = await UserBook.find(filter)
+            .populate('bookId')
+            .sort({ updatedAt: -1 }) // Show latest first
+            .skip(skip)
+            .limit(parseInt(limit));
+
+        res.json({
+            books: userBooks,
+            totalCount,
+            currentPage: parseInt(page),
+            totalPages: Math.ceil(totalCount / parseInt(limit))
+        });
     } catch (error) {
-        console.error('Get User Books Error:', error);
+        logger.error(`Get User Books Error: ${error.message}`);
         res.status(500).json({ error: 'Failed to fetch user books' });
     }
 };
@@ -171,7 +201,7 @@ exports.deleteUserBook = async (req, res) => {
 
     res.json({ message: 'Book successfully deleted from library' });
   } catch (error) {
-    console.error('Delete User Book Error:', error);
+    logger.error(`Delete User Book Error: ${error.message}`);
     res.status(500).json({ error: 'Failed to delete book from library' });
   }
 };
@@ -197,7 +227,7 @@ exports.getLatestNote = async (req, res) => {
             timestamp: latestBook.updatedAt
         });
     } catch (error) {
-        console.error('Get Latest Note Error:', error);
+        logger.error(`Get Latest Note Error: ${error.message}`);
         res.status(500).json({ error: 'Failed to fetch latest note' });
     }
 };
@@ -219,7 +249,7 @@ exports.getUserBookById = async (req, res) => {
 
     res.json(userBook);
   } catch (error) {
-    console.error('Get User Book By Id Error:', error);
+    logger.error(`Get User Book By Id Error: ${error.message}`);
     res.status(500).json({ error: 'Failed to fetch user book' });
   }
 };
@@ -249,7 +279,46 @@ exports.updateUserBook = async (req, res) => {
 
         res.json(userBook);
     } catch (error) {
-        console.error('Update User Book Error:', error);
+        logger.error(`Update User Book Error: ${error.message}`);
         res.status(500).json({ error: 'Failed to update user book' });
+    }
+};
+
+exports.uploadCover = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+        const relativePath = `/uploads/books/${req.file.filename}`;
+        res.json({ url: relativePath });
+    } catch (error) {
+        logger.error(`Upload Cover Error: ${error.message}`);
+        res.status(500).json({ error: 'Failed to upload cover' });
+    }
+};
+
+exports.addManualBook = async (req, res) => {
+    try {
+        const { title, authors, thumbnail, description } = req.body;
+
+        if (!title) {
+            return res.status(400).json({ error: 'Title is required' });
+        }
+
+        const sourceId = `manual_${Date.now()}_${Math.round(Math.random() * 1E9)}`;
+
+        const externalBook = new ExternalBookId({
+            sourceId,
+            title,
+            authors: authors || [],
+            thumbnail,
+            description
+        });
+        await externalBook.save();
+
+        res.status(201).json(externalBook);
+    } catch (error) {
+        logger.error(`Add Manual Book Error: ${error.message}`);
+        res.status(500).json({ error: 'Failed to add manual book' });
     }
 };

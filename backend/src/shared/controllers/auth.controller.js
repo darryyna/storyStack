@@ -2,6 +2,7 @@ const { promisify } = require('util');
 const User = require('../models/User.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const logger = require('../configuration/logger');
 
 const verifyJwt = promisify(jwt.verify);
 
@@ -50,6 +51,7 @@ exports.register = async (req, res) => {
     });
     res.status(201).json({ message: 'User is created', accessToken });
   } catch (err) {
+    logger.error(`Registration error for email ${email}: ${err.message}`);
     res.status(400).json({ error: 'Error while registering', details: err.message });
   }
 };
@@ -75,6 +77,7 @@ exports.login = async (req, res) => {
 
     res.json({ accessToken });
   } catch (err) {
+    logger.error(`Login error for user ${username}: ${err.message}`);
     res.status(500).json({ error: 'Login Error', details: err.message });
   }
 };
@@ -97,6 +100,7 @@ exports.refreshToken = async (req, res) => {
     if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
       return res.status(403).json({ error: 'Invalid refresh token' });
     }
+    logger.error(`Token refresh failed: ${err.message}`);
     res.status(500).json({ error: 'Token refresh failed', details: err.message });
   }
 };
