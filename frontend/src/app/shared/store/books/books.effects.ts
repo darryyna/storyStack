@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, exhaustMap, map, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { mergeMap, of } from 'rxjs';
 import * as BooksActions from './books.actions';
 import { BooksService } from '../../../core/services/books.service';
-import { Book, SearchBook, PaginatedBooksResponse } from '../../../core/models/book.model';
+import { PaginatedBooksResponse } from '../../../core/models/book.model';
 
 import * as UiActions from '../ui/ui.actions';
 
@@ -14,20 +14,21 @@ export class BooksEffects {
     private readonly booksService = inject(BooksService);
 
     loadBooks$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(BooksActions.loadBooks),
-            switchMap(({ filters }) =>
-                this.booksService.getUserBooks(filters).pipe(
-                    map(res => {
-                        const response: PaginatedBooksResponse = Array.isArray(res)
-                            ? { books: res, totalCount: res.length, currentPage: 1, totalPages: 1 }
-                            : res as PaginatedBooksResponse;
-                        return BooksActions.loadBooksSuccess({ response });
-                    }),
-                    catchError(error => of(BooksActions.loadBooksFailure({ error: error.message || 'Failed to fetch books' })))
-                )
+      this.actions$.pipe(
+        ofType(BooksActions.loadBooks),
+        switchMap(({ filters }) =>
+          this.booksService.getUserBooks(filters).pipe(
+            map((response: PaginatedBooksResponse) =>
+              BooksActions.loadBooksSuccess({ response })
+            ),
+            catchError(error =>
+              of(BooksActions.loadBooksFailure({
+                error: error.message || 'Failed to fetch books'
+              }))
             )
+          )
         )
+      )
     );
 
     addBook$ = createEffect(() =>
@@ -167,4 +168,50 @@ export class BooksEffects {
             map(() => BooksActions.loadLatestNote())
         )
     );
+
+  loadRecommendations$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(BooksActions.loadRecommendations),
+      switchMap(() =>
+        this.booksService.getRecommendations().pipe(
+          map(recommendations => BooksActions.loadRecommendationsSuccess({ recommendations })),
+          catchError(error => of(BooksActions.loadRecommendationsFailure({ error: error.message })))
+        )
+      )
+    )
+  );
+
+  addBookFromRecommendation$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(BooksActions.addBookFromRecommendation),
+      mergeMap(({ book }) =>  // mergeMap бо може бути кілька одночасно
+        this.booksService.addExternalBook(book).pipe(
+          switchMap(externalBook =>
+            this.booksService.addUserBook(externalBook.id).pipe(
+              map(() => BooksActions.addBookFromRecommendationSuccess({
+                sourceId: book.id
+              }))
+            )
+          ),
+          catchError(error => of(BooksActions.addBookFromRecommendationFailure({
+            sourceId: book.id,
+            error: error.message
+          })))
+        )
+      )
+    )
+  );
+
+  addBookFromRecommendationSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(BooksActions.addBookFromRecommendationSuccess),
+      switchMap(() => [
+        BooksActions.loadBooks({}),
+        UiActions.showToast({
+          toastType: UiActions.ToastType.Success,
+          messageKey: 'TOAST.SUCCESS_ADD_RECOMMENDATION'
+        })
+      ])
+    )
+  );
 }

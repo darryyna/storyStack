@@ -59,6 +59,20 @@
 
 .switcher-content {
   width: 100%;
+
+  .forgot-link {
+    display: block;
+    text-align: center;
+    margin-top: -20px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--accent-base);
+    }
+  }
 }
 
 form {

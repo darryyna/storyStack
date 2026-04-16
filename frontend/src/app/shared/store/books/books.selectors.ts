@@ -46,3 +46,28 @@ export const selectTotalPages = createSelector(
     selectBooksState,
     (state) => state.totalPages
 );
+
+export const selectCountsByStatus = createSelector(
+  selectBooksState,
+  (state) => state.countsByStatus
+);
+
+export const selectRecommendations = createSelector(
+  selectBooksState,
+  (state) => state.recommendations
+);
+
+export const selectRecommendationsLoading = createSelector(
+  selectBooksState,
+  (state) => state.recommendationsLoading
+);
+
+export const selectAddedFromRecommendations = createSelector(
+  selectBooksState,
+  state => state.addedFromRecommendations
+);
+
+export const selectAddingFromRecommendations = createSelector(
+  selectBooksState,
+  state => state.addingFromRecommendations
+);

@@ -345,10 +345,6 @@
   }
 }
 
-.recommendation-section {
-  height: 300px;
-}
-
 .btn {
   padding: 10px 20px;
   border-radius: 8px;
@@ -376,4 +372,70 @@
 .btn-primary {
   background-color: var(--accent-base);
   color: white;
+}
+
+.recommendation-section {
+  height: auto;
+}
+
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.recommendation-card {
+  background: var(--background-section);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-base);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .rec-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 6px 0;
+  }
+
+  .rec-authors {
+    font-size: 13px;
+    color: var(--accent-base);
+    margin: 0 0 12px 0;
+    font-weight: 500;
+  }
+
+  .rec-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .rec-add-btn {
+    margin-top: 10px;
+  }
+
+  .rec-added-label {
+     display: inline-block;
+      margin-top: 10px;
+  }
 }

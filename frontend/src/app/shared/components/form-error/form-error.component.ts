@@ -16,6 +16,8 @@ export class FormErrorComponent {
   private readonly lang = toSignal(this.translate.onLangChange);
 
   readonly control = input<AbstractControl | null>(null);
+  readonly serverError = input<string | null>(null);
+
   private readonly changeSignal = signal(0);
 
   constructor() {
@@ -32,6 +34,7 @@ export class FormErrorComponent {
 
   protected shouldShow = computed(() => {
     this.changeSignal();
+    if (this.serverError()) return true;
     const controlToShowError = this.control();
     return !!controlToShowError && controlToShowError.invalid && (controlToShowError.touched || controlToShowError.dirty);
   });
@@ -39,6 +42,7 @@ export class FormErrorComponent {
   protected errorMessage = computed(() => {
     this.changeSignal();
     this.lang();
+    if (this.serverError()) return this.translate.instant(this.serverError()!);
     const controlToValidate = this.control();
     if (!controlToValidate?.errors) return '';
 

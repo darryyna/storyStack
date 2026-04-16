@@ -149,12 +149,6 @@
 
         &.active[data-status="dropped"] {
             background: var(--dropped-bg);
-            color: #FF4D4F;
-            border-color: transparent;
-        }
-
-        &.active[data-status="onHold"] {
-            background: var(--onhold-bg);
             color: #FBBF24;
             border-color: transparent;
         }
@@ -166,8 +160,7 @@
     --reading-bg: rgba(109, 74, 255, 0.15);
     --planned-bg: rgba(74, 111, 143, 0.15);
     --completed-bg: rgba(52, 211, 153, 0.15);
-    --dropped-bg: rgba(255, 77, 79, 0.15);
-    --onhold-bg: rgba(251, 191, 36, 0.15);
+    --dropped-bg:  rgba(251, 191, 36, 0.15);
 }
 
 .rating-selector {
@@ -316,7 +309,7 @@
         align-items: center;
         gap: 6px;
         transition: opacity 0.3s ease, transform 0.3s ease;
-        
+
         &.hidden {
             opacity: 0;
             pointer-events: none;
@@ -331,7 +324,7 @@
             opacity: 1;
             color: var(--accent-base);
             font-weight: 600;
-            
+
             mat-icon {
                 animation: rotate 2s linear infinite;
                 font-size: 16px;

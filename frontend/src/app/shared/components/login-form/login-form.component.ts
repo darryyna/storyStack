@@ -2,15 +2,17 @@ import { Component, inject, signal, DestroyRef } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Store, select } from '@ngrx/store';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
-import { selectIsAuthenticated } from '../../store/auth/auth.selectors';
-import { loginUser, registerUser } from '../../store/auth/auth.actions';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs';
+import { selectAuthError, selectIsAuthenticated } from '../../store/auth/auth.selectors';
+import { clearAuthError, loginUser, registerUser } from '../../store/auth/auth.actions';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs';
 import { passwordMatchValidator } from '../../validators/password-match.validator';
 import { FormErrorComponent } from '../form-error/form-error.component';
+import { ForgotPasswordModalComponent } from '../modal-window/forgot-password-modal/forgot-password-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-login-form',
@@ -27,6 +29,12 @@ export class LoginFormComponent {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly translate = inject(TranslateService);
+  private readonly dialog = inject(MatDialog);
+
+  protected readonly authError = toSignal(
+    this.store.pipe(select(selectAuthError))
+  );
 
   protected readonly loginForm = this.fb.nonNullable.group({
     username: ['', Validators.required],
@@ -54,10 +62,15 @@ export class LoginFormComponent {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(() => this.router.navigate(['/']));
+
+    this.loginForm.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => this.store.dispatch(clearAuthError()));
   }
 
   protected setActiveTab(tab: 'login' | 'signup'): void {
     this.activeTab.set(tab);
+    this.store.dispatch(clearAuthError());
     this.loginForm.markAsUntouched();
     this.registerForm.markAsUntouched();
   }
@@ -65,13 +78,9 @@ export class LoginFormComponent {
   protected onLogin(): void {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.getRawValue();
-
-      this.store.dispatch(
-        loginUser({ payload: { username, password } })
-      );
+      this.store.dispatch(loginUser({ payload: { username, password } }));
       return;
     }
-
     this.markFormGroupTouched(this.loginForm);
   }
 
@@ -87,6 +96,10 @@ export class LoginFormComponent {
     }
 
     this.markFormGroupTouched(this.registerForm);
+  }
+
+  protected openForgotPassword(): void {
+    this.dialog.open(ForgotPasswordModalComponent, { width: '600px' });
   }
 
   private markFormGroupTouched(

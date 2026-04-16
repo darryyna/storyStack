@@ -116,7 +116,22 @@
     "SEE_ALL": "See all",
     "CONFIRM": "Confirm",
     "RESET_FILTERS": "Reset Filters",
-    "BACK": "Back"
+    "BACK": "Back",
+    "FORGOT_PASSWORD": "Forgot password?",
+    "LOADING": "Loading...",
+    "SENDING": "Sent",
+    "SAVE": "Save",
+    "CLOSE": "Close"
+  },
+  "AUTH": {
+    "FORGOT_PASSWORD_TITLE": "Reset password",
+    "FORGOT_PASSWORD_DESC": "Enter your email address and we'll send you instructions to reset your password.",
+    "FORGOT_PASSWORD_SUCCESS": "Success! Password reset instructions sent to your email. Follow up :)",
+    "FORGOT_PASSWORD_ERROR": "An error occurred. Please try again later.",
+    "RESET_PASSWORD_TITLE": "Set new password",
+    "RESET_PASSWORD_SUCCESS": "Your password has been reset successfully. You can now log in with your new password.",
+    "REDIRECTING_TO_LOGIN": "Redirecting to login page...",
+    "RESET_ERROR": "Failed to reset password. The link might be expired or invalid."
   },
   "PLACEHOLDERS": {
     "FORM-EMAIL": "Email address",
@@ -152,7 +167,11 @@
     "DELETE_CONFIRM_TITLE": "Delete Book",
     "DELETE_CONFIRM_DESC": "Are you sure you want to delete this book from your library?",
     "AUTO_SAVED": "Auto-saved",
-    "NO_NOTES_YET": "No notes yet. Start reading and write down your thoughts!"
+    "NO_NOTES_YET": "No notes yet. Start reading and write down your thoughts!",
+    "NO_RECOMMENDATIONS": "Not enough data for recommendations. Read and rate more books to get personalized suggestions!",
+    "ADD_TO_LIBRARY": "Add to Library",
+    "RECOMMENDATION_ADDED": "Book added to your library!"
+
   },
   "FILTERS": {
     "STATUS": "Status",
@@ -179,10 +198,12 @@
     "EMAIL": "Invalid email",
     "MIN_LENGTH": "Minimum length is {{requiredLength}} characters",
     "PASSWORD_MISMATCH": "Passwords do not match",
-    "REQUIRED_TRUE": "You must accept the terms"
+    "REQUIRED_TRUE": "You must accept the terms",
+    "INVALID_CREDENTIALS": "Invalid credentials. Check the information and try again"
   },
   "MANUAL_ENTRY": {
     "TITLE": "Add manually",
+    "TITLE_REVIEW": "Review book details",
     "SUBTITLE": "Fill in the details for your custom book.",
     "BOOK_TITLE": "Book Title",
     "AUTHORS": "Authors (comma separated)",
@@ -203,6 +224,7 @@
     "INFO_UPDATE": "Updating...",
     "WARNING_TITLE": "Action required",
     "SUCCESS_TITLE": "Success",
-    "ERROR_TITLE": "Error"
+    "ERROR_TITLE": "Error",
+    "SUCCESS_ADD_RECOMMENDATION": "Recommended book added to library"
   }
 }

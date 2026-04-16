@@ -31,6 +31,55 @@ router.get('/user-books/latest-note', auth, booksController.getLatestNote);
 
 /**
  * @swagger
+ * /api/books/user-books/recommendations:
+ *   get:
+ *     summary: Get AI-powered book recommendations
+ *     description: >
+ *       Returns 5 personalized book recommendations based on the user's reading history,
+ *       favorite authors, tags, and book descriptions. Results are cached for 24 hours
+ *       and invalidated when the user adds or removes a book.
+ *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of recommended books
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: gemini_rec1
+ *                   title:
+ *                     type: string
+ *                     example: The Name of the Wind
+ *                   authors:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     example: ["Patrick Rothfuss"]
+ *                   description:
+ *                     type: string
+ *                     example: A fantasy novel about a legendary wizard...
+ *                   thumbnail:
+ *                     type: string
+ *                     example: ""
+ *                   sourceId:
+ *                     type: string
+ *                     example: gemini_rec1
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Failed to get recommendations
+ */
+router.get('/user-books/recommendations', auth, booksController.getRecommendations);
+
+/**
+ * @swagger
  * /api/books/user-books/{id}:
  *   get:
  *     summary: Get single user book

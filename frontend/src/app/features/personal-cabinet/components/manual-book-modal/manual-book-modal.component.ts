@@ -1,5 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -8,17 +7,14 @@ import { catchError, finalize, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as BooksActions from '../../../../shared/store/books/books.actions';
-import { SearchBook } from '../../../../core/models/book.model';
-import { Inject } from '@angular/core';
+import { ManualBookModalData, SearchBook } from '../../../../core/models/book.model';
+import { Actions, ofType } from '@ngrx/effects';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-manual-book-modal',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    TranslateModule
-  ],
+  imports: [ReactiveFormsModule, TranslateModule],
   templateUrl: './manual-book-modal.component.html',
   styleUrls: ['./manual-book-modal.component.scss']
 })
@@ -27,6 +23,13 @@ export class ManualBookModalComponent {
   private readonly fb = inject(FormBuilder);
   private readonly booksService = inject(BooksService);
   private readonly store = inject(Store);
+  private readonly data = inject<ManualBookModalData>(MAT_DIALOG_DATA);
+  private readonly actions$ = inject(Actions);
+
+  protected readonly isCustom = signal(this.data?.isCustom ?? false);
+  protected readonly selectedFile = signal<File | null>(null);
+  protected readonly imagePreview = signal<string | null>(null);
+  protected readonly isSaving = signal(false);
 
   protected readonly bookForm = this.fb.group({
     title: ['', [Validators.required]],
@@ -34,34 +37,37 @@ export class ManualBookModalComponent {
     description: ['']
   });
 
-  protected readonly selectedFile = signal<File | null>(null);
-  protected readonly imagePreview = signal<string | null>(null);
-  protected readonly isSaving = signal(false);
-
-  constructor(@Inject(MAT_DIALOG_DATA) public data?: SearchBook) {
-    if (data) {
+  constructor() {
+    if (this.data?.book) {
       this.bookForm.patchValue({
-        title: data.title,
-        authors: data.authors?.join(', ') || '',
-        description: data.description || ''
+        title: this.data.book.title,
+        authors: this.data.book.authors?.join(', ') || '',
+        description: this.data.book.description || ''
       });
-      if (data.thumbnail) {
-        this.imagePreview.set(data.thumbnail);
+      if (this.data.book.thumbnail) {
+        this.imagePreview.set(this.data.book.thumbnail);
       }
     }
+
+    if (!this.data?.isCustom) {
+      this.bookForm.disable();
+    }
+    this.actions$.pipe(
+      ofType(BooksActions.addBookSuccess),
+      takeUntilDestroyed()
+    ).subscribe(() => this.dialogRef.close(true));
   }
+
   protected onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      this.selectedFile.set(file);
+    if (!input.files?.length) return;
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreview.set(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+    const file = input.files[0];
+    this.selectedFile.set(file);
+
+    const reader = new FileReader();
+    reader.onload = () => this.imagePreview.set(reader.result as string);
+    reader.readAsDataURL(file);
   }
 
   protected onRemoveImage(): void {
@@ -73,14 +79,19 @@ export class ManualBookModalComponent {
     this.dialogRef.close();
   }
 
+  protected onConfirmExternal(): void {
+    if (!this.data?.book) return;
+    this.store.dispatch(BooksActions.addBook({ book: this.data.book }));
+  }
+
   protected onSubmit(): void {
-    if (this.bookForm.invalid || this.isSaving()) {
-      return;
-    }
+    if (this.bookForm.invalid || this.isSaving() || !this.isCustom()) return;
 
     this.isSaving.set(true);
-    const formValue = this.bookForm.value;
-    const authorsArray = formValue.authors ? formValue.authors.split(',').map(a => a.trim()) : [];
+    const formValue = this.bookForm.getRawValue();
+    const authorsArray = formValue.authors
+      ? formValue.authors.split(',').map(a => a.trim())
+      : [];
 
     const bookData: Partial<SearchBook> = {
       title: formValue.title!,
@@ -89,15 +100,15 @@ export class ManualBookModalComponent {
       thumbnail: this.imagePreview() || undefined
     };
 
-    if (this.data?.id) {
-      bookData.id = this.data.id;
+    if (this.data?.book?.id) {
+      bookData.id = this.data.book.id;
     }
 
     const file = this.selectedFile();
 
     const saveExternal$ = file
       ? this.booksService.uploadCover(file).pipe(
-        catchError(() => of({ url: bookData.thumbnail })), // Fallback to current thumbnail if upload fails
+        catchError(() => of({ url: bookData.thumbnail })),
         switchMap(res => {
           const updatedData = { ...bookData, thumbnail: (res as { url: string | undefined }).url };
           return bookData.id
@@ -105,9 +116,9 @@ export class ManualBookModalComponent {
             : this.booksService.addManualBook(updatedData);
         })
       )
-      : (bookData.id
+      : bookData.id
         ? this.booksService.addExternalBook(bookData as SearchBook)
-        : this.booksService.addManualBook(bookData));
+        : this.booksService.addManualBook(bookData);
 
     saveExternal$.pipe(
       switchMap(externalBook => this.booksService.addUserBook(externalBook.id)),

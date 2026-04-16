@@ -13,7 +13,6 @@ export const BookStatus = {
     Planned: 'planned',
     Reading: 'reading',
     Completed: 'completed',
-    OnHold: 'onHold',
     Dropped: 'dropped'
 } as const;
 
@@ -54,9 +53,20 @@ export interface BookFilters {
     limit?: number;
 }
 
-export interface PaginatedBooksResponse {
+  export interface PaginatedBooksResponse {
     books: Book[];
     totalCount: number;
     currentPage: number;
     totalPages: number;
+    countsByStatus: {
+      reading: number;
+      planned: number;
+      completed: number;
+      dropped: number;
+    };
+  }
+
+export interface ManualBookModalData {
+  book?: SearchBook;
+  isCustom?: boolean;
 }

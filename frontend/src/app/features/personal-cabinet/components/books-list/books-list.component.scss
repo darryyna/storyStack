@@ -218,13 +218,8 @@
     }
 
     &[data-status="dropped"] {
-        background: rgba(255, 77, 79, 0.15);
-        color: #FF4D4F;
-    }
-
-    &[data-status="onHold"] {
-        background: rgba(251, 191, 36, 0.15);
-        color: #FBBF24;
+      background: rgba(251, 191, 36, 0.15);
+      color: #FBBF24;
     }
 }
 

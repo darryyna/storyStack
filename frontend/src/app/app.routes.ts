@@ -6,6 +6,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { PersonalCabinetComponent } from './features/personal-cabinet/personal-cabinet.component';
 import { BooksListComponent } from './features/personal-cabinet/components/books-list/books-list.component';
 import { BookDetailsComponent } from './features/personal-cabinet/components/book-details/book-details.component';
+import { ResetPasswordComponent } from './shared/components/login-form/reset-password/reset-password.component';
 
 export const appRoutes: Routes = [
   {
@@ -17,6 +18,8 @@ export const appRoutes: Routes = [
     path: 'login',
     component: LoginFormComponent,
   },
+  { path: 'reset-password',
+    component: ResetPasswordComponent },
   {
     path: 'about',
     component: AboutPageComponent

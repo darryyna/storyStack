@@ -98,8 +98,6 @@ export class BookDetailsComponent implements OnInit {
     const currentBook = this.book();
     if (currentBook) {
       this.store.dispatch(BooksActions.updateBook({ id: currentBook.id, updates: { notes } }));
-      // In a real app we might listen to updateBookSuccess to set isSavingNotes back to false,
-      // but here we can just set a timeout or rely on the store's reactive update to clear the "saving" feel.
       setTimeout(() => this.isSavingNotes.set(false), 500);
     }
   }

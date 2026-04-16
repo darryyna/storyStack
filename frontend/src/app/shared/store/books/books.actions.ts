@@ -89,3 +89,30 @@ export const updateBookFailure = createAction(
     '[Books] Update Book Failure',
     props<{ error: string }>()
 );
+
+export const loadRecommendations = createAction('[Books] Load Recommendations');
+
+export const loadRecommendationsSuccess = createAction(
+  '[Books] Load Recommendations Success',
+  props<{ recommendations: SearchBook[] }>()
+);
+
+export const loadRecommendationsFailure = createAction(
+  '[Books] Load Recommendations Failure',
+  props<{ error: string }>()
+);
+
+export const addBookFromRecommendation = createAction(
+  '[Books] Add Book From Recommendation',
+  props<{ book: SearchBook }>()
+);
+
+export const addBookFromRecommendationSuccess = createAction(
+  '[Books] Add Book From Recommendation Success',
+  props<{ sourceId: string }>()
+);
+
+export const addBookFromRecommendationFailure = createAction(
+  '[Books] Add Book From Recommendation Failure',
+  props<{ sourceId: string; error: string }>()
+);
