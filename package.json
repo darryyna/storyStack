@@ -5,6 +5,9 @@
     "prettier": "^3.5.3"
   },
   "dependencies": {
-    "mongoose": "^8.15.0"
+    "@google/genai": "^1.50.1",
+    "@google/generative-ai": "^0.24.1",
+    "mongoose": "^8.15.0",
+    "nodemailer": "^8.0.5"
   }
 }

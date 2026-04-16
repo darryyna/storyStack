@@ -1,78 +1,66 @@
 <div class="wrapper">
   <div class="form-wrapper">
     <div class="switcher-buttons">
-      <button class="switcher-button" [class.active]="activeTab() === 'login'" (click)="setActiveTab('login')">{{ 'ACTIONS.SIGN_IN' | translate}}</button>
-      <button class="switcher-button" [class.active]="activeTab() === 'signup'" (click)="setActiveTab('signup')">{{ 'ACTIONS.SIGN_UP' | translate}}</button>
+      <button class="switcher-button" [class.active]="activeTab() === 'login'" (click)="setActiveTab('login')">{{
+        'ACTIONS.SIGN_IN' | translate}}</button>
+      <button class="switcher-button" [class.active]="activeTab() === 'signup'" (click)="setActiveTab('signup')">{{
+        'ACTIONS.SIGN_UP' | translate}}</button>
     </div>
     <div class="switcher-content">
       @if (activeTab() === 'login') {
-        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-          <div class="field">
-            <input
-              formControlName="username"
-              [class.invalid]="loginForm.controls.username.invalid && loginForm.controls.username.touched"
-              placeholder="{{ 'PLACEHOLDERS.FORM-USERNAME' | translate }}"
-            >
-            <app-form-error [control]="loginForm.controls.username" />
-          </div>
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <div class="field">
+          <input formControlName="username"
+            [class.invalid]="loginForm.controls.username.invalid && loginForm.controls.username.touched"
+            placeholder="{{ 'PLACEHOLDERS.FORM-USERNAME' | translate }}">
+          <app-form-error [control]="loginForm.controls.username" />
+        </div>
 
-          <div class="field">
-            <input
-              type="password"
-              formControlName="password"
-              [class.invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched"
-              placeholder="{{ 'PLACEHOLDERS.FORM-PASSWORD' | translate }}"
-            >
-            <app-form-error [control]="loginForm.controls.password" />
-          </div>
+        <div class="field">
+          <input type="password" formControlName="password"
+            [class.invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched"
+            placeholder="{{ 'PLACEHOLDERS.FORM-PASSWORD' | translate }}">
+          <app-form-error [control]="loginForm.controls.password" />
+        </div>
+        <app-form-error [serverError]="authError() ? 'FORM_ERRORS.INVALID_CREDENTIALS' : null" />
 
-          <button type="submit" [disabled]="loginForm.invalid">{{ 'ACTIONS.SIGN_IN' | translate }}</button>
-        </form>
+        <p class="forgot-link" (click)="openForgotPassword()">
+          {{ 'ACTIONS.FORGOT_PASSWORD' | translate }}
+        </p>
+        <button type="submit" [disabled]="loginForm.invalid">{{ 'ACTIONS.SIGN_IN' | translate }}</button>
+      </form>
       } @else {
-        <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
-          <div class="field">
-            <input
-              type="email"
-              formControlName="email"
-              [class.invalid]="registerForm.controls.email.invalid && registerForm.controls.email.touched"
-              placeholder="{{ 'PLACEHOLDERS.FORM-EMAIL' | translate }}"
-            >
-            <app-form-error [control]="registerForm.controls.email" />
-          </div>
+      <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+        <div class="field">
+          <input type="email" formControlName="email"
+            [class.invalid]="registerForm.controls.email.invalid && registerForm.controls.email.touched"
+            placeholder="{{ 'PLACEHOLDERS.FORM-EMAIL' | translate }}">
+          <app-form-error [control]="registerForm.controls.email" />
+        </div>
 
-          <div class="field">
-            <input
-              type="text"
-              formControlName="username"
-              [class.invalid]="registerForm.controls.username.invalid && registerForm.controls.username.touched"
-              placeholder="{{ 'PLACEHOLDERS.FORM-USERNAME' | translate }}"
-            >
-            <app-form-error [control]="registerForm.controls.username" />
-          </div>
+        <div class="field">
+          <input type="text" formControlName="username"
+            [class.invalid]="registerForm.controls.username.invalid && registerForm.controls.username.touched"
+            placeholder="{{ 'PLACEHOLDERS.FORM-USERNAME' | translate }}">
+          <app-form-error [control]="registerForm.controls.username" />
+        </div>
 
-          <div class="field">
-            <input
-              type="password"
-              formControlName="password"
-              [class.invalid]="registerForm.controls.password.invalid && registerForm.controls.password.touched"
-              placeholder="{{ 'PLACEHOLDERS.FORM-PASSWORD' | translate }}"
-            >
-            <app-form-error [control]="registerForm.controls.password" />
-          </div>
+        <div class="field">
+          <input type="password" formControlName="password"
+            [class.invalid]="registerForm.controls.password.invalid && registerForm.controls.password.touched"
+            placeholder="{{ 'PLACEHOLDERS.FORM-PASSWORD' | translate }}">
+          <app-form-error [control]="registerForm.controls.password" />
+        </div>
 
-          <div class="field">
-            <input
-              type="password"
-              formControlName="confirmPassword"
-              [class.invalid]="(registerForm.controls.confirmPassword.invalid && registerForm.controls.confirmPassword.touched)
+        <div class="field">
+          <input type="password" formControlName="confirmPassword" [class.invalid]="(registerForm.controls.confirmPassword.invalid && registerForm.controls.confirmPassword.touched)
                 || (registerForm.hasError('passwordMismatch') && registerForm.controls.confirmPassword.touched)"
-              placeholder="{{ 'PLACEHOLDERS.FORM-CONFIRM-PASSWORD' | translate }}"
-            >
-            <app-form-error [control]="registerForm.controls.confirmPassword" />
-            @if (registerForm.hasError('passwordMismatch') && registerForm.controls.confirmPassword.touched) {
-              <div class="form-error">{{ 'FORM_ERRORS.PASSWORD_MISMATCH' | translate }}</div>
-            }
-          </div>
+            placeholder="{{ 'PLACEHOLDERS.FORM-CONFIRM-PASSWORD' | translate }}">
+          <app-form-error [control]="registerForm.controls.confirmPassword" />
+          @if (registerForm.hasError('passwordMismatch') && registerForm.controls.confirmPassword.touched) {
+          <div class="form-error">{{ 'FORM_ERRORS.PASSWORD_MISMATCH' | translate }}</div>
+          }
+        </div>
 
           <div class="field">
             <div class="checkbox-wrapper">

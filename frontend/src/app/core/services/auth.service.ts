@@ -51,9 +51,12 @@ export class AuthService {
   getAccessToken(): string | null {
     return this.accessTokenSubject.value;
   }
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/forgot-password`, { email });
+  }
 
-  isAuthenticated(): boolean {
-    return !!this.accessTokenSubject.value;
+  resetPassword(token: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/reset-password`, { token, newPassword });
   }
 }
 

@@ -40,4 +40,13 @@ const setCache = async (key, value, ttlSeconds = 600) => {
     }
 };
 
-module.exports = { connectRedis, getCache, setCache };
+const deleteCache = async (key) => {
+  if (!client) return;
+  try {
+    await client.del(key);
+  } catch (err) {
+    logger.warn(`Redis DEL error: ${err.message}`);
+  }
+};
+
+module.exports = { connectRedis, getCache, setCache, deleteCache };

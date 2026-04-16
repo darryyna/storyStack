@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const BookEnums = require('../enums/BookEnums');
+const { ReadingStatus } = require('../enums/BookEnums');
 
 const UserBookSchema = new mongoose.Schema({
     userId: {
@@ -14,8 +14,9 @@ const UserBookSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: BookEnums.ReadingStatusEnum,
-        required: true
+        enum: Object.values(ReadingStatus),
+        required: true,
+        default: ReadingStatus.PLANNED
     },
     rating: {
         type: Number,

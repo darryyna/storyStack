@@ -1,14 +1,19 @@
 import { createReducer, on } from '@ngrx/store';
 import * as BooksActions from './books.actions';
-import { Book } from '../../../core/models/book.model';
+import { Book, BookStatus, SearchBook } from '../../../core/models/book.model';
 
 export interface BooksState {
     books: Book[];
     totalCount: number;
     currentPage: number;
+    countsByStatus: Record<BookStatus, number>;
     totalPages: number;
     selectedBook: Book | null;
     latestNote: { bookId: string; bookTitle: string; lastNote: string; timestamp: string } | null;
+    recommendations: SearchBook[];
+    recommendationsLoading: boolean;
+    addedFromRecommendations: string[];
+    addingFromRecommendations: string[];
     isLoading: boolean;
     error: string;
     isAdding: boolean;
@@ -18,9 +23,19 @@ export const initialState: BooksState = {
     books: [],
     totalCount: 0,
     currentPage: 1,
+    countsByStatus: {
+      [BookStatus.Reading]: 0,
+      [BookStatus.Planned]: 0,
+      [BookStatus.Completed]: 0,
+      [BookStatus.Dropped]: 0,
+    },
     totalPages: 0,
     selectedBook: null,
     latestNote: null,
+    recommendations: [],
+    recommendationsLoading: false,
+    addedFromRecommendations: [],
+    addingFromRecommendations: [],
     isLoading: false,
     error: '',
     isAdding: false
@@ -34,12 +49,13 @@ export const booksReducer = createReducer(
         error: ''
     })),
     on(BooksActions.loadBooksSuccess, (state, { response }) => ({
-        ...state,
-        books: response.books,
-        totalCount: response.totalCount,
-        currentPage: response.currentPage,
-        totalPages: response.totalPages,
-        isLoading: false
+      ...state,
+      books: response.books,
+      totalCount: response.totalCount,
+      currentPage: response.currentPage,
+      totalPages: response.totalPages,
+      countsByStatus: response.countsByStatus,
+      isLoading: false
     })),
     on(BooksActions.loadBooksFailure, (state, { error }) => ({
         ...state,
@@ -117,5 +133,31 @@ export const booksReducer = createReducer(
         ...state,
         isLoading: false,
         error
-    }))
+    })),
+  on(BooksActions.loadRecommendations, state => ({
+    ...state,
+    recommendationsLoading: true,
+  })),
+  on(BooksActions.loadRecommendationsSuccess, (state, { recommendations }) => ({
+    ...state,
+    recommendations,
+    recommendationsLoading: false,
+  })),
+  on(BooksActions.loadRecommendationsFailure, state => ({
+    ...state,
+    recommendationsLoading: false,
+  })),
+  on(BooksActions.addBookFromRecommendation, (state, { book }) => ({
+    ...state,
+    addingFromRecommendations: [...state.addingFromRecommendations, book.id],
+  })),
+  on(BooksActions.addBookFromRecommendationSuccess, (state, { sourceId }) => ({
+    ...state,
+    addingFromRecommendations: state.addingFromRecommendations.filter(id => id !== sourceId),
+    addedFromRecommendations: [...state.addedFromRecommendations, sourceId],
+  })),
+  on(BooksActions.addBookFromRecommendationFailure, (state, { sourceId }) => ({
+    ...state,
+    addingFromRecommendations: state.addingFromRecommendations.filter(id => id !== sourceId),
+  })),
 );

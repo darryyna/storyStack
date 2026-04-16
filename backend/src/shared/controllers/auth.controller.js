@@ -1,8 +1,10 @@
 const { promisify } = require('util');
 const User = require('../models/User.model');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const logger = require('../configuration/logger');
+const { sendPasswordResetEmail } = require('../services/email.service');
 
 const verifyJwt = promisify(jwt.verify);
 
@@ -112,4 +114,53 @@ exports.logout = (req, res) => {
     sameSite: 'Strict',
   });
   res.json({ message: 'Logout from the system' });
+};
+
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+
+    const user = await User.findOne({ email });
+
+    // Відповідь однакова незалежно від того чи юзер існує — щоб не зливати інфу
+    if (!user) return res.status(200).json({ message: 'If this email exists, a reset link was sent' });
+
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 година
+    await user.save();
+
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    await sendPasswordResetEmail(email, resetUrl);
+
+    res.status(200).json({ message: 'If this email exists, a reset link was sent' });
+  } catch (err) {
+    logger.error(`Forgot password error: ${err.message}`);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword) return res.status(400).json({ error: 'Token and new password are required' });
+
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+
+    if (!user) return res.status(400).json({ error: 'Invalid or expired token' });
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (err) {
+    logger.error(`Reset password error: ${err.message}`);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
 };

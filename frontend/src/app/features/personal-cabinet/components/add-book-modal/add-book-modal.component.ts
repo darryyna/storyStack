@@ -5,7 +5,7 @@ import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
 import { BooksService } from '../../../../core/services/books.service';
-import { SearchBook } from '../../../../core/models/book.model';
+import { ManualBookModalData, SearchBook } from '../../../../core/models/book.model';
 import { debounceTime, distinctUntilChanged, switchMap, catchError, of, tap } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -34,8 +34,6 @@ export class AddBookModalComponent {
   private readonly actions$ = inject(Actions);
 
   protected readonly searchControl = new FormControl<string>('', { nonNullable: true });
-
-  // state
   protected readonly filteredBooks =
     toSignal(
       this.searchControl.valueChanges.pipe(
@@ -68,10 +66,6 @@ export class AddBookModalComponent {
       );
     }
 
-    protected displayFn(book: SearchBook | null): string {
-      return book?.title ?? '';
-    }
-
     protected onBookClick(book: SearchBook): void {
       this.dialogRef.close(book);
     }
@@ -89,13 +83,11 @@ export class AddBookModalComponent {
     }
 
     protected onAddManually(): void {
+      this.dialogRef.close();
       this.dialog.open(ManualBookModalComponent, {
         width: '600px',
+        data: { isCustom: true } satisfies ManualBookModalData,
         autoFocus: false
-      }).afterClosed().subscribe((result: boolean | undefined) => {
-        if (result) {
-          this.dialogRef.close(true);
-        }
       });
     }
 }

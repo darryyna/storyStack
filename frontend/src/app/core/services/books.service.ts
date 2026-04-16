@@ -32,7 +32,7 @@ export class BooksService {
     }
 
     public getUserBooks(filters?: BookFilters): Observable<PaginatedBooksResponse> {
-        let params: Record<string, string | number | string[]> = {};
+        const params: Record<string, string | number | string[]> = {};
         if (filters) {
             if (filters.status) params['status'] = filters.status;
             if (filters.rating !== undefined) params['rating'] = filters.rating;
@@ -68,4 +68,8 @@ export class BooksService {
     public addManualBook(bookData: Partial<SearchBook>): Observable<ExternalBookResponse> {
         return this.http.post<ExternalBookResponse>(`${this.apiUrl}/manual`, bookData);
     }
+
+  public getRecommendations(): Observable<SearchBook[]> {
+    return this.http.get<SearchBook[]>(`${this.apiUrl}/user-books/recommendations`);
+  }
 }
