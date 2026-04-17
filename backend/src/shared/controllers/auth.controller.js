@@ -49,7 +49,7 @@ exports.register = async (req, res) => {
       httpOnly: true,
       secure: false,
       sameSite: 'Strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 днів
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
     res.status(201).json({ message: 'User is created', accessToken });
   } catch (err) {
@@ -122,13 +122,11 @@ exports.forgotPassword = async (req, res) => {
     if (!email) return res.status(400).json({ error: 'Email is required' });
 
     const user = await User.findOne({ email });
-
-    // Відповідь однакова незалежно від того чи юзер існує — щоб не зливати інфу
     if (!user) return res.status(200).json({ message: 'If this email exists, a reset link was sent' });
 
     const token = crypto.randomBytes(32).toString('hex');
     user.resetPasswordToken = token;
-    user.resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 година
+    user.resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 hour
     await user.save();
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;

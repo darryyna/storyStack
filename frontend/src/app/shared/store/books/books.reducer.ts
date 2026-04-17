@@ -1,44 +1,32 @@
 import { createReducer, on } from '@ngrx/store';
 import * as BooksActions from './books.actions';
-import { Book, BookStatus, SearchBook } from '../../../core/models/book.model';
+import { BookStatus } from '../../../core/models/book.model';
+import { BooksState, RecommendationsState } from './books.state';
 
-export interface BooksState {
-    books: Book[];
-    totalCount: number;
-    currentPage: number;
-    countsByStatus: Record<BookStatus, number>;
-    totalPages: number;
-    selectedBook: Book | null;
-    latestNote: { bookId: string; bookTitle: string; lastNote: string; timestamp: string } | null;
-    recommendations: SearchBook[];
-    recommendationsLoading: boolean;
-    addedFromRecommendations: string[];
-    addingFromRecommendations: string[];
-    isLoading: boolean;
-    error: string;
-    isAdding: boolean;
-}
+const initialRecommendationsState: RecommendationsState = {
+  items: [],
+  isLoading: false,
+  addedIds: [],
+  addingIds: [],
+};
 
 export const initialState: BooksState = {
     books: [],
     totalCount: 0,
     currentPage: 1,
+    totalPages: 0,
     countsByStatus: {
       [BookStatus.Reading]: 0,
       [BookStatus.Planned]: 0,
       [BookStatus.Completed]: 0,
       [BookStatus.Dropped]: 0,
     },
-    totalPages: 0,
     selectedBook: null,
     latestNote: null,
-    recommendations: [],
-    recommendationsLoading: false,
-    addedFromRecommendations: [],
-    addingFromRecommendations: [],
+    recommendations: initialRecommendationsState,
     isLoading: false,
+    isAdding: false,
     error: '',
-    isAdding: false
 };
 
 export const booksReducer = createReducer(
@@ -134,30 +122,39 @@ export const booksReducer = createReducer(
         isLoading: false,
         error
     })),
-  on(BooksActions.loadRecommendations, state => ({
-    ...state,
-    recommendationsLoading: true,
-  })),
-  on(BooksActions.loadRecommendationsSuccess, (state, { recommendations }) => ({
-    ...state,
-    recommendations,
-    recommendationsLoading: false,
-  })),
-  on(BooksActions.loadRecommendationsFailure, state => ({
-    ...state,
-    recommendationsLoading: false,
-  })),
-  on(BooksActions.addBookFromRecommendation, (state, { book }) => ({
-    ...state,
-    addingFromRecommendations: [...state.addingFromRecommendations, book.id],
-  })),
-  on(BooksActions.addBookFromRecommendationSuccess, (state, { sourceId }) => ({
-    ...state,
-    addingFromRecommendations: state.addingFromRecommendations.filter(id => id !== sourceId),
-    addedFromRecommendations: [...state.addedFromRecommendations, sourceId],
-  })),
-  on(BooksActions.addBookFromRecommendationFailure, (state, { sourceId }) => ({
-    ...state,
-    addingFromRecommendations: state.addingFromRecommendations.filter(id => id !== sourceId),
-  })),
+
+    on(BooksActions.loadRecommendations, state => ({
+      ...state,
+      recommendations: { ...state.recommendations, isLoading: true },
+    })),
+    on(BooksActions.loadRecommendationsSuccess, (state, { recommendations }) => ({
+      ...state,
+      recommendations: { ...state.recommendations, items: recommendations, isLoading: false },
+    })),
+    on(BooksActions.loadRecommendationsFailure, state => ({
+      ...state,
+      recommendations: { ...state.recommendations, isLoading: false },
+    })),
+    on(BooksActions.addBookFromRecommendation, (state, { book }) => ({
+      ...state,
+      recommendations: {
+        ...state.recommendations,
+        addingIds: [...state.recommendations.addingIds, book.id],
+      },
+    })),
+    on(BooksActions.addBookFromRecommendationSuccess, (state, { sourceId }) => ({
+      ...state,
+      recommendations: {
+        ...state.recommendations,
+        addingIds: state.recommendations.addingIds.filter(id => id !== sourceId),
+        addedIds: [...state.recommendations.addedIds, sourceId],
+      },
+    })),
+    on(BooksActions.addBookFromRecommendationFailure, (state, { sourceId }) => ({
+      ...state,
+      recommendations: {
+        ...state.recommendations,
+        addingIds: state.recommendations.addingIds.filter(id => id !== sourceId),
+      },
+    })),
 );

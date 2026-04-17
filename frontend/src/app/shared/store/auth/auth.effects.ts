@@ -2,12 +2,14 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import * as AuthActions from './auth.actions';
 import { AuthService } from '../../../core/services/auth.service';
-import { catchError, map, mergeMap, of } from 'rxjs';
+import { catchError, map, mergeMap, of, tap } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthEffects {
   private readonly actions$ = inject(Actions);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   // LOGIN
   loginUser$ = createEffect(() =>
@@ -87,5 +89,45 @@ export class AuthEffects {
         )
       )
     )
+  );
+
+  forgotPassword$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.forgotPassword),
+      mergeMap(({ email }) =>
+        this.authService.forgotPassword(email).pipe(
+          map(() => AuthActions.forgotPasswordSuccess()),
+          catchError(error =>
+            of(AuthActions.forgotPasswordFailure({
+              error: error.error?.error || 'AUTH.FORGOT_PASSWORD_ERROR'
+            }))
+          )
+        )
+      )
+    )
+  );
+
+  resetPassword$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.resetPassword),
+      mergeMap(({ token, newPassword }) =>
+        this.authService.resetPassword(token, newPassword).pipe(
+          map(() => AuthActions.resetPasswordSuccess()),
+          catchError(error =>
+            of(AuthActions.resetPasswordFailure({
+              error: error.error?.error || 'AUTH.RESET_ERROR'
+            }))
+          )
+        )
+      )
+    )
+  );
+
+  resetPasswordRedirect$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(AuthActions.resetPasswordSuccess),
+        tap(() => setTimeout(() => this.router.navigate(['/login']), 2000))
+      ),
+    { dispatch: false }
   );
 }

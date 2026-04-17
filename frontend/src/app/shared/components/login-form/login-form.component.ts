@@ -2,13 +2,13 @@ import { Component, inject, signal, DestroyRef } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Store, select } from '@ngrx/store';
 import { Router } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { selectAuthError, selectIsAuthenticated } from '../../store/auth/auth.selectors';
 import { clearAuthError, loginUser, registerUser } from '../../store/auth/auth.actions';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { filter, map } from 'rxjs';
+import { filter } from 'rxjs';
 import { passwordMatchValidator } from '../../validators/password-match.validator';
 import { FormErrorComponent } from '../form-error/form-error.component';
 import { ForgotPasswordModalComponent } from '../modal-window/forgot-password-modal/forgot-password-modal.component';
@@ -29,7 +29,6 @@ export class LoginFormComponent {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly translate = inject(TranslateService);
   private readonly dialog = inject(MatDialog);
 
   protected readonly authError = toSignal(

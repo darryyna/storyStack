@@ -184,7 +184,7 @@ export class BooksEffects {
   addBookFromRecommendation$ = createEffect(() =>
     this.actions$.pipe(
       ofType(BooksActions.addBookFromRecommendation),
-      mergeMap(({ book }) =>  // mergeMap бо може бути кілька одночасно
+      mergeMap(({ book }) =>
         this.booksService.addExternalBook(book).pipe(
           switchMap(externalBook =>
             this.booksService.addUserBook(externalBook.id).pipe(

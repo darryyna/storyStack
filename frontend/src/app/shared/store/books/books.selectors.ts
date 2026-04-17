@@ -1,73 +1,32 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { BooksState } from './books.reducer';
+import { BooksState } from './books.state';
 
 export const selectBooksState = createFeatureSelector<BooksState>('books');
 
-export const selectAllBooks = createSelector(
-    selectBooksState,
-    (state) => state.books
-);
+// Books
+export const selectAllBooks = createSelector(selectBooksState, state => state.books);
+export const selectBooksLoading = createSelector(selectBooksState, state => state.isLoading);
+export const selectBooksAdding = createSelector(selectBooksState, state => state.isAdding);
+export const selectBooksError = createSelector(selectBooksState, state => state.error);
+export const selectTotalCount = createSelector(selectBooksState, state => state.totalCount);
+export const selectCurrentPage = createSelector(selectBooksState, state => state.currentPage);
+export const selectTotalPages = createSelector(selectBooksState, state => state.totalPages);
+export const selectCountsByStatus = createSelector(selectBooksState, state => state.countsByStatus);
 
-export const selectBooksLoading = createSelector(
-    selectBooksState,
-    (state) => state.isLoading
-);
+// Selected Book
+export const selectSelectedBook = createSelector(selectBooksState, state => state.selectedBook);
 
-export const selectSelectedBook = createSelector(
-    selectBooksState,
-    (state) => state.selectedBook
-);
+// Latest Note
+export const selectLatestNote = createSelector(selectBooksState, state => state.latestNote);
 
-export const selectLatestNote = createSelector(
-    selectBooksState,
-    (state) => state.latestNote
-);
-
-export const selectBooksAdding = createSelector(
-    selectBooksState,
-    (state) => state.isAdding
-);
-
-export const selectBooksError = createSelector(
-    selectBooksState,
-    (state) => state.error
-);
-export const selectTotalCount = createSelector(
-    selectBooksState,
-    (state) => state.totalCount
-);
-
-export const selectCurrentPage = createSelector(
-    selectBooksState,
-    (state) => state.currentPage
-);
-
-export const selectTotalPages = createSelector(
-    selectBooksState,
-    (state) => state.totalPages
-);
-
-export const selectCountsByStatus = createSelector(
-  selectBooksState,
-  (state) => state.countsByStatus
-);
-
+// Recommendations
+export const selectRecommendationsState = createSelector(
+  selectBooksState, state => state.recommendations);
 export const selectRecommendations = createSelector(
-  selectBooksState,
-  (state) => state.recommendations
-);
-
+  selectRecommendationsState, rec => rec.items);
 export const selectRecommendationsLoading = createSelector(
-  selectBooksState,
-  (state) => state.recommendationsLoading
-);
-
+  selectRecommendationsState, rec => rec.isLoading);
 export const selectAddedFromRecommendations = createSelector(
-  selectBooksState,
-  state => state.addedFromRecommendations
-);
-
+  selectRecommendationsState, rec => rec.addedIds);
 export const selectAddingFromRecommendations = createSelector(
-  selectBooksState,
-  state => state.addingFromRecommendations
-);
+  selectRecommendationsState, rec => rec.addingIds);

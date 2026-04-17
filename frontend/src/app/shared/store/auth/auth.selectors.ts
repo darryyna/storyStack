@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { AuthState } from './auth.reducer';
+import { AuthState } from './auth.state';
 
 export const selectAuthState = createFeatureSelector<AuthState>('auth');
 
@@ -21,4 +21,14 @@ export const selectCurrentUser = createSelector(
 export const selectAuthError = createSelector(
   selectAuthState,
   (state: AuthState) => state.error
+);
+
+export const selectForgotPassword = createSelector(
+  selectAuthState,
+  state => state.forgotPassword
+);
+
+export const selectResetPassword = createSelector(
+  selectAuthState,
+  state => state.resetPassword
 );

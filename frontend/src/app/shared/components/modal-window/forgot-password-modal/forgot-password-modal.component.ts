@@ -1,9 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from '../../../../core/services/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormErrorComponent } from '../../form-error/form-error.component';
+import { Store } from '@ngrx/store';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { selectForgotPassword } from '../../../store/auth/auth.selectors';
+import { forgotPassword } from '../../../store/auth/auth.actions';
 
 @Component({
   selector: 'app-forgot-password-modal',
@@ -13,13 +16,14 @@ import { FormErrorComponent } from '../../form-error/form-error.component';
   styleUrl: './forgot-password-modal.component.scss',
 })
 export class ForgotPasswordModalComponent {
+  private readonly store = inject(Store);
   private readonly dialogRef = inject(MatDialogRef<ForgotPasswordModalComponent>);
   private readonly fb = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
 
-  protected readonly isLoading = signal(false);
-  protected readonly submitted = signal(false);
-  protected readonly error = signal<string | null>(null);
+  protected readonly forgotPasswordState = toSignal(
+    this.store.select(selectForgotPassword),
+    { initialValue: { isLoading: false, submitted: false, error: null } }
+  );
 
   protected readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]]
@@ -27,19 +31,7 @@ export class ForgotPasswordModalComponent {
 
   protected onSubmit(): void {
     if (this.form.invalid) return;
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    this.authService.forgotPassword(this.form.getRawValue().email).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        this.submitted.set(true);
-      },
-      error: () => {
-        this.isLoading.set(false);
-        this.error.set('AUTH.FORGOT_PASSWORD_ERROR');
-      }
-    });
+    this.store.dispatch(forgotPassword({ email: this.form.getRawValue().email }));
   }
 
   protected onCancel(): void {

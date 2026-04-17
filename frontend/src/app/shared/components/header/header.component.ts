@@ -37,7 +37,6 @@ export class HeaderComponent {
   );
   private readonly activeMenu = signal<MenuType>(null);
 
-  // derived signals
   protected readonly isMenuOpen = computed(
     () => this.activeMenu() === 'main'
   );

@@ -24,3 +24,25 @@ export const logoutUserSuccess = createAction('[Auth] Logout User Success');
 // Check auth (on app init: refresh from httpOnly cookie)
 export const checkAuthStatus = createAction('[Auth] Check Auth Status');
 export const checkAuthStatusFailure = createAction('[Auth] Check Auth Status Failure');
+
+// Forgot Password
+export const forgotPassword = createAction(
+  '[Auth] Forgot Password',
+  props<{ email: string }>()
+);
+export const forgotPasswordSuccess = createAction('[Auth] Forgot Password Success');
+export const forgotPasswordFailure = createAction(
+  '[Auth] Forgot Password Failure',
+  props<{ error: string }>()
+);
+
+// Reset Password
+export const resetPassword = createAction(
+  '[Auth] Reset Password',
+  props<{ token: string; newPassword: string }>()
+);
+export const resetPasswordSuccess = createAction('[Auth] Reset Password Success');
+export const resetPasswordFailure = createAction(
+  '[Auth] Reset Password Failure',
+  props<{ error: string }>()
+);
