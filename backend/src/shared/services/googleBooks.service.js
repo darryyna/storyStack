@@ -33,7 +33,9 @@ function normalizeGoogleBook(item) {
         title: info.title || 'Unknown Title',
         authors: info.authors || [],
         thumbnail: info.imageLinks?.thumbnail || null,
-        description: info.description || null
+        description: info.description || null,
+        pageCount: info.pageCount || null,
+        categories: info.categories || []
     };
 }
 

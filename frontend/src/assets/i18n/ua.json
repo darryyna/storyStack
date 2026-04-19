@@ -145,7 +145,10 @@
   "DROPDOWN_ITEMS": {
     "EXIT": "Вийти",
     "PERSONAL_CABINET": "Особистий кабінет",
-    "SETTINGS": "Налаштування"
+    "SETTINGS": "Налаштування",
+    "MY_LIBRARY": "Моя бібліотека",
+    "MY_STATISTICS": "Моя статистика",
+    "MY_GOALS": "Мої цілі"
   },
   "PERSONAL_CABINET": {
     "WELCOME": "Знову вітаємо у вашій особистій бібліотеці",
@@ -224,6 +227,8 @@
     "WARNING_TITLE": "Потрібна дія",
     "SUCCESS_TITLE": "Успіх",
     "ERROR_TITLE": "Помилка",
-    "SUCCESS_ADD_RECOMMENDATION": "Рекомендована книга додана до бібліотеки"
+    "SUCCESS_ADD_RECOMMENDATION": "Книгу додано з рекомендацій",
+    "SUCCESS_GOAL_CREATE": "Ціль для читання успішно створена",
+    "ERROR_GOAL_CREATE": "Не вдалося створити ціль"
   }
 }

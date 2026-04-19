@@ -11,9 +11,10 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import * as BooksActions from '../../../../shared/store/books/books.actions';
 import { selectSelectedBook, selectBooksLoading } from '../../../../shared/store/books/books.selectors';
-import { BookStatus } from '../../../../core/models/book.model';
+import { Book, BookStatus } from '../../../../core/models/book.model';
 import { LoaderComponent } from '../../../../shared/components/loader/loader.component';
 import { ResolveUrlPipe } from '../../../../shared/pipes/resolve-url.pipe';
+import { StatisticsService } from '../../../../core/services/statistics.service';
 
 @Component({
   selector: 'app-book-details',
@@ -32,6 +33,9 @@ export class BookDetailsComponent implements OnInit {
 
   protected readonly statuses = Object.values(BookStatus);
   protected readonly ratings = [1, 2, 3, 4, 5];
+  
+  private readonly statisticsService = inject(StatisticsService);
+  protected readonly topTags = signal<{_id: string, count: number}[]>([]);
 
   protected newTag = signal('');
   protected isSavingNotes = signal(false);
@@ -51,6 +55,24 @@ export class BookDetailsComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.store.dispatch(BooksActions.loadBook({ id }));
+    }
+    this.loadTopTags();
+  }
+
+  private loadTopTags(): void {
+    this.statisticsService.getGeneralStats().subscribe(stats => {
+      this.topTags.set(stats.topTags.slice(0, 5));
+    });
+  }
+
+  protected quickAddTag(tag: string): void {
+    const currentBook = this.book();
+    if (currentBook) {
+      const tags = [...(currentBook.tags || [])];
+      if (!tags.includes(tag)) {
+        tags.push(tag);
+        this.store.dispatch(BooksActions.updateBook({ id: currentBook.id, updates: { tags } }));
+      }
     }
   }
 
@@ -99,6 +121,24 @@ export class BookDetailsComponent implements OnInit {
     if (currentBook) {
       this.store.dispatch(BooksActions.updateBook({ id: currentBook.id, updates: { notes } }));
       setTimeout(() => this.isSavingNotes.set(false), 500);
+    }
+  }
+
+  protected addPages(pages: number): void {
+    const currentBook = this.book();
+    if (currentBook && pages > 0) {
+      this.store.dispatch(BooksActions.updateProgress({ id: currentBook.id, pagesRead: pages }));
+    }
+  }
+
+  protected updatePageCount(pageCount: number): void {
+    const currentBook = this.book();
+    if (currentBook && pageCount > 0) {
+      // We'll send this as part of updateBook, and the BE will handle updating the ExternalBookId
+      this.store.dispatch(BooksActions.updateBook({ 
+        id: currentBook.id, 
+        updates: { bookId: { ...currentBook.bookId, pageCount } } as unknown as Book 
+      }));
     }
   }
 

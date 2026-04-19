@@ -47,6 +47,56 @@
             </div>
         </section>
 
+        <section class="card progress-card" *ngIf="['reading', 'completed'].includes(b.status) || !b.bookId.pageCount">
+            <h2 class="card-title">
+                <mat-icon>trending_up</mat-icon>
+                {{ 'TABLE.PROGRESS' | translate }}
+                <span class="status-indicator" *ngIf="b.status === 'completed'">
+                    <mat-icon>check_circle</mat-icon>
+                    Finished
+                </span>
+            </h2>
+
+            <div class="progress-stats">
+                <div class="progress-text">
+                    <span class="current">{{ b.currentPage || 0 }}</span>
+                    <span class="separator">/</span>
+                    <span class="total" *ngIf="b.bookId.pageCount">{{ b.bookId.pageCount }}</span>
+                    <span class="unit">pages</span>
+                </div>
+
+                <div class="manual-page-count" *ngIf="!b.bookId.pageCount">
+                    <p class="prompt">Total page count is missing. Please enter it to track progress:</p>
+                    <div class="input-group">
+                        <input type="number"
+                               class="page-count-input"
+                               placeholder="e.g. 350"
+                               #manualPages>
+                        <button class="save-btn" (click)="updatePageCount(+manualPages.value)">Save</button>
+                    </div>
+                </div>
+
+                <div class="full-progress-bar" *ngIf="b.bookId.pageCount">
+                    <div class="progress-fill" [style.width.%]="(b.currentPage || 0) / b.bookId.pageCount * 100"></div>
+                </div>
+
+                <div class="progress-actions" *ngIf="b.status !== 'completed'">
+                    <button class="add-btn" (click)="addPages(1)">+1</button>
+                    <button class="add-btn" (click)="addPages(5)">+5</button>
+                    <button class="add-btn" (click)="addPages(10)">+10</button>
+                    <button class="add-btn" (click)="addPages(20)">+20</button>
+                    <div class="custom-add">
+                        <input type="number" #customPages class="mini-input" placeholder="+X">
+                        <button class="add-btn" (click)="addPages(+customPages.value); customPages.value=''">Add</button>
+                    </div>
+                </div>
+
+                <p class="completed-hint" *ngIf="b.status === 'completed' && b.finishedAt">
+                    You finished this book on {{ b.finishedAt | date:'mediumDate' }}
+                </p>
+            </div>
+        </section>
+
         <section class="card tags-card">
             <h2 class="card-title">
                 <mat-icon>local_offer</mat-icon>
@@ -61,11 +111,25 @@
                 }
             </div>
             <div class="tag-input-wrapper">
-                <input type="text" [(ngModel)]="newTag" (keyup.enter)="addTag()"
-                    [placeholder]="'PLACEHOLDERS.ADD_TAG' | translate" class="modern-input">
-                <button mat-icon-button (click)="addTag()" [disabled]="!newTag().trim()">
-                    <mat-icon>add</mat-icon>
-                </button>
+                <input type="text"
+                       [(ngModel)]="newTag"
+                       (keyup.enter)="addTag()"
+                       [placeholder]="'PLACEHOLDERS.ADD_TAG' | translate"
+                       class="modern-input">
+                <button class="btn btn-primary" (click)="addTag()" [disabled]="!newTag().trim()">Add</button>
+            </div>
+
+            <div class="tag-suggestions" *ngIf="topTags().length > 0">
+                <span class="suggestion-label">Suggested:</span>
+                <div class="suggestion-list">
+                    @for (tag of topTags(); track tag._id) {
+                        <button class="suggestion-btn"
+                                *ngIf="!b.tags?.includes(tag._id)"
+                                (click)="quickAddTag(tag._id)">
+                            +{{ tag._id }}
+                        </button>
+                    }
+                </div>
             </div>
         </section>
 

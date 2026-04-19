@@ -96,6 +96,14 @@ router.patch('/user-books/:id', auth, booksController.updateUserBook);
 
 /**
  * @swagger
+ * /api/books/user-books/{id}/progress:
+ *   patch:
+ *     summary: Update reading progress
+ */
+router.patch('/user-books/:id/progress', auth, booksController.updateReadingProgress);
+
+/**
+ * @swagger
  * /api/books/user-books/{id}:
  *   delete:
  *     summary: Delete book from user library

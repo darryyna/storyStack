@@ -34,7 +34,8 @@ export class ManualBookModalComponent {
   protected readonly bookForm = this.fb.group({
     title: ['', [Validators.required]],
     authors: ['', [Validators.required]],
-    description: ['']
+    description: [''],
+    pageCount: [null as number | null]
   });
 
   constructor() {
@@ -42,7 +43,8 @@ export class ManualBookModalComponent {
       this.bookForm.patchValue({
         title: this.data.book.title,
         authors: this.data.book.authors?.join(', ') || '',
-        description: this.data.book.description || ''
+        description: this.data.book.description || '',
+        pageCount: this.data.book.pageCount || null
       });
       if (this.data.book.thumbnail) {
         this.imagePreview.set(this.data.book.thumbnail);
@@ -97,7 +99,8 @@ export class ManualBookModalComponent {
       title: formValue.title!,
       authors: authorsArray,
       description: formValue.description || '',
-      thumbnail: this.imagePreview() || undefined
+      thumbnail: this.imagePreview() || undefined,
+      pageCount: formValue.pageCount || undefined
     };
 
     if (this.data?.book?.id) {

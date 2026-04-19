@@ -18,6 +18,7 @@ import { provideEffects } from '@ngrx/effects';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { AuthInterceptor } from './app/core/interceptors/auth.interceptor';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -42,5 +43,6 @@ bootstrapApplication(AppComponent, {
       autoPause: true,
     }),
     provideEffects([AuthEffects, BooksEffects, UiEffects]),
+    provideCharts(withDefaultRegisterables()),
   ],
 });

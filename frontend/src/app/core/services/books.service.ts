@@ -22,7 +22,9 @@ export class BooksService {
             title: book.title,
             authors: book.authors,
             thumbnail: book.thumbnail,
-            description: book.description
+            description: book.description,
+            pageCount: book.pageCount,
+            categories: book.categories
         };
         return this.http.post<ExternalBookResponse>(`${this.apiUrl}/external`, payload);
     }
@@ -40,7 +42,7 @@ export class BooksService {
             if (filters.page) params['page'] = filters.page.toString();
             if (filters.limit) params['limit'] = filters.limit.toString();
         }
-        return this.http.get<PaginatedBooksResponse>(`${this.apiUrl}/user-books`, { params: params as any });
+        return this.http.get<PaginatedBooksResponse>(`${this.apiUrl}/user-books`, { params: params as Record<string, string | number | readonly string[]> });
     }
 
     public getBookById(id: string): Observable<Book> {
@@ -71,5 +73,9 @@ export class BooksService {
 
   public getRecommendations(): Observable<SearchBook[]> {
     return this.http.get<SearchBook[]>(`${this.apiUrl}/user-books/recommendations`);
+  }
+
+  public updateReadingProgress(id: string, pagesRead: number): Observable<{ userBook: Book; log: unknown }> {
+    return this.http.patch<{ userBook: Book; log: unknown }>(`${this.apiUrl}/user-books/${id}/progress`, { pagesRead });
   }
 }

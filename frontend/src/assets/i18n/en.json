@@ -84,7 +84,12 @@
     "ABOUT-FEATURE-3-TITLE": "AI Recommendations",
     "ABOUT-FEATURE-4-TITLE": "Your thoughts matter",
     "ABOUT-WHY-TITLE": "Why readers choose StoryStack",
-    "PERSONAL_CABINET": "Hi there, {{username}}"
+    "PERSONAL_CABINET": "Hi there, {{username}}",
+    "ABOUT-WHY-1": "Intuitive and beautiful design — reading management is a pleasure",
+    "ABOUT-WHY-2": "Complete privacy — your books, notes and ratings only for you (or friends, if you want)",
+    "ABOUT-WHY-3": "Constant updates — new features, better recommendations, integrations",
+    "STATISTICS": "My Statistics",
+    "GOALS": "My Goals"
   },
   "PARAGRAPHS": {
     "ADVANTAGES-1": "Stay motivated by tracking reading activity, progress, and current page count in real time",
@@ -145,7 +150,10 @@
   "DROPDOWN_ITEMS": {
     "EXIT": "Exit",
     "PERSONAL_CABINET": "Personal cabinet",
-    "SETTINGS": "Settings"
+    "SETTINGS": "Settings",
+    "MY_LIBRARY": "My Library",
+    "MY_STATISTICS": "My Statistics",
+    "MY_GOALS": "My Goals"
   },
   "PERSONAL_CABINET": {
     "WELCOME": "Welcome back to your personal library.",
@@ -183,6 +191,7 @@
     "TITLE": "Title",
     "AUTHOR": "Author",
     "STATUS": "Status",
+    "PROGRESS": "Progress",
     "RATING": "Rating",
     "TAGS": "Tags",
     "ACTIONS": "Actions"
@@ -212,7 +221,8 @@
     "CHANGE_COVER": "Change Cover",
     "REMOVE_COVER": "Remove",
     "SAVING": "Saving...",
-    "OPTIONAL": "(Optional)"
+    "OPTIONAL": "(Optional)",
+    "TOTAL_PAGES": "Total Pages"
   },
   "TOAST": {
     "SUCCESS_ADD": "Book '{{title}}' successfully added to your library!",
@@ -225,6 +235,9 @@
     "WARNING_TITLE": "Action required",
     "SUCCESS_TITLE": "Success",
     "ERROR_TITLE": "Error",
-    "SUCCESS_ADD_RECOMMENDATION": "Recommended book added to library"
+    "SUCCESS_ADD_RECOMMENDATION": "Book added from recommendations",
+    "SUCCESS_GOAL_CREATE": "Reading goal created successfully",
+    "ERROR_GOAL_CREATE": "Failed to create reading goal",
+    "SUCCESS_PROGRESS_UPDATE": "Reading progress updated!"
   }
 }

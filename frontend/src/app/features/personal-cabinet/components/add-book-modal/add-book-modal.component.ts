@@ -13,6 +13,7 @@ import * as BooksActions from '../../../../shared/store/books/books.actions';
 import { selectBooksAdding } from '../../../../shared/store/books/books.selectors';
 import { ManualBookModalComponent } from '../manual-book-modal/manual-book-modal.component';
 import { ResolveUrlPipe } from '../../../../shared/pipes/resolve-url.pipe';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-add-book-modal',
@@ -21,7 +22,8 @@ import { ResolveUrlPipe } from '../../../../shared/pipes/resolve-url.pipe';
     CommonModule,
     ReactiveFormsModule,
     TranslateModule,
-    ResolveUrlPipe
+    ResolveUrlPipe,
+    MatIconModule
   ],
   templateUrl: './add-book-modal.component.html',
   styleUrls: ['./add-book-modal.component.scss']

@@ -44,6 +44,9 @@
       <div class="preview-info">
         <h3>{{ selectedBook()!.title }}</h3>
         <p class="preview-authors">{{ selectedBook()!.authors.join(', ') }}</p>
+        <p class="preview-pages" *ngIf="selectedBook()!.pageCount">
+          <mat-icon>menu_book</mat-icon> {{ selectedBook()!.pageCount }} pages
+        </p>
         <p class="preview-desc" *ngIf="selectedBook()!.description">{{ selectedBook()!.description }}</p>
       </div>
     </div>

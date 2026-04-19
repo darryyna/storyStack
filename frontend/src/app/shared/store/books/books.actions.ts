@@ -90,6 +90,21 @@ export const updateBookFailure = createAction(
     props<{ error: string }>()
 );
 
+export const updateProgress = createAction(
+    '[Books] Update Progress',
+    props<{ id: string; pagesRead: number }>()
+);
+
+export const updateProgressSuccess = createAction(
+    '[Books] Update Progress Success',
+    props<{ book: Book }>()
+);
+
+export const updateProgressFailure = createAction(
+    '[Books] Update Progress Failure',
+    props<{ error: string }>()
+);
+
 export const loadRecommendations = createAction('[Books] Load Recommendations');
 
 export const loadRecommendationsSuccess = createAction(

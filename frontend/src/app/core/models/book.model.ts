@@ -7,6 +7,8 @@ export interface SearchBook {
     authors: string[];
     thumbnail: string | null;
     description?: string | null;
+    pageCount?: number | null;
+    categories?: string[];
 }
 
 export const BookStatus = {
@@ -34,6 +36,8 @@ export interface Book {
         title: string;
         authors?: string[];
         thumbnail?: string;
+        pageCount?: number;
+        categories?: string[];
     };
 }
 
