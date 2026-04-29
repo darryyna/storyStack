@@ -144,10 +144,24 @@ exports.addUserBook = async (req, res) => {
 exports.getUserBooks = async (req, res) => {
   try {
     const userId = req.userId;
-    const { status, rating, tags, page = 1, limit = 10 } = req.query;
-
+    const { status, rating, tags, search, page = 1, limit = 10 } = req.query;
     const filter = { userId };
-    if (status) filter.status = status;
+
+    if (search) {
+      const matchingExternalBooks = await ExternalBookId.find({
+        title: { $regex: search, $options: 'i' }
+      }).select('_id');
+      const bookIds = matchingExternalBooks.map(b => b._id);
+      filter.bookId = { $in: bookIds };
+    }
+    if (status) {
+      if (status.startsWith('folder:')) {
+        const folderId = status.split(':')[1];
+        filter.folderId = folderId === 'null' ? null : folderId;
+      } else {
+        filter.status = status;
+      }
+    }
 
     if (rating !== undefined) {
       const numRating = Number(rating);
@@ -163,6 +177,7 @@ exports.getUserBooks = async (req, res) => {
       UserBook.countDocuments(filter),
       UserBook.find(filter)
         .populate('bookId')
+        .populate('folderId')
         .sort({ updatedAt: -1 })
         .skip(skip)
         .limit(parseInt(limit))
@@ -383,28 +398,65 @@ exports.updateReadingProgress = async (req, res) => {
     const userId = req.userId;
     const { id } = req.params;
     const { pagesRead } = req.body;
-    const userBook = await UserBook.findOne({ _id: id, userId }).populate('bookId');
-    if (!userBook) return res.status(404).json({ error: 'Book not found' });
-    const newPage = (userBook.currentPage || 0) + pagesRead;
-    if (userBook.bookId.pageCount && newPage >= userBook.bookId.pageCount) {
-        userBook.currentPage = userBook.bookId.pageCount;
-        userBook.status = 'completed';
-        userBook.finishedAt = new Date();
-    } else {
-        userBook.currentPage = newPage;
+
+    if (!Number.isInteger(pagesRead) || pagesRead <= 0) {
+      return res.status(400).json({ error: 'pagesRead must be a positive integer' });
     }
-    await userBook.save();
+
+    const userBook = await UserBook.findOne({ _id: id, userId }).populate('bookId');
+    if (!userBook) {
+      return res.status(404).json({ error: 'Book not found' });
+    }
+
+    if (!userBook.bookId) {
+      logger.error(`Orphaned UserBook: bookId population failed for UserBook ${id}`);
+      return res.status(500).json({ error: 'Book metadata not found' });
+    }
+
+    if (userBook.status === ReadingStatus.COMPLETED) {
+      return res.status(400).json({ error: 'Cannot update progress on a completed book' });
+    }
+
+    const totalPages = userBook.bookId.pageCount || 0;
+    const currentProgress = userBook.currentPage || 0;
+    const newPage = currentProgress + pagesRead;
+
+    const update = {};
+    if (totalPages > 0 && newPage >= totalPages) {
+      update.$set = {
+        currentPage: totalPages,
+        status: ReadingStatus.COMPLETED,
+        finishedAt: new Date()
+      };
+    } else {
+      update.$inc = { currentPage: pagesRead };
+    }
+
+    const updatedUserBook = await UserBook.findOneAndUpdate(
+      { _id: id, userId, status: { $ne: ReadingStatus.COMPLETED } },
+      update,
+      { new: true }
+    ).populate('bookId');
+
+    if (!updatedUserBook) {
+      return res.status(400).json({ error: 'Failed to update progress (book might be completed or deleted)' });
+    }
+
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
-    let log = await ReadingLog.findOne({ userId, userBookId: id, date: { $gte: startOfDay } });
-    if (log) {
-      log.pagesRead += pagesRead;
-      await log.save();
-    } else {
-      log = await ReadingLog.create({ userId, userBookId: id, date: new Date(), pagesRead });
-    }
-    res.json({ userBook, log });
+
+    const log = await ReadingLog.findOneAndUpdate(
+      { userId, userBookId: id, date: { $gte: startOfDay } },
+      {
+        $inc: { pagesRead },
+        $setOnInsert: { userId, userBookId: id, date: new Date() }
+      },
+      { upsert: true, new: true }
+    );
+
+    res.json({ userBook: updatedUserBook, log });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    logger.error(`Update Reading Progress Error: ${error.message}`);
+    res.status(500).json({ error: 'Failed to update reading progress' });
   }
 };

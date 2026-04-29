@@ -39,6 +39,7 @@ export class BooksService {
             if (filters.status) params['status'] = filters.status;
             if (filters.rating !== undefined) params['rating'] = filters.rating;
             if (filters.tags) params['tags'] = filters.tags;
+            if (filters.search) params['search'] = filters.search;
             if (filters.page) params['page'] = filters.page.toString();
             if (filters.limit) params['limit'] = filters.limit.toString();
         }

@@ -144,6 +144,7 @@
     "FORM-PASSWORD": "Password",
     "FORM-CONFIRM-PASSWORD": "Confirm Password",
     "FILTER_TAGS": "Separate tags with commas",
+    "SEARCH_BOOKS": "Search by title...",
     "ADD_TAG": "Add a tag...",
     "ADD_NOTE": "Write your thoughts here..."
   },
@@ -178,14 +179,19 @@
     "NO_NOTES_YET": "No notes yet. Start reading and write down your thoughts!",
     "NO_RECOMMENDATIONS": "Not enough data for recommendations. Read and rate more books to get personalized suggestions!",
     "ADD_TO_LIBRARY": "Add to Library",
-    "RECOMMENDATION_ADDED": "Book added to your library!"
-
+    "RECOMMENDATION_ADDED": "Book added to your library!",
+    "CREATE_FOLDER": "Create Folder",
+    "FOLDER_ALREADY_EXISTS": "Folder with this name already exists",
+    "NO_BOOKS_IN_FOLDER": "No books in this folder yet",
+    "BOOKS_IN_FOLDER": "Books in this folder",
+    "REMOVE_FROM_FOLDER": "Remove from folder"
   },
   "FILTERS": {
     "STATUS": "Status",
     "ALL_STATUSES": "All Statuses",
     "RATING": "Rating",
-    "TAGS": "Tags"
+    "TAGS": "Tags",
+    "SEARCH": "Search"
   },
   "TABLE": {
     "TITLE": "Title",
@@ -194,6 +200,7 @@
     "PROGRESS": "Progress",
     "RATING": "Rating",
     "TAGS": "Tags",
+    "FOLDER": "Folder",
     "ACTIONS": "Actions"
   },
   "BOOKS_LIST": {
@@ -238,6 +245,11 @@
     "SUCCESS_ADD_RECOMMENDATION": "Book added from recommendations",
     "SUCCESS_GOAL_CREATE": "Reading goal created successfully",
     "ERROR_GOAL_CREATE": "Failed to create reading goal",
-    "SUCCESS_PROGRESS_UPDATE": "Reading progress updated!"
+    "SUCCESS_PROGRESS_UPDATE": "Reading progress updated!",
+    "SUCCESS_FOLDER_CREATE": "Folder created successfully",
+    "ERROR_FOLDER_CREATE": "Failed to create folder",
+    "SUCCESS_ADD_TO_FOLDER": "Books successfully added to folder",
+    "SUCCESS_FOLDER_DELETE": "Folder deleted successfully",
+    "ERROR_FOLDER_DELETE": "Failed to delete folder"
   }
 }

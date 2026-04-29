@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, effect, viewChild, TemplateRef } from '@angular/core';
+import { Component, inject, signal, OnInit, effect, viewChild, TemplateRef, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -15,6 +15,12 @@ import { LoaderComponent } from '../../../../shared/components/loader/loader.com
 import { ResolveUrlPipe } from '../../../../shared/pipes/resolve-url.pipe';
 import { FormsModule } from '@angular/forms';
 import { Actions, ofType } from '@ngrx/effects';
+import { FoldersService } from '../../../../core/services/folders.service';
+import { Folder } from '../../../../core/models/folder.model';
+import { CreateFolderModalComponent } from '../create-folder-modal/create-folder-modal.component';
+import { firstValueFrom, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import * as FoldersActions from '../../../../shared/store/folders/folders.actions';
+import { selectAllFolders } from '../../../../shared/store/folders/folders.selectors';
 
 @Component({
   selector: 'app-books-list',
@@ -31,6 +37,7 @@ export class BooksListComponent implements OnInit {
   private readonly actions$ = inject(Actions);
 
   protected readonly books = toSignal(this.store.select(selectAllBooks), { initialValue: [] });
+  protected readonly folders = toSignal(this.store.select(selectAllFolders), { initialValue: [] });
   protected readonly isLoading = toSignal(this.store.select(selectBooksLoading), { initialValue: false });
   protected readonly totalPages = toSignal(this.store.select(selectTotalPages), { initialValue: 0 });
   protected readonly currentPage = toSignal(this.store.select(selectCurrentPage), { initialValue: 1 });
@@ -43,9 +50,22 @@ export class BooksListComponent implements OnInit {
   protected statusFilter = signal<string>('');
   protected ratingFilter = signal<number | null>(null);
   protected tagFilter = signal<string>('');
+  protected searchFilter = signal<string>('');
   protected pageFilter = signal<number>(1);
+  private searchSubject = new Subject<string>();
+  protected selectedBookIds = signal<Set<string>>(new Set());
+  protected showFolderDropdown = signal<boolean>(false);
+  protected showCreateFolderModal = signal<boolean>(false);
 
   constructor() {
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      takeUntilDestroyed()
+    ).subscribe(value => {
+      this.searchFilter.set(value);
+    });
+
     effect(() => {
       const filters: BookFilters = {
         page: this.pageFilter(),
@@ -83,8 +103,23 @@ export class BooksListComponent implements OnInit {
         urlParams['tags'] = null;
       }
 
+      if (this.searchFilter()) {
+        filters.search = this.searchFilter();
+        urlParams['search'] = filters.search;
+      } else {
+        urlParams['search'] = null;
+      }
+
       this.store.dispatch(BooksActions.loadBooks({ filters }));
       this.updateUrl(urlParams);
+    }, { allowSignalWrites: true });
+
+    effect(() => {
+      this.statusFilter();
+      this.ratingFilter();
+      this.tagFilter();
+      this.searchFilter();
+      untracked(() => this.pageFilter.set(1));
     }, { allowSignalWrites: true });
 
     this.actions$.pipe(
@@ -102,12 +137,79 @@ export class BooksListComponent implements OnInit {
     });
   }
 
+  protected onSearch(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(value);
+  }
+
   ngOnInit(): void {
     const params = this.route.snapshot.queryParams;
     if (params['status']) this.statusFilter.set(params['status']);
     if (params['rating']) this.ratingFilter.set(Number(params['rating']));
     if (params['tags']) this.tagFilter.set(Array.isArray(params['tags']) ? params['tags'].join(', ') : params['tags']);
     if (params['page']) this.pageFilter.set(Number(params['page']));
+    this.store.dispatch(FoldersActions.loadFolders());
+  }
+
+  protected toggleSelectAll(event: any) {
+    const checked = event.target.checked;
+    if (checked) {
+      this.selectedBookIds.set(new Set(this.books().map(b => b.id!)));
+    } else {
+      this.selectedBookIds.set(new Set());
+    }
+  }
+
+  protected toggleSelectBook(id: string) {
+    const selected = new Set(this.selectedBookIds());
+    if (selected.has(id)) {
+      selected.delete(id);
+    } else {
+      selected.add(id);
+    }
+    this.selectedBookIds.set(selected);
+  }
+
+  protected isBookSelected(id: string): boolean {
+    return this.selectedBookIds().has(id);
+  }
+
+  protected get isAllSelected(): boolean {
+    return this.books().length > 0 && this.selectedBookIds().size === this.books().length;
+  }
+
+  protected toggleFolderDropdown() {
+    this.showFolderDropdown.update(v => !v);
+  }
+
+  protected addToFolder(folderId: string | null) {
+    const bookIds = Array.from(this.selectedBookIds());
+    if (bookIds.length > 0) {
+      this.store.dispatch(FoldersActions.addBooksToFolder({ folderId, bookIds }));
+      this.selectedBookIds.set(new Set());
+    }
+    this.showFolderDropdown.set(false);
+  }
+
+  protected removeFromFolder(bookId: string, event: Event) {
+    event.stopPropagation();
+    this.store.dispatch(FoldersActions.addBooksToFolder({ folderId: null, bookIds: [bookId] }));
+  }
+
+  protected openCreateFolderModal() {
+    this.dialog.open(CreateFolderModalComponent, {
+      width: '100%',
+      maxWidth: '500px',
+      panelClass: 'responsive-dialog',
+      autoFocus: false
+    }).afterClosed().subscribe((result: Folder | undefined) => {
+      if (result) {
+        const bookIds = Array.from(this.selectedBookIds());
+        this.store.dispatch(FoldersActions.createFolder({ folder: { ...result, bookIds } }));
+        this.selectedBookIds.set(new Set());
+      }
+    });
+    this.showFolderDropdown.set(false);
   }
 
   protected resetFilters(): void {
@@ -118,9 +220,9 @@ export class BooksListComponent implements OnInit {
   }
 
   protected goToPage(page: number): void {
-      if (page >= 1 && page <= this.totalPages()) {
-          this.pageFilter.set(page);
-      }
+    if (page >= 1 && page <= this.totalPages()) {
+      this.pageFilter.set(page);
+    }
   }
 
   private updateUrl(params: Record<string, string | number | string[] | null>): void {
@@ -140,6 +242,11 @@ export class BooksListComponent implements OnInit {
     });
   }
 
+  protected deleteFolder(id: string, event: Event): void {
+    event.stopPropagation();
+    this.store.dispatch(FoldersActions.deleteFolder({ id }));
+  }
+
   protected viewBook(id: string): void {
     this.router.navigate(['/personal-cabinet/books', id]);
   }
@@ -154,6 +261,10 @@ export class BooksListComponent implements OnInit {
   }
 
   protected backToCabinet(): void {
-    this.router.navigate(['/personal-cabinet']);
+    if (this.statusFilter().startsWith('folder:')) {
+      this.statusFilter.set('');
+    } else {
+      this.router.navigate(['/personal-cabinet']);
+    }
   }
 }
