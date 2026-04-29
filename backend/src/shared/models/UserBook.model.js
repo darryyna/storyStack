@@ -45,6 +45,11 @@ const UserBookSchema = new mongoose.Schema({
         type: Number,
         min: 0
     },
+    folderId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Folder',
+        default: null
+    }
 }, {
     timestamps: true
 });

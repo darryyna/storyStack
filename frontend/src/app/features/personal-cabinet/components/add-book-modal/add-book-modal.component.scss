@@ -156,6 +156,22 @@
     margin: 0 0 12px 0;
   }
 
+  .preview-pages {
+    font-size: 14px;
+    color: var(--accent-base);
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
   .preview-desc {
     font-size: 13px;
     color: var(--text-muted);

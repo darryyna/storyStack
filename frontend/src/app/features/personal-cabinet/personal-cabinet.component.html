@@ -108,30 +108,42 @@
     <span>{{ 'PERSONAL_CABINET.RECOMMENDATION' | translate }}</span>
     <span class="divider-line"></span>
   </h2>
-  <div class="recommendations-grid">
-    @for (book of recommendations(); track book.id) {
-      <div class="recommendation-card">
-        <h4 class="rec-title">{{ book.title }}</h4>
-        <p class="rec-authors">{{ book.authors.join(', ') }}</p>
-        <p class="rec-desc">{{ book.description }}</p>
+  @if (recommendationsLoading()) {
+    <div class="loader-container">
+      <div class="spinner"></div>
+    </div>
+  } @else if (recommendations().length === 0) {
+    <div class="empty-state-card">
+      <p>{{ 'PERSONAL_CABINET.NO_RECOMMENDATIONS' | translate }}</p>
+    </div>
+  } @else {
+    <div class="recommendations-grid">
+      @for (book of recommendations(); track book.id) {
+        <div class="recommendation-card">
+          <h4 class="rec-title">{{ book.title }}</h4>
+          <p class="rec-authors">{{ book.authors.join(', ') }}</p>
+          <p class="rec-desc">{{ book.description }}</p>
 
-        @if (isRecommendationAdded(book.id)) {
-          <span class="rec-added-label">
-          {{ 'PERSONAL_CABINET.RECOMMENDATION_ADDED' | translate }}
-        </span>
-        } @else {
-          <button
-            class="btn btn-primary rec-add-btn"
-            [disabled]="isRecommendationAdding(book.id)"
-            (click)="addRecommendedBook(book, $event)">
-            @if (isRecommendationAdding(book.id)) {
-              {{ 'ACTIONS.LOADING' | translate }}
-            } @else {
-              {{ 'PERSONAL_CABINET.ADD_TO_LIBRARY' | translate }}
-            }
-          </button>
-        }
-      </div>
-    }
-  </div>
+          @if (isRecommendationAdded(book.id)) {
+            <span class="rec-added-label">
+            {{ 'PERSONAL_CABINET.RECOMMENDATION_ADDED' | translate }}
+          </span>
+          } @else {
+            <button
+              class="btn btn-primary rec-add-btn"
+              [disabled]="isRecommendationAdding(book.id)"
+              (click)="addRecommendedBook(book, $event)">
+
+              @if (isRecommendationAdding(book.id)) {
+                <div class="spinner small"></div>
+              } @else {
+                {{ 'PERSONAL_CABINET.ADD_TO_LIBRARY' | translate }}
+              }
+
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
 </div>

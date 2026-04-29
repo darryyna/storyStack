@@ -1,0 +1,88 @@
+<div class="stats-container">
+    <app-loader [isLoading]="isLoading()"></app-loader>
+
+    <header class="stats-header">
+        <h1>{{ 'HEADERS.STATISTICS' | translate }}</h1>
+        <p class="subtitle">Overview of your reading journey</p>
+    </header>
+
+    @if (stats(); as s) {
+    <div class="stats-grid">
+        <div class="summary-cards">
+            <div class="card summary-card">
+                <mat-icon>menu_book</mat-icon>
+                <div class="summary-content">
+                    <span class="value">{{ s.totalBooks }}</span>
+                    <span class="label">Total Books</span>
+                </div>
+            </div>
+            <div class="card summary-card">
+                <mat-icon>check_circle</mat-icon>
+                <div class="summary-content">
+                    <span class="value">{{ s.booksRead }}</span>
+                    <span class="label">Books Read</span>
+                </div>
+            </div>
+            <div class="card summary-card">
+                <mat-icon>auto_stories</mat-icon>
+                <div class="summary-content">
+                    <span class="value">{{ s.totalCurrentPages }}</span>
+                    <span class="label">Pages Read</span>
+                </div>
+            </div>
+            <div class="card summary-card">
+                <mat-icon>star</mat-icon>
+                <div class="summary-content">
+                    <span class="value">{{ (s.avgRating || 0) | number:'1.1-1' }}</span>
+                    <span class="label">Avg Rating</span>
+                </div>
+            </div>
+            <div class="card summary-card goals-achieved">
+                <mat-icon>emoji_events</mat-icon>
+                <div class="summary-content">
+                    <span class="value">{{ s.achievedGoals || 0 }}</span>
+                    <span class="label">Goals Achieved</span>
+                </div>
+            </div>
+        </div>
+        <div class="card chart-card full-width">
+            <h2 class="card-title">Reading Activity (Last 30 Days)</h2>
+            <div class="chart-wrapper">
+                <canvas baseChart [data]="activityChartData" [options]="activityChartOptions" [type]="'bar'">
+                </canvas>
+            </div>
+        </div>
+        <div class="secondary-grid">
+            <div class="card chart-card">
+                <h2 class="card-title">Top Genres</h2>
+                <div class="chart-wrapper doughnut">
+                    <canvas baseChart [data]="genreChartData" [type]="'doughnut'">
+                    </canvas>
+                </div>
+            </div>
+
+            <div class="card chart-card">
+                <h2 class="card-title">Books per Year</h2>
+                <div class="chart-wrapper">
+                    <canvas baseChart [data]="yearChartData" [type]="'line'">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+        <div class="card tags-card">
+            <h2 class="card-title">Favorite Tags</h2>
+            <div class="tags-cloud">
+                @for (tag of s.topTags; track tag._id) {
+                <div class="tag-item">
+                    <span class="tag-name">#{{ tag._id }}</span>
+                    <span class="tag-count">{{ tag.count }}</span>
+                </div>
+                }
+                @if (s.topTags.length === 0) {
+                    <p class="empty-hint">No tags yet</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
+</div>

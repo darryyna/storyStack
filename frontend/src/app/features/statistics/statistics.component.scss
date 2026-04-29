@@ -1,0 +1,143 @@
+.stats-container {
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.stats-header {
+    margin-bottom: 32px;
+    
+    h1 {
+        font-size: 32px;
+        font-weight: 800;
+        margin: 0;
+        color: var(--text-primary);
+    }
+    
+    .subtitle {
+        color: var(--text-secondary);
+        font-size: 16px;
+        margin-top: 4px;
+    }
+}
+
+.stats-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.card {
+    background: var(--background-section);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.summary-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    mat-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+        color: var(--accent-base);
+    }
+
+    &.goals-achieved mat-icon {
+        color: #FBBF24;
+    }
+    
+    .summary-content {
+        display: flex;
+        flex-direction: column;
+        
+        .value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        
+        .label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+    }
+}
+
+.chart-card {
+    .card-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 24px;
+        color: var(--text-primary);
+    }
+    
+    .chart-wrapper {
+        height: 300px;
+        position: relative;
+        
+        &.doughnut {
+            height: 250px;
+            display: flex;
+            justify-content: center;
+        }
+    }
+}
+
+.secondary-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    
+    @media (min-width: 992px) {
+        grid-template-columns: 400px 1fr;
+    }
+}
+
+.tags-card {
+    .tags-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        
+        .tag-item {
+            background: rgba(109, 74, 255, 0.1);
+            border: 1px solid rgba(109, 74, 255, 0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            
+            .tag-name {
+                color: var(--accent-base);
+                font-weight: 600;
+            }
+            
+            .tag-count {
+                background: var(--accent-base);
+                color: white;
+                font-size: 11px;
+                padding: 2px 6px;
+                border-radius: 10px;
+            }
+        }
+    }
+    
+    .empty-hint {
+        color: var(--text-muted);
+        font-style: italic;
+    }
+}

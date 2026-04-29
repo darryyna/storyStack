@@ -15,7 +15,7 @@ async function search(query, limit = 10) {
         params: {
             q: query,
             limit,
-            fields: 'key,title,author_name,cover_i,first_sentence'
+            fields: 'key,title,author_name,cover_i,first_sentence,number_of_pages_median,subject'
         },
         headers: {
             'User-Agent': 'StoryStack/1.0 (book-tracker-app)'
@@ -40,7 +40,9 @@ function normalizeOpenLibraryBook(doc) {
             : null,
         description: doc.first_sentence
             ? (Array.isArray(doc.first_sentence) ? doc.first_sentence[0] : doc.first_sentence)
-            : null
+            : null,
+        pageCount: doc.number_of_pages_median || (doc.number_of_pages ? doc.number_of_pages[0] : null),
+        categories: doc.subject || []
     };
 }
 

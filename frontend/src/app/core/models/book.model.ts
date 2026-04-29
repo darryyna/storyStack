@@ -1,3 +1,5 @@
+import { Folder } from './folder.model';
+
 export type BookSource = 'google' | 'openlibrary';
 
 export interface SearchBook {
@@ -7,6 +9,8 @@ export interface SearchBook {
     authors: string[];
     thumbnail: string | null;
     description?: string | null;
+    pageCount?: number | null;
+    categories?: string[];
 }
 
 export const BookStatus = {
@@ -28,12 +32,15 @@ export interface Book {
     startedAt?: Date;
     finishedAt?: Date;
     currentPage?: number;
+    folderId?: Folder;
     bookId: { // populated ExternalBookId
         _id: string;
         sourceId: string;
         title: string;
         authors?: string[];
         thumbnail?: string;
+        pageCount?: number;
+        categories?: string[];
     };
 }
 
@@ -49,6 +56,7 @@ export interface BookFilters {
     status?: string;
     rating?: number;
     tags?: string[];
+    search?: string;
     page?: number;
     limit?: number;
 }

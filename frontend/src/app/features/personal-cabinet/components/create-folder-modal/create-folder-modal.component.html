@@ -1,0 +1,51 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h2>{{ 'FOLDER_MODAL.TITLE' | translate }}</h2>
+    <button class="close-btn" (click)="onClose()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <form [formGroup]="folderForm" (ngSubmit)="onSubmit()" class="folder-form">
+    <div class="form-group">
+      <label for="name">{{ 'FOLDER_MODAL.NAME' | translate }} *</label>
+      <input type="text" id="name" formControlName="name" 
+             [placeholder]="'FOLDER_MODAL.NAME' | translate"
+             [class.error]="folderForm.get('name')?.invalid && folderForm.get('name')?.touched">
+      @if (folderForm.get('name')?.invalid && folderForm.get('name')?.touched) {
+        <span class="error-msg">{{ 'FORM_ERRORS.REQUIRED' | translate }}</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="description">{{ 'FOLDER_MODAL.DESCRIPTION' | translate }}</label>
+      <textarea id="description" formControlName="description" 
+                [placeholder]="'FOLDER_MODAL.DESCRIPTION' | translate" rows="3"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>{{ 'FOLDER_MODAL.COLOR' | translate }}</label>
+      <div class="color-picker">
+        @for (color of colors; track color) {
+          <div class="color-option" 
+               [style.background-color]="color"
+               [class.selected]="selectedColor === color"
+               (click)="selectColor(color)">
+            @if (selectedColor === color) {
+              <i class="fas fa-check"></i>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" (click)="onClose()">
+        {{ 'ACTIONS.CANCEL' | translate }}
+      </button>
+      <button type="submit" class="btn-primary" [disabled]="folderForm.invalid || isSubmitting">
+        {{ isSubmitting ? ('ACTIONS.LOADING' | translate) : ('ACTIONS.SAVE' | translate) }}
+      </button>
+    </div>
+  </form>
+</div>

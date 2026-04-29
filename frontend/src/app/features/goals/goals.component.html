@@ -1,0 +1,109 @@
+<div class="goals-container">
+    <app-loader [isLoading]="isLoading()"></app-loader>
+
+    <header class="goals-header">
+        <div class="header-content">
+            <h1>{{ 'HEADERS.GOALS' | translate }}</h1>
+            <p class="subtitle">Set and track your reading targets</p>
+        </div>
+        <button class="btn btn-primary" (click)="toggleCreate()">
+            <mat-icon>{{ isCreating() ? 'close' : 'add' }}</mat-icon>
+            {{ isCreating() ? 'Cancel' : 'Create Goal' }}
+        </button>
+    </header>
+
+    @if (isCreating()) {
+    <div class="card create-goal-card">
+        <h2 class="card-title">New Reading Goal</h2>
+        <form [formGroup]="goalForm" (ngSubmit)="onSubmit()" class="goal-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Goal Name</label>
+                    <input type="text" formControlName="name" placeholder="e.g. Summer Reading 2024" class="modern-input">
+                </div>
+
+                <div class="form-group">
+                    <label>Duration</label>
+                    <select formControlName="type" class="modern-select">
+                        <option value="MONTH">Monthly</option>
+                        <option value="QUARTER">Quarterly</option>
+                        <option value="HALF_YEAR">Half Year</option>
+                        <option value="YEAR">Yearly</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Goal Type</label>
+                    <select formControlName="goalType" class="modern-select">
+                        <option value="BOOKS_COUNT">Books Count</option>
+                        <option value="PAGES_COUNT">Pages Count</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Target Value</label>
+                    <input type="number" formControlName="targetCount" class="modern-input">
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Specific Category (Optional)</label>
+                    <input type="text" formControlName="category" placeholder="e.g. Fantasy, History" class="modern-input">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" [disabled]="goalForm.invalid">Start Goal</button>
+            </div>
+        </form>
+    </div>
+    }
+
+    <div class="goals-list">
+        @for (goal of goals(); track goal.id) {
+        <div class="card goal-card" [class.achieved]="goal.isAchieved">
+            <div class="goal-header">
+                <div class="goal-info">
+                    <h3 class="goal-name">{{ goal.name }}</h3>
+                    <div class="goal-meta">
+                        <span class="goal-type-badge">{{ goal.goalType === 'BOOKS_COUNT' ? 'Books' : 'Pages' }}</span>
+                        <span class="goal-duration">{{ goal.type | titlecase }}</span>
+                        <span class="goal-category" *ngIf="goal.category">#{{ goal.category }}</span>
+                    </div>
+                </div>
+                <button class="delete-btn" (click)="goal.id && deleteGoal(goal.id)">
+                    <mat-icon>delete_outline</mat-icon>
+                </button>
+            </div>
+
+            <div class="goal-progress-section">
+                <div class="progress-info">
+                    <span class="progress-count">{{ goal.currentCount || 0 }} / {{ goal.targetCount }}</span>
+                    <span class="progress-percent">{{ goal.progressPercent }}%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" [style.width.%]="goal.progressPercent"></div>
+                </div>
+                <div class="goal-dates">
+                    <span>From: {{ goal.startDate | date:'shortDate' }}</span>
+                    <span>To: {{ goal.endDate | date:'shortDate' }}</span>
+                </div>
+            </div>
+            
+            @if (goal.isAchieved) {
+                <div class="achievement-badge">
+                    <mat-icon>emoji_events</mat-icon>
+                    <span>Achieved!</span>
+                </div>
+            }
+        </div>
+        }
+
+        @if (goals().length === 0 && !isCreating() && !isLoading()) {
+        <div class="empty-state">
+            <mat-icon>flag</mat-icon>
+            <p>You haven't set any goals yet.</p>
+            <button class="btn btn-primary" (click)="toggleCreate()">Set Your First Goal</button>
+        </div>
+        }
+    </div>
+</div>

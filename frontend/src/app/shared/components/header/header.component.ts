@@ -9,7 +9,7 @@ import { selectCurrentUser, selectIsAuthenticated } from '../../store/auth/auth.
 import { logoutUser } from '../../store/auth/auth.actions';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UpperCasePipe } from '@angular/common';
-import { MenuType } from '../../helpers/ui-models';
+import { HeaderRoutes, MenuType } from '../../helpers/ui-models';
 
 
 @Component({
@@ -36,6 +36,8 @@ export class HeaderComponent {
     { initialValue: undefined }
   );
   private readonly activeMenu = signal<MenuType>(null);
+  protected readonly headerRoutes = HeaderRoutes;
+
 
   protected readonly isMenuOpen = computed(
     () => this.activeMenu() === 'main'
@@ -60,9 +62,9 @@ export class HeaderComponent {
     this.themeService.toggleTheme();
   }
 
-  protected navigateToCabinet(): void {
+  protected navigateTo(path: HeaderRoutes): void {
+    this.router.navigate([path]);
     this.closeMenu();
-    this.router.navigate(['/personal-cabinet']);
   }
 
   protected onLogout(event: Event): void {
@@ -91,4 +93,6 @@ export class HeaderComponent {
       this.closeMenu();
     }
   }
+
+  protected readonly HeaderRoutes = HeaderRoutes;
 }

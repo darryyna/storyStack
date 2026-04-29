@@ -14,10 +14,13 @@ import { booksReducer } from './app/shared/store/books/books.reducer';
 import { BooksEffects } from './app/shared/store/books/books.effects';
 import { uiReducer } from './app/shared/store/ui/ui.reducer';
 import { UiEffects } from './app/shared/store/ui/ui.effects';
+import { foldersReducer } from './app/shared/store/folders/folders.reducer';
+import { FoldersEffects } from './app/shared/store/folders/folders.effects';
 import { provideEffects } from '@ngrx/effects';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { AuthInterceptor } from './app/core/interceptors/auth.interceptor';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -35,12 +38,13 @@ bootstrapApplication(AppComponent, {
         loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] },
       }),
     ),
-    provideStore({ auth: authReducer, books: booksReducer, ui: uiReducer }),
+    provideStore({ auth: authReducer, books: booksReducer, ui: uiReducer, folders: foldersReducer }),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode(),
       autoPause: true,
     }),
-    provideEffects([AuthEffects, BooksEffects, UiEffects]),
+    provideEffects([AuthEffects, BooksEffects, UiEffects, FoldersEffects]),
+    provideCharts(withDefaultRegisterables()),
   ],
 });

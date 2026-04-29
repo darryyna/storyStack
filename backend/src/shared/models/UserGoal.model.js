@@ -7,21 +7,38 @@ const UserGoalSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    year: {
-        type: Number,
+    name: {
+        type: String,
         required: true,
-        min: 1900,
-        max: currentYear + 3
+        trim: true
     },
-    goal: {
+    type: {
+        type: String,
+        enum: ['MONTH', 'QUARTER', 'HALF_YEAR', 'YEAR'],
+        required: true
+    },
+    goalType: {
+        type: String,
+        enum: ['BOOKS_COUNT', 'PAGES_COUNT'],
+        required: true
+    },
+    startDate: {
+        type: Date,
+        required: true
+    },
+    endDate: {
+        type: Date,
+        required: true
+    },
+    targetCount: {
         type: Number,
         required: true,
         min: 1
     },
-    completed: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'UserBook'
-    }],
+    category: {
+        type: String,
+        trim: true
+    },
     isAchieved: {
         type: Boolean,
         default: false

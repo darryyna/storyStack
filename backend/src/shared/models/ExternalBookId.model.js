@@ -19,7 +19,13 @@ const BookIdSchema = new mongoose.Schema({
     },
     description: {
         type: String
-    }
+    },
+    pageCount: {
+        type: Number
+    },
+    categories: [{
+        type: String
+    }]
 });
 
 BookIdSchema.virtual('id').get(function () {

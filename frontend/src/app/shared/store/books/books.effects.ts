@@ -150,6 +150,31 @@ export class BooksEffects {
         )
     );
 
+    updateProgress$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(BooksActions.updateProgress),
+            switchMap(({ id, pagesRead }) =>
+                this.booksService.updateReadingProgress(id, pagesRead).pipe(
+                    switchMap(response => [
+                        BooksActions.updateProgressSuccess({ book: response.userBook }),
+                        BooksActions.loadBook({ id })
+                    ]),
+                    catchError(error => of(BooksActions.updateProgressFailure({ error: error.message })))
+                )
+            )
+        )
+    );
+
+    updateProgressSuccess$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(BooksActions.updateProgressSuccess),
+            map(() => UiActions.showToast({
+                toastType: UiActions.ToastType.Success,
+                messageKey: 'TOAST.SUCCESS_PROGRESS_UPDATE'
+            }))
+        )
+    );
+
     loadLatestNote$ = createEffect(() =>
         this.actions$.pipe(
             ofType(BooksActions.loadLatestNote),
