@@ -10,5 +10,6 @@ router.get('/', folderController.getFolders);
 router.put('/:id', folderController.updateFolder);
 router.delete('/:id', folderController.deleteFolder);
 router.post('/:id/books', folderController.addBooksToFolder);
+router.delete('/:id/books', folderController.removeBooksFromFolder);
 
 module.exports = router;

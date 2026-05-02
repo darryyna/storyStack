@@ -117,3 +117,21 @@ exports.addBooksToFolder = async (req, res) => {
         res.status(500).json({ message: 'Error adding books to folder' });
     }
 };
+
+exports.removeBooksFromFolder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { bookIds } = req.body;
+    const userId = req.userId;
+
+    await UserBook.updateMany(
+      { _id: { $in: bookIds }, userId },
+      { $set: { folderId: null } }
+    );
+
+    res.json({ message: 'Books removed from folder successfully' });
+  } catch (error) {
+    logger.error('Error removing books from folder:', error);
+    res.status(500).json({ message: 'Error removing books from folder' });
+  }
+};
