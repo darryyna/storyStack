@@ -262,5 +262,48 @@
     "ERROR_FOLDER_DELETE": "Failed to delete folder",
     "SUCCESS_REMOVE_FROM_FOLDER": "Book removed from folder successfully",
     "ERROR_REMOVE_FROM_FOLDER": "Failed to remove book from folder"
+  },
+  "GOALS": {
+    "SUBTITLE": "Set and track your reading targets",
+    "CREATE_BUTTON": "Create Goal",
+    "NEW_GOAL_TITLE": "New Reading Goal",
+    "ACHIEVED_LABEL": "Achieved!",
+    "EMPTY_STATE": "You haven't set any goals yet.",
+    "EMPTY_STATE_CTA": "Set Your First Goal",
+    "DATE_FROM": "From",
+    "DATE_TO": "To",
+    "FORM": {
+      "NAME_LABEL": "Goal Name",
+      "NAME_PLACEHOLDER": "e.g. Summer Reading 2024",
+      "DURATION_LABEL": "Duration",
+      "GOAL_TYPE_LABEL": "Goal Type",
+      "TARGET_LABEL": "Target Value",
+      "CATEGORY_LABEL": "Specific Category (Optional)",
+      "CATEGORY_PLACEHOLDER": "e.g. Fantasy, History",
+      "SUBMIT": "Start Goal"
+    },
+    "DURATION": {
+      "MONTH": "Monthly",
+      "QUARTER": "Quarterly",
+      "HALF_YEAR": "Half Year",
+      "YEAR": "Yearly"
+    },
+    "GOAL_TYPE": {
+      "BOOKS_COUNT": "Books Count",
+      "PAGES_COUNT": "Pages Count"
+    },
+    "AI_PREDICTION": {
+      "TRIGGER": "AI Prediction",
+      "LOADING": "Analysing your reading habits...",
+      "ERROR": "Could not load prediction.",
+      "RETRY": "Retry",
+      "LABEL": "AI Prediction",
+      "ON_TRACK": "On track ✓",
+      "NEEDS_EFFORT": "Needs effort ⚡",
+      "PAGES_PER_DAY": "pages/day needed",
+      "BOOKS_PER_MONTH": "books/month needed",
+      "AT_CURRENT_PACE": "At current pace",
+      "DAYS": "days"
+    }
   }
 }

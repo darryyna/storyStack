@@ -14,7 +14,7 @@
   <section class="filters-section">
     <div class="filter-group">
       <label>{{ 'FILTERS.STATUS' | translate }}</label>
-      <select [(ngModel)]="statusFilter" class="modern-select">
+      <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)" class="modern-select">
         <option value="">{{ 'FILTERS.ALL_STATUSES' | translate }}</option>
         @for (status of statuses; track status) {
         <option [value]="status">{{ 'readingStatus.' + status | translate }}</option>
@@ -37,7 +37,7 @@
 
     <div class="filter-group">
       <label>{{ 'FILTERS.TAGS' | translate }}</label>
-      <input type="text" [(ngModel)]="tagFilter" [placeholder]="'PLACEHOLDERS.FILTER_TAGS' | translate"
+      <input type="text" [ngModel]="tagFilter()" (ngModelChange)="tagFilter.set($event)" [placeholder]="'PLACEHOLDERS.FILTER_TAGS' | translate"
         class="modern-input" />
     </div>
 

@@ -4,106 +4,169 @@
     <header class="goals-header">
         <div class="header-content">
             <h1>{{ 'HEADERS.GOALS' | translate }}</h1>
-            <p class="subtitle">Set and track your reading targets</p>
+            <p class="subtitle">{{ 'GOALS.SUBTITLE' | translate }}</p>
         </div>
         <button class="btn btn-primary" (click)="toggleCreate()">
             <mat-icon>{{ isCreating() ? 'close' : 'add' }}</mat-icon>
-            {{ isCreating() ? 'Cancel' : 'Create Goal' }}
+          {{ isCreating() ? ('ACTIONS.CANCEL' | translate) : ('GOALS.CREATE_BUTTON' | translate) }}
         </button>
     </header>
 
     @if (isCreating()) {
-    <div class="card create-goal-card">
-        <h2 class="card-title">New Reading Goal</h2>
+      <div class="card create-goal-card">
+        <h2 class="card-title">{{ 'GOALS.NEW_GOAL_TITLE' | translate }}</h2>
         <form [formGroup]="goalForm" (ngSubmit)="onSubmit()" class="goal-form">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Goal Name</label>
-                    <input type="text" formControlName="name" placeholder="e.g. Summer Reading 2024" class="modern-input">
-                </div>
-
-                <div class="form-group">
-                    <label>Duration</label>
-                    <select formControlName="type" class="modern-select">
-                        <option value="MONTH">Monthly</option>
-                        <option value="QUARTER">Quarterly</option>
-                        <option value="HALF_YEAR">Half Year</option>
-                        <option value="YEAR">Yearly</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Goal Type</label>
-                    <select formControlName="goalType" class="modern-select">
-                        <option value="BOOKS_COUNT">Books Count</option>
-                        <option value="PAGES_COUNT">Pages Count</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Target Value</label>
-                    <input type="number" formControlName="targetCount" class="modern-input">
-                </div>
-
-                <div class="form-group full-width">
-                    <label>Specific Category (Optional)</label>
-                    <input type="text" formControlName="category" placeholder="e.g. Fantasy, History" class="modern-input">
-                </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>{{ 'GOALS.FORM.NAME_LABEL' | translate }}</label>
+              <input type="text" formControlName="name" [placeholder]="'GOALS.FORM.NAME_PLACEHOLDER' | translate" class="modern-input">
             </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary" [disabled]="goalForm.invalid">Start Goal</button>
+            <div class="form-group">
+              <label>{{ 'GOALS.FORM.DURATION_LABEL' | translate }}</label>
+              <select formControlName="type" class="modern-select">
+                <option value="MONTH">{{ 'GOALS.DURATION.MONTH' | translate }}</option>
+                <option value="QUARTER">{{ 'GOALS.DURATION.QUARTER' | translate }}</option>
+                <option value="HALF_YEAR">{{ 'GOALS.DURATION.HALF_YEAR' | translate }}</option>
+                <option value="YEAR">{{ 'GOALS.DURATION.YEAR' | translate }}</option>
+              </select>
             </div>
+
+            <div class="form-group">
+              <label>{{ 'GOALS.FORM.GOAL_TYPE_LABEL' | translate }}</label>
+              <select formControlName="goalType" class="modern-select">
+                <option value="BOOKS_COUNT">{{ 'GOALS.GOAL_TYPE.BOOKS_COUNT' | translate }}</option>
+                <option value="PAGES_COUNT">{{ 'GOALS.GOAL_TYPE.PAGES_COUNT' | translate }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'GOALS.FORM.TARGET_LABEL' | translate }}</label>
+              <input type="number" formControlName="targetCount" class="modern-input">
+            </div>
+
+            <div class="form-group full-width">
+              <label>{{ 'GOALS.FORM.CATEGORY_LABEL' | translate }}</label>
+              <input type="text" formControlName="category" [placeholder]="'GOALS.FORM.CATEGORY_PLACEHOLDER' | translate" class="modern-input">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="goalForm.invalid">{{ 'GOALS.FORM.SUBMIT' | translate }}</button>
+          </div>
         </form>
-    </div>
+      </div>
     }
 
     <div class="goals-list">
-        @for (goal of goals(); track goal.id) {
+      @for (goal of goals(); track goal.id) {
         <div class="card goal-card" [class.achieved]="goal.isAchieved">
-            <div class="goal-header">
-                <div class="goal-info">
-                    <h3 class="goal-name">{{ goal.name }}</h3>
-                    <div class="goal-meta">
-                        <span class="goal-type-badge">{{ goal.goalType === 'BOOKS_COUNT' ? 'Books' : 'Pages' }}</span>
-                        <span class="goal-duration">{{ goal.type | titlecase }}</span>
-                        <span class="goal-category" *ngIf="goal.category">#{{ goal.category }}</span>
-                    </div>
-                </div>
-                <button class="delete-btn" (click)="goal.id && deleteGoal(goal.id)">
-                    <mat-icon>delete_outline</mat-icon>
-                </button>
-            </div>
-
-            <div class="goal-progress-section">
-                <div class="progress-info">
-                    <span class="progress-count">{{ goal.currentCount || 0 }} / {{ goal.targetCount }}</span>
-                    <span class="progress-percent">{{ goal.progressPercent }}%</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" [style.width.%]="goal.progressPercent"></div>
-                </div>
-                <div class="goal-dates">
-                    <span>From: {{ goal.startDate | date:'shortDate' }}</span>
-                    <span>To: {{ goal.endDate | date:'shortDate' }}</span>
-                </div>
-            </div>
-            
-            @if (goal.isAchieved) {
-                <div class="achievement-badge">
+          <div class="goal-header">
+            <div class="goal-info">
+              <div class="goal-name-row">
+                <h3 class="goal-name">{{ goal.name }}</h3>
+                @if (goal.isAchieved) {
+                  <div class="achievement-badge">
                     <mat-icon>emoji_events</mat-icon>
-                    <span>Achieved!</span>
-                </div>
-            }
-        </div>
-        }
+                    <span>{{ 'GOALS.ACHIEVED_LABEL' | translate }}</span>
+                  </div>
+                }
+              </div>
+              <div class="goal-meta">
+                <span class="goal-type-badge">{{ goal.goalType === 'BOOKS_COUNT' ? ('GOALS.GOAL_TYPE.BOOKS_COUNT' | translate) : ('GOALS.GOAL_TYPE.PAGES_COUNT' | translate) }}</span>
+                <span class="goal-duration">{{ goal.type | titlecase }}</span>
+                <span class="goal-category" *ngIf="goal.category">#{{ goal.category }}</span>
+              </div>
+            </div>
+            <button class="delete-btn" *ngIf="!goal.isAchieved" (click)="goal.id && deleteGoal(goal.id)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
 
-        @if (goals().length === 0 && !isCreating() && !isLoading()) {
-        <div class="empty-state">
-            <mat-icon>flag</mat-icon>
-            <p>You haven't set any goals yet.</p>
-            <button class="btn btn-primary" (click)="toggleCreate()">Set Your First Goal</button>
+          <div class="goal-progress-section">
+            <div class="progress-info">
+              <span class="progress-count">{{ goal.currentCount || 0 }} / {{ goal.targetCount }}</span>
+              <span class="progress-percent">{{ goal.progressPercent }}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="goal.progressPercent"></div>
+            </div>
+            <div class="goal-dates">
+              <span>{{ 'GOALS.DATE_FROM' | translate }}: {{ goal.startDate | date:'shortDate' }}</span>
+              <span>{{ 'GOALS.DATE_TO' | translate }}: {{ goal.endDate | date:'shortDate' }}</span>
+            </div>
+          </div>
+
+          @if (goal.id && !goal.isAchieved) {
+            <div class="ai-prediction-section">
+              @if (!getPrediction(goal.id)) {
+                <button class="prediction-trigger-btn" (click)="loadPrediction(goal.id!)">
+                  <mat-icon>auto_awesome</mat-icon>
+                  {{ 'GOALS.AI_PREDICTION.TRIGGER' | translate }}
+                </button>
+              } @else if (getPrediction(goal.id)!.isLoading) {
+                <div class="prediction-loading">
+                  <div class="prediction-spinner"></div>
+                  <span>{{ 'GOALS.AI_PREDICTION.LOADING' | translate }}</span>
+                </div>
+              } @else if (getPrediction(goal.id)!.error) {
+                <div class="prediction-error">
+                  <mat-icon>error_outline</mat-icon>
+                  <span>{{ 'GOALS.AI_PREDICTION.ERROR' | translate }}</span>
+                  <button class="retry-btn" (click)="loadPrediction(goal.id!)">{{ 'GOALS.AI_PREDICTION.RETRY' | translate }}</button>
+                </div>
+              } @else {
+                @if (getPrediction(goal.id)!.data; as pred) {
+                  <div class="prediction-card" [class.achievable]="pred.isAchievable" [class.at-risk]="!pred.isAchievable">
+                    <div class="prediction-header">
+                      <mat-icon class="ai-icon">auto_awesome</mat-icon>
+                      <span class="prediction-label">{{ 'GOALS.AI_PREDICTION.LABEL' | translate }}</span>
+                      <span class="achievability-badge" [class.yes]="pred.isAchievable" [class.no]="!pred.isAchievable">
+                        {{ pred.isAchievable ? ('GOALS.AI_PREDICTION.ON_TRACK' | translate) : ('GOALS.AI_PREDICTION.NEEDS_EFFORT' | translate) }}
+                      </span>
+                    </div>
+
+                    <p class="prediction-message">{{ pred.shortMessage }}</p>
+
+                    <div class="prediction-stats">
+                      @if (pred.dailyPagesNeeded) {
+                        <div class="pred-stat">
+                          <mat-icon>menu_book</mat-icon>
+                          <span><strong>{{ pred.dailyPagesNeeded }}</strong> {{ 'GOALS.AI_PREDICTION.PAGES_PER_DAY' | translate }}</span>
+                        </div>
+                      }
+                      @if (pred.booksPerMonthNeeded) {
+                        <div class="pred-stat">
+                          <mat-icon>library_books</mat-icon>
+                          <span><strong>{{ pred.booksPerMonthNeeded }}</strong> {{ 'GOALS.AI_PREDICTION.BOOKS_PER_MONTH' | translate }}</span>
+                        </div>
+                      }
+                      @if (pred.estimatedCompletionDays !== null) {
+                        <div class="pred-stat">
+                          <mat-icon>schedule</mat-icon>
+                          <span>{{ 'GOALS.AI_PREDICTION.AT_CURRENT_PACE' | translate }}: <strong>~{{ pred.estimatedCompletionDays }} {{ 'GOALS.AI_PREDICTION.DAYS' | translate }}</strong></span>
+                        </div>
+                      }
+                    </div>
+
+                    <div class="prediction-tip">
+                      <mat-icon>tips_and_updates</mat-icon>
+                      <span>{{ pred.tip }}</span>
+                    </div>
+                  </div>
+                }
+              }
+            </div>
+          }
         </div>
-        }
+      }
+
+      @if (goals().length === 0 && !isCreating() && !isLoading()) {
+        <div class="empty-state">
+          <mat-icon>flag</mat-icon>
+          <p>{{ 'GOALS.EMPTY_STATE' | translate }}</p>
+          <button class="btn btn-primary" (click)="toggleCreate()">{{ 'GOALS.EMPTY_STATE_CTA' | translate }}</button>
+        </div>
+      }
     </div>
-</div>
+  </div>

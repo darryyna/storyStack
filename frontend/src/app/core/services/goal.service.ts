@@ -2,20 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-
-export interface Goal {
-    id?: string;
-    name: string;
-    type: 'MONTH' | 'QUARTER' | 'HALF_YEAR' | 'YEAR' | 'CUSTOM';
-    goalType: 'BOOKS_COUNT' | 'PAGES_COUNT';
-    startDate: string | Date;
-    endDate: string | Date;
-    targetCount: number;
-    currentCount?: number;
-    progressPercent?: number;
-    isAchieved?: boolean;
-    category?: string;
-}
+import { Goal } from '../../shared/models/goal.model';
+import { GoalPredictionResponse } from '../../shared/models/prediction.model';
 
 @Injectable({
     providedIn: 'root'
@@ -35,4 +23,8 @@ export class GoalService {
     deleteGoal(id: string): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
+
+  getGoalPrediction(id: string): Observable<GoalPredictionResponse> {
+    return this.http.get<GoalPredictionResponse>(`${this.apiUrl}/${id}/prediction`);
+  }
 }

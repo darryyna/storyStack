@@ -1,8 +1,8 @@
 const UserGoal = require('../models/UserGoal.model');
 const UserBook = require('../models/UserBook.model');
 const ReadingLog = require('../models/ReadingLog.model');
-const mongoose = require('mongoose');
 const logger = require('../configuration/logger');
+const geminiService = require('../services/gemini.service');
 
 exports.createGoal = async (req, res) => {
     try {
@@ -103,4 +103,101 @@ exports.deleteGoal = async (req, res) => {
         logger.error(`Delete Goal Error: ${error.message}`);
         res.status(500).json({ error: 'Failed to delete goal' });
     }
+};
+
+
+exports.getGoalPrediction = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { id } = req.params;
+
+    const goal = await UserGoal.findOne({ _id: id, userId });
+    if (!goal) {
+      return res.status(404).json({ error: 'Goal not found' });
+    }
+
+    let currentCount = 0;
+    if (goal.goalType === 'BOOKS_COUNT') {
+      currentCount = await UserBook.countDocuments({
+        userId,
+        status: 'completed',
+        finishedAt: { $gte: goal.startDate, $lte: goal.endDate }
+      });
+    } else {
+      const logs = await ReadingLog.find({
+        userId,
+        date: { $gte: goal.startDate, $lte: goal.endDate }
+      });
+      currentCount = logs.reduce((sum, l) => sum + l.pagesRead, 0);
+    }
+
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now);
+    thirtyDaysAgo.setDate(now.getDate() - 30);
+    const ninetyDaysAgo = new Date(now);
+    ninetyDaysAgo.setDate(now.getDate() - 90);
+
+    const logsLast30 = await ReadingLog.find({
+      userId,
+      date: { $gte: thirtyDaysAgo }
+    });
+    const logsLast90 = await ReadingLog.find({
+      userId,
+      date: { $gte: ninetyDaysAgo }
+    });
+
+    const uniqueDaysLast30 = new Set(
+      logsLast30.map(l => l.date.toISOString().split('T')[0])
+    ).size;
+
+    const totalPagesLast30 = logsLast30.reduce((s, l) => s + l.pagesRead, 0);
+    const avgPagesPerDay = uniqueDaysLast30 > 0
+      ? Math.round(totalPagesLast30 / uniqueDaysLast30)
+      : 0;
+    const activeDaysPerWeek = Math.round((uniqueDaysLast30 / 30) * 7 * 10) / 10;
+
+    const booksLast90 = await UserBook.countDocuments({
+      userId,
+      status: 'completed',
+      finishedAt: { $gte: ninetyDaysAgo }
+    });
+    const avgBooksPerMonth = Math.round((booksLast90 / 3) * 10) / 10;
+
+    const achievedGoalsCount = await UserGoal.countDocuments({ userId, isAchieved: true });
+
+    const daysUntilEnd = Math.max(0, Math.ceil((new Date(goal.endDate) - now) / (1000 * 60 * 60 * 24)));
+
+    const prediction = await geminiService.getGoalPrediction({
+      goal,
+      readingStats: {
+        avgPagesPerDay,
+        avgBooksPerMonth,
+        activeDaysPerWeek,
+        totalPagesLast30Days: totalPagesLast30,
+        totalBooksLast90Days: booksLast90,
+        achievedGoalsCount,
+        daysUntilEnd,
+        currentCount,
+        targetCount: goal.targetCount,
+        goalType: goal.goalType,
+        goalPeriod: goal.type,
+        goalName: goal.name,
+      }
+    });
+
+    res.json({
+      prediction,
+      stats: {
+        avgPagesPerDay,
+        avgBooksPerMonth,
+        activeDaysPerWeek,
+        currentCount,
+        daysUntilEnd,
+      }
+    });
+
+  } catch (error) {
+    logger.error(`Get Goal Prediction Error: ${error.message}`);
+    res.status(500).json({ error: 'Failed to get goal prediction' });
+  }
 };
