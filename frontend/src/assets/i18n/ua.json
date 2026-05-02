@@ -86,7 +86,8 @@
     "ABOUT-WHY-TITLE": "Чому читачі обирають StoryStack",
     "PERSONAL_CABINET": "Привіт, {{username}}",
     "STATISTICS": "Моя статистика",
-    "GOALS": "Мої цілі"
+    "GOALS": "Мої цілі",
+    "BOOK_COLLECTION": "Моя колекція книг"
   },
   "PARAGRAPHS": {
     "ADVANTAGES-1": "Залишайтеся вмотивованими, відстежуючи активність читання, прогрес і поточний підрахунок сторінок в режимі реального часу",
@@ -142,7 +143,8 @@
     "FORM-CONFIRM-PASSWORD": "Підтвердіть пароль",
     "FILTER_TAGS": "Розділяйте теги комами",
     "ADD_TAG": "Додати тег...",
-    "ADD_NOTE": "Напишіть ваші думки тут..."
+    "ADD_NOTE": "Напишіть ваші думки тут...",
+    "SEARCH_BOOKS": "Пошук за назвою..."
   },
   "DROPDOWN_ITEMS": {
     "EXIT": "Вийти",
@@ -184,7 +186,8 @@
     "STATUS": "Статус",
     "ALL_STATUSES": "Усі статуси",
     "RATING": "Рейтинг",
-    "TAGS": "Теги"
+    "TAGS": "Теги",
+    "SEARCH": "Пошук"
   },
   "TABLE": {
     "TITLE": "Назва",
@@ -193,7 +196,8 @@
     "PROGRESS": "Прогрес",
     "RATING": "Рейтинг",
     "TAGS": "Теги",
-    "ACTIONS": "Дії"
+    "ACTIONS": "Дії",
+    "FOLDER": "Папка"
   },
   "BOOKS_LIST": {
     "NO_BOOKS_FOUND": "Книг не знайдено за вашими фільтрами."
@@ -243,7 +247,9 @@
     "ERROR_FOLDER_CREATE": "Не вдалося створити папку",
     "SUCCESS_ADD_TO_FOLDER": "Книги успішно додано до папки",
     "SUCCESS_FOLDER_DELETE": "Папку успішно видалено",
-    "ERROR_FOLDER_DELETE": "Не вдалося видалити папку"
+    "ERROR_FOLDER_DELETE": "Не вдалося видалити папку",
+    "SUCCESS_REMOVE_FROM_FOLDER": "Книгу успішно вилучено з папки",
+    "ERROR_REMOVE_FROM_FOLDER": "Не вдалося вилучити книгу з папки"
   },
   "FOLDER_MODAL": {
     "TITLE": "Створити нову папку",

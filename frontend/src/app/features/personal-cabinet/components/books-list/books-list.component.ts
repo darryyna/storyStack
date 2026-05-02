@@ -15,10 +15,9 @@ import { LoaderComponent } from '../../../../shared/components/loader/loader.com
 import { ResolveUrlPipe } from '../../../../shared/pipes/resolve-url.pipe';
 import { FormsModule } from '@angular/forms';
 import { Actions, ofType } from '@ngrx/effects';
-import { FoldersService } from '../../../../core/services/folders.service';
 import { Folder } from '../../../../core/models/folder.model';
 import { CreateFolderModalComponent } from '../create-folder-modal/create-folder-modal.component';
-import { firstValueFrom, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import * as FoldersActions from '../../../../shared/store/folders/folders.actions';
 import { selectAllFolders } from '../../../../shared/store/folders/folders.selectors';
 
@@ -184,16 +183,34 @@ export class BooksListComponent implements OnInit {
 
   protected addToFolder(folderId: string | null) {
     const bookIds = Array.from(this.selectedBookIds());
-    if (bookIds.length > 0) {
+    if (bookIds.length === 0) return;
+
+    if (folderId === null) {
+      bookIds.forEach(bookId => {
+        const book = this.books().find(b => b.id === bookId);
+        if (book?.folderId?.id) {
+          this.store.dispatch(FoldersActions.removeBooksFromFolder({
+            folderId: book.folderId.id,
+            bookIds: [bookId]
+          }));
+        }
+      });
+    } else {
       this.store.dispatch(FoldersActions.addBooksToFolder({ folderId, bookIds }));
-      this.selectedBookIds.set(new Set());
     }
+
+    this.selectedBookIds.set(new Set());
     this.showFolderDropdown.set(false);
   }
 
   protected removeFromFolder(bookId: string, event: Event) {
     event.stopPropagation();
-    this.store.dispatch(FoldersActions.addBooksToFolder({ folderId: null, bookIds: [bookId] }));
+    const book = this.books().find(b => b.id === bookId);
+    if (!book?.folderId?.id) return;
+    this.store.dispatch(FoldersActions.removeBooksFromFolder({
+      folderId: book.folderId.id,
+      bookIds: [bookId]
+    }));
   }
 
   protected openCreateFolderModal() {

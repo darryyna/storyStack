@@ -89,7 +89,8 @@
     "ABOUT-WHY-2": "Complete privacy — your books, notes and ratings only for you (or friends, if you want)",
     "ABOUT-WHY-3": "Constant updates — new features, better recommendations, integrations",
     "STATISTICS": "My Statistics",
-    "GOALS": "My Goals"
+    "GOALS": "My Goals",
+    "BOOK_COLLECTION": "My Book Collection"
   },
   "PARAGRAPHS": {
     "ADVANTAGES-1": "Stay motivated by tracking reading activity, progress, and current page count in real time",
@@ -184,7 +185,8 @@
     "FOLDER_ALREADY_EXISTS": "Folder with this name already exists",
     "NO_BOOKS_IN_FOLDER": "No books in this folder yet",
     "BOOKS_IN_FOLDER": "Books in this folder",
-    "REMOVE_FROM_FOLDER": "Remove from folder"
+    "REMOVE_FROM_FOLDER": "Remove from folder",
+    "ADD_TO_FOLDER": "Add to Folder"
   },
   "FILTERS": {
     "STATUS": "Status",
@@ -202,6 +204,13 @@
     "TAGS": "Tags",
     "FOLDER": "Folder",
     "ACTIONS": "Actions"
+  },
+  "FOLDER_MODAL": {
+    "TITLE": "Create New Folder",
+    "NAME": "Folder Name",
+    "DESCRIPTION": "Description",
+    "COLOR": "Color",
+    "NEW_FOLDER": "+ Create New"
   },
   "BOOKS_LIST": {
     "NO_BOOKS_FOUND": "No books found matching your filters."
@@ -250,6 +259,8 @@
     "ERROR_FOLDER_CREATE": "Failed to create folder",
     "SUCCESS_ADD_TO_FOLDER": "Books successfully added to folder",
     "SUCCESS_FOLDER_DELETE": "Folder deleted successfully",
-    "ERROR_FOLDER_DELETE": "Failed to delete folder"
+    "ERROR_FOLDER_DELETE": "Failed to delete folder",
+    "SUCCESS_REMOVE_FROM_FOLDER": "Book removed from folder successfully",
+    "ERROR_REMOVE_FROM_FOLDER": "Failed to remove book from folder"
   }
 }

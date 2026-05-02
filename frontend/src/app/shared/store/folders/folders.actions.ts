@@ -20,3 +20,13 @@ export const deleteFolderFailure = createAction('[Folders] Delete Folder Failure
 export const addBooksToFolder = createAction('[Folders] Add Books To Folder', props<{ folderId: string | null, bookIds: string[] }>());
 export const addBooksToFolderSuccess = createAction('[Folders] Add Books To Folder Success');
 export const addBooksToFolderFailure = createAction('[Folders] Add Books To Folder Failure', props<{ error: string }>());
+
+export const removeBooksFromFolder = createAction(
+  '[Folders] Remove Books From Folder',
+  props<{ folderId: string; bookIds: string[] }>()
+);
+export const removeBooksFromFolderSuccess = createAction('[Folders] Remove Books From Folder Success');
+export const removeBooksFromFolderFailure = createAction(
+  '[Folders] Remove Books From Folder Failure',
+  props<{ error: string }>()
+);

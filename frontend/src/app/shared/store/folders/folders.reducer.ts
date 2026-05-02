@@ -9,10 +9,10 @@ export const foldersReducer = createReducer(
     on(FoldersActions.loadFoldersFailure, (state, { error }) => ({ ...state, error, loading: false })),
 
     on(FoldersActions.createFolder, (state) => ({ ...state, loading: true })),
-    on(FoldersActions.createFolderSuccess, (state, { folder }) => ({ 
-        ...state, 
-        folders: [...state.folders, folder], 
-        loading: false 
+    on(FoldersActions.createFolderSuccess, (state, { folder }) => ({
+        ...state,
+        folders: [...state.folders, folder],
+        loading: false
     })),
     on(FoldersActions.createFolderFailure, (state, { error }) => ({ ...state, error, loading: false })),
 
@@ -34,5 +34,9 @@ export const foldersReducer = createReducer(
 
     on(FoldersActions.addBooksToFolder, (state) => ({ ...state, loading: true })),
     on(FoldersActions.addBooksToFolderSuccess, (state) => ({ ...state, loading: false })),
-    on(FoldersActions.addBooksToFolderFailure, (state, { error }) => ({ ...state, error, loading: false }))
+    on(FoldersActions.addBooksToFolderFailure, (state, { error }) => ({ ...state, error, loading: false })),
+
+    on(FoldersActions.removeBooksFromFolder, (state) => ({ ...state, loading: true })),
+    on(FoldersActions.removeBooksFromFolderSuccess, (state) => ({ ...state, loading: false })),
+    on(FoldersActions.removeBooksFromFolderFailure, (state, { error }) => ({ ...state, error, loading: false })),
 );

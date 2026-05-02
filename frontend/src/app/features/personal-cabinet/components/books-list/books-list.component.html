@@ -4,7 +4,7 @@
       <button mat-icon-button class="back-btn" (click)="backToCabinet()">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <h1>My Book Collection</h1>
+      <h1>{{ 'HEADERS.BOOK_COLLECTION' | translate }} </h1>
     </div>
     <button mat-stroked-button color="warn" class="reset-btn" (click)="resetFilters()">
       {{ 'ACTIONS.RESET_FILTERS' | translate }}
@@ -45,7 +45,7 @@
       <label>{{ 'FILTERS.SEARCH' | translate }}</label>
       <div class="search-input-wrapper">
         <mat-icon>search</mat-icon>
-        <input type="text" [placeholder]="'PLACEHOLDERS.SEARCH_BOOKS' | translate" 
+        <input type="text" [placeholder]="'PLACEHOLDERS.SEARCH_BOOKS' | translate"
                class="modern-input" (input)="onSearch($event)" />
       </div>
     </div>

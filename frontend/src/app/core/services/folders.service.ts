@@ -33,6 +33,10 @@ export class FoldersService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  removeBooksFromFolder(folderId: string, bookIds: string[]): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/${folderId}/books`, { body: { bookIds } });
+  }
+
   addBooksToFolder(folderId: string | null, bookIds: string[]): Observable<AddBooksToFolderResponse> {
     const id = folderId === null ? 'null' : folderId;
     return this.http.post<AddBooksToFolderResponse>(`${this.apiUrl}/${id}/books`, { bookIds });

@@ -128,4 +128,39 @@ export class FoldersEffects {
             }))
         )
     );
+
+  removeBooksFromFolder$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(FoldersActions.removeBooksFromFolder),
+      switchMap(({ folderId, bookIds }) =>
+        this.foldersService.removeBooksFromFolder(folderId, bookIds).pipe(
+          map(() => FoldersActions.removeBooksFromFolderSuccess()),
+          catchError(error => of(FoldersActions.removeBooksFromFolderFailure({ error: error.message })))
+        )
+      )
+    )
+  );
+
+  removeBooksFromFolderSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(FoldersActions.removeBooksFromFolderSuccess),
+      switchMap(() => [
+        UiActions.showToast({
+          toastType: UiActions.ToastType.Success,
+          messageKey: 'TOAST.SUCCESS_REMOVE_FROM_FOLDER'
+        }),
+        BooksActions.loadBooks({ filters: { page: 1, limit: 10 } })
+      ])
+    )
+  );
+
+  removeBooksFromFolderFailure$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(FoldersActions.removeBooksFromFolderFailure),
+      map(() => UiActions.showToast({
+        toastType: UiActions.ToastType.Error,
+        messageKey: 'TOAST.ERROR_REMOVE_FROM_FOLDER'
+      }))
+    )
+  );
 }
