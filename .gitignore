@@ -46,6 +46,7 @@ jspm_packages/
 
 package-lock.json
 backend/package-lock.json
+backend/src/seed/
 frontend/package-lock.json
 
 # Snowpack dependency directory (https://snowpack.dev/)

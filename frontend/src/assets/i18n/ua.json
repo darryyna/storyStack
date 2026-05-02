@@ -257,5 +257,48 @@
     "DESCRIPTION": "Опис",
     "COLOR": "Колір",
     "NEW_FOLDER": "+ Створити нову"
+  },
+  "GOALS": {
+    "SUBTITLE": "Встановлюйте та відстежуйте цілі читання",
+    "CREATE_BUTTON": "Створити ціль",
+    "NEW_GOAL_TITLE": "Нова ціль читання",
+    "ACHIEVED_LABEL": "Досягнуто!",
+    "EMPTY_STATE": "Ви ще не встановили жодної цілі.",
+    "EMPTY_STATE_CTA": "Встановити першу ціль",
+    "DATE_FROM": "З",
+    "DATE_TO": "До",
+    "FORM": {
+      "NAME_LABEL": "Назва цілі",
+      "NAME_PLACEHOLDER": "напр. Літнє читання 2024",
+      "DURATION_LABEL": "Тривалість",
+      "GOAL_TYPE_LABEL": "Тип цілі",
+      "TARGET_LABEL": "Цільове значення",
+      "CATEGORY_LABEL": "Категорія (необов'язково)",
+      "CATEGORY_PLACEHOLDER": "напр. Фентезі, Історія",
+      "SUBMIT": "Почати"
+    },
+    "DURATION": {
+      "MONTH": "Місячна",
+      "QUARTER": "Квартальна",
+      "HALF_YEAR": "Піврічна",
+      "YEAR": "Річна"
+    },
+    "GOAL_TYPE": {
+      "BOOKS_COUNT": "Кількість книг",
+      "PAGES_COUNT": "Кількість сторінок"
+    },
+    "AI_PREDICTION": {
+      "TRIGGER": "AI Прогноз",
+      "LOADING": "Аналізуємо ваші звички читання...",
+      "ERROR": "Не вдалося завантажити прогноз.",
+      "RETRY": "Повторити",
+      "LABEL": "AI Прогноз",
+      "ON_TRACK": "На правильному шляху ✓",
+      "NEEDS_EFFORT": "Потрібні зусилля ⚡",
+      "PAGES_PER_DAY": "сторінок/день потрібно",
+      "BOOKS_PER_MONTH": "книг/місяць потрібно",
+      "AT_CURRENT_PACE": "При поточному темпі",
+      "DAYS": "днів"
+    }
   }
 }

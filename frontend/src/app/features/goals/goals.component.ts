@@ -2,11 +2,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { GoalService, Goal } from '../../core/services/goal.service';
+import { GoalService } from '../../core/services/goal.service';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { LoaderComponent } from '../../shared/components/loader/loader.component';
 import * as UiActions from '../../shared/store/ui/ui.actions';
+import { GoalPrediction } from '../../shared/models/prediction.model';
+import { Goal } from '../../shared/models/goal.model';
 
 @Component({
   selector: 'app-goals',
@@ -23,6 +25,13 @@ export class GoalsComponent implements OnInit {
   protected goals = signal<Goal[]>([]);
   protected isLoading = signal(true);
   protected isCreating = signal(false);
+
+  protected predictions = signal<Record<string, {
+    data: GoalPrediction | null;
+    isLoading: boolean;
+    isLoaded: boolean;
+    error: boolean;
+  }>>({});
 
   protected goalForm = this.fb.group({
     name: ['', [Validators.required]],
@@ -42,9 +51,39 @@ export class GoalsComponent implements OnInit {
       next: (data) => {
         this.goals.set(data);
         this.isLoading.set(false);
+        this.predictions.set({});
       },
       error: () => this.isLoading.set(false)
     });
+  }
+
+  protected loadPrediction(goalId: string): void {
+    const current = this.predictions()[goalId];
+    if (current?.isLoaded || current?.isLoading) return;
+
+    this.predictions.update(p => ({
+      ...p,
+      [goalId]: { data: null, isLoading: true, isLoaded: false, error: false }
+    }));
+
+    this.goalService.getGoalPrediction(goalId).subscribe({
+      next: (res) => {
+        this.predictions.update(p => ({
+          ...p,
+          [goalId]: { data: res.prediction, isLoading: false, isLoaded: true, error: false }
+        }));
+      },
+      error: () => {
+        this.predictions.update(p => ({
+          ...p,
+          [goalId]: { data: null, isLoading: false, isLoaded: false, error: true }
+        }));
+      }
+    });
+  }
+
+  protected getPrediction(goalId: string) {
+    return this.predictions()[goalId] ?? null;
   }
 
   protected onSubmit(): void {
@@ -52,7 +91,7 @@ export class GoalsComponent implements OnInit {
 
     const formValue = this.goalForm.value;
     const startDate = new Date();
-    let endDate = new Date();
+    const endDate = new Date();
 
     switch (formValue.type) {
         case 'MONTH': endDate.setMonth(endDate.getMonth() + 1); break;
@@ -77,16 +116,16 @@ export class GoalsComponent implements OnInit {
         this.loadGoals();
         this.isCreating.set(false);
         this.goalForm.reset({ type: 'MONTH', goalType: 'BOOKS_COUNT', targetCount: 1 });
-        this.store.dispatch(UiActions.showToast({ 
-          toastType: UiActions.ToastType.Success, 
-          messageKey: 'TOAST.SUCCESS_GOAL_CREATE' 
+        this.store.dispatch(UiActions.showToast({
+          toastType: UiActions.ToastType.Success,
+          messageKey: 'TOAST.SUCCESS_GOAL_CREATE'
         }));
       },
       error: () => {
         this.isLoading.set(false);
-        this.store.dispatch(UiActions.showToast({ 
-          toastType: UiActions.ToastType.Error, 
-          messageKey: 'TOAST.ERROR_GOAL_CREATE' 
+        this.store.dispatch(UiActions.showToast({
+          toastType: UiActions.ToastType.Error,
+          messageKey: 'TOAST.ERROR_GOAL_CREATE'
         }));
       }
     });

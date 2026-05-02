@@ -103,7 +103,7 @@ export class PersonalCabinetComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.store.dispatch(BooksActions.loadBooks({}));
+    this.store.dispatch(BooksActions.loadBooks({ filters: { limit: 100 } }));
     this.store.dispatch(BooksActions.loadLatestNote());
     this.store.dispatch(BooksActions.loadRecommendations());
   }

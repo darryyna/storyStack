@@ -51,7 +51,7 @@ export class BooksEffects {
         this.actions$.pipe(
             ofType(BooksActions.addBookSuccess),
             switchMap(({ book }) => [
-                BooksActions.loadBooks({}),
+                BooksActions.loadBooks({ filters: { limit: 100 } }),
                 UiActions.showToast({
                     toastType: UiActions.ToastType.Success,
                     messageKey: 'TOAST.SUCCESS_ADD',
@@ -87,7 +87,7 @@ export class BooksEffects {
         this.actions$.pipe(
             ofType(BooksActions.deleteBookSuccess),
             switchMap(() => [
-                BooksActions.loadBooks({}),
+                BooksActions.loadBooks({ filters: { limit: 100 } }),
                 UiActions.showToast({
                     toastType: UiActions.ToastType.Success,
                     messageKey: 'TOAST.SUCCESS_DELETE'
@@ -231,7 +231,7 @@ export class BooksEffects {
     this.actions$.pipe(
       ofType(BooksActions.addBookFromRecommendationSuccess),
       switchMap(() => [
-        BooksActions.loadBooks({}),
+        BooksActions.loadBooks({ filters: { limit: 100 } }),
         UiActions.showToast({
           toastType: UiActions.ToastType.Success,
           messageKey: 'TOAST.SUCCESS_ADD_RECOMMENDATION'
