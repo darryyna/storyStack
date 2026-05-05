@@ -227,6 +227,7 @@
     "INVALID_CREDENTIALS": "Invalid credentials. Check the information and try again"
   },
   "MANUAL_ENTRY": {
+    "OR": "or",
     "TITLE": "Add manually",
     "TITLE_REVIEW": "Review book details",
     "SUBTITLE": "Fill in the details for your custom book.",

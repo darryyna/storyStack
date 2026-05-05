@@ -1,4 +1,7 @@
+@use '../../../../shared/styles/responsive.scss' as r;
+
 .list-container {
+  @include r.responsive-padding;
   padding: 16px;
   max-width: 1200px;
   margin: 0 auto;
@@ -13,6 +16,16 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 40px;
+
+  @include r.mobile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+
+    .header-left h1 { font-size: 22px; }
+
+    .reset-btn { width: 100%; }
+  }
 
   .header-left {
     display: flex;
@@ -50,6 +63,14 @@
   border-radius: 16px;
   border: 1px solid var(--border-subtle);
   margin-bottom: 32px;
+
+  @include r.tablet-up {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include r.desktop {
+    grid-template-columns: repeat(4, 1fr);
+  }
 
   @media (min-width: 1024px) {
     grid-template-columns: repeat(4, 1fr);
@@ -114,6 +135,10 @@
   align-items: center;
   gap: 8px;
 
+  @include r.mobile {
+    flex-wrap: wrap;
+  }
+
   .rating-btn {
     background: var(--background-surface);
     border: 1px solid var(--border-default);
@@ -161,6 +186,32 @@
   border-collapse: collapse;
   text-align: left;
 
+  @include r.tablet-down {
+    // hide author, progress, tags, folder on small screens
+    thead tr th:nth-child(3),
+    thead tr th:nth-child(5),
+    thead tr th:nth-child(7),
+    thead tr th:nth-child(8),
+    tbody tr td:nth-child(3),
+    tbody tr td:nth-child(5),
+    tbody tr td:nth-child(7),
+    tbody tr td:nth-child(8) {
+      display: none;
+    }
+
+    th, td { padding: 12px 10px; }
+  }
+
+  @include r.mobile {
+    // on very small screens also hide rating
+    thead tr th:nth-child(6),
+    tbody tr td:nth-child(6) {
+      display: none;
+    }
+
+    th, td { padding: 10px 8px; font-size: 13px; }
+  }
+
   thead {
     background: rgba(255, 255, 255, 0.02);
 
@@ -207,6 +258,14 @@
   gap: 16px;
   font-weight: 600;
   min-width: 0;
+
+  @include r.mobile {
+    gap: 8px;
+
+    span {
+      max-width: 120px;
+    }
+  }
 
   span {
     white-space: nowrap;
@@ -350,6 +409,13 @@
   background: rgba(255, 255, 255, 0.02);
   border-top: 1px solid var(--border-subtle);
 
+  @include r.mobile {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+    padding: 16px;
+  }
+
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 16px;
@@ -471,6 +537,12 @@
   margin-bottom: 1rem;
   animation: slideIn 0.3s ease;
 
+  @include r.mobile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
   .selection-count {
     font-weight: 700;
     color: var(--accent-base);
@@ -479,6 +551,18 @@
 
 .folder-dropdown-container {
   position: relative;
+
+  @include r.mobile {
+    width: 100%;
+
+    > button { width: 100%; }
+
+    .folder-dropdown {
+      width: 100%;
+      right: auto;
+      left: 0;
+    }
+  }
 
   .folder-dropdown {
     position: absolute;
@@ -563,6 +647,11 @@ tr.selected {
 }
 
 .folders-area {
+  @include r.tablet-up {
+    flex-direction: row;
+    align-items: center;
+  }
+
   margin-bottom: 2rem;
   display: flex;
   flex-direction: row;
@@ -605,6 +694,10 @@ tr.selected {
     gap: 12px;
     padding: 4px 0;
     max-width: 100%;
+
+    @include r.mobile {
+      gap: 8px;
+    }
   }
 
   .folder-chip {
@@ -621,6 +714,11 @@ tr.selected {
     transition: all 0.2s;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     position: relative;
+
+    @include r.mobile {
+      padding: 6px 12px;
+      padding-right: 32px;
+    }
 
     &:hover {
       transform: translateY(-2px);

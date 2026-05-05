@@ -1,4 +1,7 @@
+@use '../../../../shared/styles/responsive.scss' as r;
+
 .details-container {
+  @include r.responsive-padding;
     padding: 16px;
     max-width: 1200px;
     margin: 0 auto;
@@ -15,6 +18,13 @@
     align-items: center;
     gap: 16px;
     margin-bottom: 32px;
+
+  @include r.mobile {
+    gap: 10px;
+
+    .header-info h1 { font-size: 20px; }
+    .header-info .authors { font-size: 14px; }
+  }
 
     .back-btn {
         color: var(--text-secondary);
@@ -37,6 +47,20 @@
 }
 
 .details-grid {
+  @include r.desktop {
+    grid-template-columns: 360px 1fr;
+    grid-template-areas:
+      "main tags"
+      "main notes";
+  }
+
+  // tablet: stack but side-by-side for tags + notes
+  @include r.tablet {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "main main"
+      "tags notes";
+  }
     display: grid;
     grid-template-columns: 1fr;
     gap: 24px;
@@ -62,6 +86,13 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
+
+  @include r.mobile {
+    .book-cover-wrapper {
+      max-width: 200px;
+      margin: 0 auto;
+    }
+  }
 }
 
 .book-cover-wrapper {
@@ -114,6 +145,15 @@
     flex-wrap: wrap;
     gap: 8px;
 
+  @include r.mobile {
+    gap: 6px;
+
+    .status-btn {
+      font-size: 12px;
+      padding: 5px 9px;
+    }
+  }
+
     .status-btn {
         background: var(--background-surface);
         border: 1px solid var(--border-default);
@@ -165,6 +205,12 @@
 .rating-selector {
     display: flex;
     gap: 6px;
+
+  @include r.mobile {
+    gap: 4px;
+
+    .rating-btn { padding: 6px 0; font-size: 13px; }
+  }
 
     .rating-btn {
         flex: 1;
@@ -252,6 +298,12 @@
     display: flex;
     gap: 8px;
 
+  @include r.mobile {
+    flex-direction: column;
+
+    .btn { width: 100%; }
+  }
+
     .modern-input {
         flex: 1;
         background: var(--background-surface);
@@ -302,6 +354,8 @@
     height: 20px;
     font-size: 12px;
     color: var(--text-muted);
+
+  @include r.mobile { font-size: 11px; }
 
     .save-status, .auto-saved {
         display: flex;
@@ -478,6 +532,14 @@
         flex-wrap: wrap;
         gap: 8px;
 
+      @include r.mobile {
+        gap: 6px;
+
+        .add-btn { padding: 6px 10px; font-size: 13px; }
+
+        .custom-add .mini-input { width: 50px; }
+      }
+
         .add-btn {
             background: var(--background-surface);
             border: 1px solid var(--border-default);
@@ -532,6 +594,11 @@
     border-radius: 20px;
     margin-left: auto;
 
+  @include r.mobile {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+
     mat-icon {
         font-size: 16px;
         width: 16px;
@@ -552,7 +619,7 @@
 
 .tag-suggestions {
     margin-top: 16px;
-    
+
     .suggestion-label {
         font-size: 11px;
         font-weight: 700;
@@ -561,13 +628,13 @@
         display: block;
         margin-bottom: 8px;
     }
-    
+
     .suggestion-list {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
     }
-    
+
     .suggestion-btn {
         background: transparent;
         border: 1px dashed var(--border-default);
@@ -577,7 +644,7 @@
         font-size: 12px;
         cursor: pointer;
         transition: all 0.2s ease;
-        
+
         &:hover {
             border-color: var(--accent-base);
             color: var(--accent-base);
