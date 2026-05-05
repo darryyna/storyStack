@@ -1,4 +1,7 @@
+@use '../../shared/styles/responsive.scss' as r;
+
 .cabinet-container {
+  @include r.responsive-padding;
   padding: 16px;
 
   @media (min-width: 768px) {
@@ -14,6 +17,8 @@
     font-weight: 800;
     color: var(--text-primary);
 
+    @include r.mobile { font-size: 24px; }
+
     .username {
       color: var(--accent-base);
     }
@@ -27,6 +32,13 @@
 }
 
 .stats-grid {
+  @include r.tablet-up {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include r.desktop {
+    grid-template-columns: repeat(4, 1fr);
+  }
   display: grid;
   grid-template-columns: 1fr;
   gap: 20px;
@@ -104,6 +116,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    @include r.mobile {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
 
     .book-info {
       display: flex;
@@ -183,6 +201,10 @@
     display: flex;
     align-items: center;
 
+    @include r.mobile {
+      font-size: 20px;
+    }
+
     .divider-line {
       height: 2px;
       flex: 1;
@@ -202,6 +224,13 @@
   border: 1px solid var(--border-subtle);
   position: relative;
   overflow: hidden;
+
+  @include r.mobile {
+    flex-direction: column;
+    padding: 20px;
+
+    .info-title { font-size: 22px; }
+  }
 
   &::before {
     content: '';
@@ -314,6 +343,16 @@
 
   transition: all 0.2s ease;
 
+  @include r.mobile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+
+    > div { width: 100%; }
+
+    button { width: 100%; justify-content: center; }
+  }
+
   &:hover {
     background-color: rgba(255, 255, 255, 0.08);
   }
@@ -379,6 +418,13 @@
 }
 
 .recommendations-grid {
+  @include r.tablet-up {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include r.desktop {
+    grid-template-columns: repeat(3, 1fr);
+  }
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;

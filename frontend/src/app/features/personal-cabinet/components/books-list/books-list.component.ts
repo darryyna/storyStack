@@ -150,14 +150,15 @@ export class BooksListComponent implements OnInit {
     this.store.dispatch(FoldersActions.loadFolders());
   }
 
-  protected toggleSelectAll(event: any) {
-    const checked = event.target.checked;
-    if (checked) {
-      this.selectedBookIds.set(new Set(this.books().map(b => b.id!)));
-    } else {
-      this.selectedBookIds.set(new Set());
-    }
+  protected toggleSelectAll(event: Event) {
+  const target = event.target as HTMLInputElement;
+  const checked = target.checked;
+  if (checked) {
+    this.selectedBookIds.set(new Set(this.books().map(b => b.id!)));
+  } else {
+    this.selectedBookIds.set(new Set());
   }
+}
 
   protected toggleSelectBook(id: string) {
     const selected = new Set(this.selectedBookIds());

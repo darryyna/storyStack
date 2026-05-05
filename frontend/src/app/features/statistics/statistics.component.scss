@@ -1,4 +1,7 @@
+@use '../../shared/styles/responsive.scss' as r;
+
 .stats-container {
+  @include r.responsive-padding;
     padding: 24px;
     max-width: 1200px;
     margin: 0 auto;
@@ -6,14 +9,18 @@
 
 .stats-header {
     margin-bottom: 32px;
-    
+
+  @include r.mobile {
+    h1 { font-size: 24px; }
+  }
+
     h1 {
         font-size: 32px;
         font-weight: 800;
         margin: 0;
         color: var(--text-primary);
     }
-    
+
     .subtitle {
         color: var(--text-secondary);
         font-size: 16px;
@@ -31,6 +38,19 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 16px;
+
+  @include r.tablet-up {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include r.desktop {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  @include r.mobile {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
 }
 
 .card {
@@ -45,7 +65,19 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    
+
+  @include r.mobile {
+    padding: 16px;
+    gap: 10px;
+
+    mat-icon { font-size: 24px; width: 24px; height: 24px; }
+
+    .summary-content {
+      .value { font-size: 20px; }
+      .label { font-size: 11px; }
+    }
+  }
+
     mat-icon {
         font-size: 32px;
         width: 32px;
@@ -56,17 +88,17 @@
     &.goals-achieved mat-icon {
         color: #FBBF24;
     }
-    
+
     .summary-content {
         display: flex;
         flex-direction: column;
-        
+
         .value {
             font-size: 24px;
             font-weight: 800;
             color: var(--text-primary);
         }
-        
+
         .label {
             font-size: 13px;
             color: var(--text-muted);
@@ -83,11 +115,21 @@
         margin-bottom: 24px;
         color: var(--text-primary);
     }
-    
+
+  @include r.mobile {
+    .chart-wrapper {
+      height: 220px;
+
+      &.doughnut { height: 200px; }
+    }
+
+    .card-title { font-size: 15px; margin-bottom: 16px; }
+  }
+
     .chart-wrapper {
         height: 300px;
         position: relative;
-        
+
         &.doughnut {
             height: 250px;
             display: flex;
@@ -97,10 +139,13 @@
 }
 
 .secondary-grid {
+  @include r.desktop {
+    grid-template-columns: 380px 1fr;
+  }
     display: grid;
     grid-template-columns: 1fr;
     gap: 24px;
-    
+
     @media (min-width: 992px) {
         grid-template-columns: 400px 1fr;
     }
@@ -111,7 +156,13 @@
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
-        
+
+      @include r.mobile {
+        gap: 8px;
+
+        .tag-item { padding: 4px 10px; font-size: 13px; }
+      }
+
         .tag-item {
             background: rgba(109, 74, 255, 0.1);
             border: 1px solid rgba(109, 74, 255, 0.2);
@@ -120,12 +171,12 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            
+
             .tag-name {
                 color: var(--accent-base);
                 font-weight: 600;
             }
-            
+
             .tag-count {
                 background: var(--accent-base);
                 color: white;
@@ -135,7 +186,7 @@
             }
         }
     }
-    
+
     .empty-hint {
         color: var(--text-muted);
         font-style: italic;
