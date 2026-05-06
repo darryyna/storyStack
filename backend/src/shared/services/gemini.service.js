@@ -10,6 +10,7 @@ exports.getBookRecommendations = async (userPreferences) => {
   // Use a session-unique prefix so sourceIds never collide across recommendation sessions
   const sessionPrefix = `gemini_${Date.now()}`;
 
+  logger.info(`Requesting book recommendations for ${titles.length} books, ${authors.length} authors`);
   const prompt = `
 You are a book recommendation engine. Based on the user's reading history, return ONLY a JSON array of 6 book recommendations.
 
@@ -42,7 +43,15 @@ Rules:
   const text = result.response.text();
 
   const clean = text.replace(/```json|```/g, '').trim();
-  return JSON.parse(clean);
+
+  try {
+    const recommendations = JSON.parse(clean);
+    logger.info(`Gemini returned ${recommendations.length} book recommendations`);
+    return recommendations;
+  } catch (err) {
+    logger.error(`Failed to parse Gemini recommendations response: ${err.message}. Raw: ${clean.slice(0, 200)}`);
+    throw new Error('Failed to parse recommendations from AI');
+  }
 };
 
 exports.getGoalPrediction = async ({ goal, readingStats }) => {
@@ -56,21 +65,24 @@ exports.getGoalPrediction = async ({ goal, readingStats }) => {
     daysUntilEnd,
     currentCount,
     targetCount,
-    goalType,       // 'BOOKS_COUNT' | 'PAGES_COUNT'
-    goalPeriod,     // 'MONTH' | 'QUARTER' | 'HALF_YEAR' | 'YEAR'
+    goalType,
+    goalPeriod,
     goalName,
   } = readingStats;
 
   const remaining = targetCount - currentCount;
   const progressPercent = Math.round((currentCount / targetCount) * 100);
+  const goalStart = new Date(goal.startDate).toISOString().split('T')[0];
+  const goalEnd = new Date(goal.endDate).toISOString().split('T')[0];
+  logger.info(`Requesting goal prediction for "${goalName}" (${progressPercent}% complete, ${remaining} remaining, ${daysUntilEnd} days left)`);
 
   const prompt = `
 You are a reading habit analyst. Based on a reader's real statistics, generate a short, encouraging AI prediction for their reading goal.
  
 Goal: "${goalName}"
 Goal type: ${goalType === 'BOOKS_COUNT' ? 'Read a certain number of books' : 'Read a certain number of pages'}
-Goal period: ${goalPeriod}
-Progress: ${currentCount} / ${targetCount} (${progressPercent}%)
+Goal period: ${goalPeriod} (${goalStart} → ${goalEnd})
+Progress: ${currentCount} / ${targetCount} (${progressPercent}%) — ${remaining} remaining
 Days remaining until goal deadline: ${daysUntilEnd}
  
 Reader's statistics (last 30-90 days):
@@ -103,5 +115,13 @@ Rules:
   const result = await model.generateContent(prompt);
   const text = result.response.text();
   const clean = text.replace(/```json|```/g, '').trim();
-  return JSON.parse(clean);
+
+  try {
+    const prediction = JSON.parse(clean);
+    logger.info(`Gemini prediction for "${goalName}": isAchievable=${prediction.isAchievable}`);
+    return prediction;
+  } catch (err) {
+    logger.error(`Failed to parse Gemini goal prediction response: ${err.message}. Raw: ${clean.slice(0, 200)}`);
+    throw new Error('Failed to parse goal prediction from AI');
+  }
 };

@@ -3,12 +3,7 @@ const logger = require('../configuration/logger');
 
 const openLibraryUrl = process.env.OPEN_LIBRARY_API_URL;
 
-/**
- * Search OpenLibrary API and normalize results to unified SearchBook format.
- * @param {string} query
- * @param {number} [limit=10]
- * @returns {Promise<Array>} Normalized SearchBook[]
- */
+// search OpenLibrary API and normalize results to unified SearchBook format
 async function search(query, limit = 10) {
     logger.info(`Triggering OpenLibrary API search for query: "${query}"`);
     const response = await axios.get(openLibraryUrl, {
@@ -26,9 +21,7 @@ async function search(query, limit = 10) {
     return docs.map(normalizeOpenLibraryBook);
 }
 
-/**
- * Normalize a single OpenLibrary doc to the unified SearchBook format.
- */
+// normalize a single OpenLibrary doc to the unified SearchBook format
 function normalizeOpenLibraryBook(doc) {
     return {
         id: doc.key,

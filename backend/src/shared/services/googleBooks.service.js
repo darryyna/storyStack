@@ -4,11 +4,7 @@ const logger = require('../configuration/logger');
 const googleApiUrl = process.env.GOOGLE_BOOKS_API_URL;
 const googleApiKey = process.env.GOOGLE_API_KEY;
 
-/**
- * Search Google Books API and normalize results to unified SearchBook format.
- * @param {string} query
- * @returns {Promise<Array>} Normalized SearchBook[]
- */
+// search Google Books API and normalize results to unified SearchBook format
 async function search(query) {
     logger.info(`Triggering Google Books API search for query: "${query}"`);
     const response = await axios.get(googleApiUrl, {
@@ -22,9 +18,7 @@ async function search(query) {
     return items.map(normalizeGoogleBook);
 }
 
-/**
- * Normalize a single Google Books item to the unified SearchBook format.
- */
+// normalize a single Google Books item to the unified SearchBook format
 function normalizeGoogleBook(item) {
     const info = item.volumeInfo || {};
     return {

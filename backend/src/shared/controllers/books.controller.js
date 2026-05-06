@@ -1,56 +1,13 @@
-const ExternalBookId = require('../models/ExternalBookId.model');
-const UserBook = require('../models/UserBook.model');
-const ReadingLog = require('../models/ReadingLog.model');
-const { getCache, setCache, deleteCache } = require('../services/redis.service');
+const booksService = require('../services/books.service');
 const { isValidObjectId } = require('../helpers/idValidationCheck');
 const logger = require('../configuration/logger');
-const { ReadingStatus } = require('../enums/BookEnums');
-const mongoose = require('mongoose');
-
-const googleBooksService = require('../services/googleBooks.service');
-const openLibraryService = require('../services/openLibrary.service');
-const geminiService = require('../services/gemini.service');
-
-
-const SEARCH_CACHE_TTL = 600; // 10 minutes
-const RECOMMENDATIONS_CACHE_TTL = 60 * 60 * 24; // 24 hours
 
 exports.searchBooks = async (req, res) => {
   try {
     const { q } = req.query;
-    if (!q) {
-      return res.status(400).json({ error: 'Query parameter "q" is required' });
-    }
+    if (!q) return res.status(400).json({ error: 'Query parameter "q" is required' });
 
-    const normalizedQuery = q.trim().toLowerCase();
-    const cacheKey = `books:search:${normalizedQuery}`;
-
-    const cached = await getCache(cacheKey);
-    if (cached) {
-      logger.info(`Cache hit for search query: "${q}"`);
-      return res.json(cached);
-    }
-
-    // Primary: Google Books API
-    let books = [];
-    try {
-      books = await googleBooksService.search(q);
-      logger.info(`Google Books returned ${books.length} results for "${q}"`);
-    } catch (googleError) {
-      logger.warn(`Google Books API failed for "${q}", falling back to OpenLibrary: ${googleError.message}`);
-    }
-
-    // Fallback: OpenLibrary (if Google returned no results or errored)
-    if (books.length === 0) {
-      try {
-        books = await openLibraryService.search(q);
-        logger.info(`OpenLibrary returned ${books.length} results for "${q}"`);
-      } catch (olError) {
-        logger.error(`OpenLibrary API also failed for "${q}": ${olError.message}`);
-      }
-    }
-
-    await setCache(cacheKey, books, SEARCH_CACHE_TTL);
+    const books = await booksService.searchBooks(q);
     res.json(books);
   } catch (error) {
     logger.error(`Search Books Error: ${error.message}`);
@@ -60,41 +17,12 @@ exports.searchBooks = async (req, res) => {
 
 exports.addExternalBook = async (req, res) => {
   try {
-    const { sourceId, title, authors, thumbnail, description, pageCount, categories } = req.body;
-
+    const { sourceId, title } = req.body;
     if (!sourceId || !title) {
       return res.status(400).json({ error: 'sourceId and title are required' });
     }
 
-    let externalBook = await ExternalBookId.findOne({ sourceId });
-
-    if (!externalBook) {
-      externalBook = new ExternalBookId({
-        sourceId,
-        title,
-        authors: authors || [],
-        thumbnail,
-        description,
-        pageCount,
-        categories: categories || []
-      });
-      await externalBook.save();
-    } else {
-      // update existing book if pageCount or categories were missing before
-      let needsUpdate = false;
-      if (pageCount && !externalBook.pageCount) {
-        externalBook.pageCount = pageCount;
-        needsUpdate = true;
-      }
-      if (categories && (!externalBook.categories || externalBook.categories.length === 0)) {
-        externalBook.categories = categories;
-        needsUpdate = true;
-      }
-      if (needsUpdate) {
-        await externalBook.save();
-      }
-    }
-
+    const externalBook = await booksService.upsertExternalBook(req.body);
     res.json(externalBook);
   } catch (error) {
     logger.error(`Add External Book Error: ${error.message}`);
@@ -104,37 +32,16 @@ exports.addExternalBook = async (req, res) => {
 
 exports.addUserBook = async (req, res) => {
   try {
-    const userId = req.userId;
-    const { externalBookId, rating, notes } = req.body;
-    const status = ReadingStatus.PLANNED;
+    const { externalBookId } = req.body;
+    if (!externalBookId) return res.status(400).json({ error: 'externalBookId is required' });
+    if (!isValidObjectId(externalBookId)) return res.status(400).json({ error: 'Invalid externalBookId' });
 
-    if (!externalBookId) {
-      return res.status(400).json({ error: 'externalBookId is required' });
-    }
+    const result = await booksService.addUserBook(req.userId, req.body);
 
-    if (!isValidObjectId(externalBookId)) {
-      return res.status(400).json({ error: 'Invalid externalBookId' });
-    }
+    if (result.notFound) return res.status(404).json({ error: 'External book not found' });
+    if (result.conflict) return res.status(409).json({ error: 'Book already added to your library' });
 
-    const externalBook = await ExternalBookId.findById(externalBookId);
-    if (!externalBook) {
-      return res.status(404).json({ error: 'External book not found' });
-    }
-
-    const existingUserBook = await UserBook.findOne({ userId, bookId: externalBookId });
-    if (existingUserBook) {
-      return res.status(409).json({ error: 'Book already added to your library' });
-    }
-
-    const userBook = await UserBook.create({
-      userId,
-      bookId: externalBookId,
-      status,
-      rating,
-      notes
-    });
-    res.status(201).json(userBook);
-    await deleteCache(`books:recommendations:${userId}`);
+    res.status(201).json(result.userBook);
   } catch (error) {
     logger.error(`Add User Book Error: ${error.message}`);
     res.status(500).json({ error: 'Failed to add book to user library' });
@@ -143,66 +50,8 @@ exports.addUserBook = async (req, res) => {
 
 exports.getUserBooks = async (req, res) => {
   try {
-    const userId = req.userId;
-    const { status, rating, tags, search, page = 1, limit = 10 } = req.query;
-    const filter = { userId };
-
-    if (search) {
-      const matchingExternalBooks = await ExternalBookId.find({
-        title: { $regex: search, $options: 'i' }
-      }).select('_id');
-      const bookIds = matchingExternalBooks.map(b => b._id);
-      filter.bookId = { $in: bookIds };
-    }
-    if (status) {
-      if (status.startsWith('folder:')) {
-        const folderId = status.split(':')[1];
-        filter.folderId = folderId === 'null' ? null : folderId;
-      } else {
-        filter.status = status;
-      }
-    }
-
-    if (rating !== undefined) {
-      const numRating = Number(rating);
-      if (!isNaN(numRating)) filter.rating = numRating;
-    }
-
-    if (tags) {
-      filter.tags = { $in: Array.isArray(tags) ? tags : [tags] };
-    }
-
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    const [totalCount, userBooks] = await Promise.all([
-      UserBook.countDocuments(filter),
-      UserBook.find(filter)
-        .populate('bookId')
-        .populate('folderId')
-        .sort({ updatedAt: -1 })
-        .skip(skip)
-        .limit(parseInt(limit))
-    ]);
-    const countsRaw = await UserBook.aggregate([
-      { $match: { userId: new mongoose.Types.ObjectId(userId) } },
-      { $group: { _id: "$status", count: { $sum: 1 } } }
-    ]);
-    const countsByStatus = {};
-    Object.values(ReadingStatus).forEach(s => {
-      countsByStatus[s] = 0;
-    });
-    countsRaw.forEach(item => {
-      if (item._id in countsByStatus) {
-        countsByStatus[item._id] = item.count;
-      }
-    });
-
-    res.json({
-      books: userBooks,
-      totalCount,
-      currentPage: parseInt(page),
-      totalPages: Math.ceil(totalCount / parseInt(limit)),
-      countsByStatus
-    });
+    const result = await booksService.getUserBooks(req.userId, req.query);
+    res.json(result);
   } catch (error) {
     logger.error(`Get User Books Error: ${error.message}`);
     res.status(500).json({ error: 'Failed to fetch user books' });
@@ -211,37 +60,50 @@ exports.getUserBooks = async (req, res) => {
 
 exports.deleteUserBook = async (req, res) => {
   try {
-    const userId = req.userId;
     const { id } = req.params;
+    if (!isValidObjectId(id)) return res.status(400).json({ error: 'Invalid book ID' });
 
-    if (!isValidObjectId(id)) {
-      return res.status(400).json({ error: 'Invalid book ID' });
-    }
-
-    const result = await UserBook.findOneAndDelete({ _id: id, userId });
-
-    if (!result) {
-      return res.status(404).json({ error: 'Book not found in your library' });
-    }
+    const deleted = await booksService.deleteUserBook(req.userId, id);
+    if (!deleted) return res.status(404).json({ error: 'Book not found in your library' });
 
     res.json({ message: 'Book successfully deleted from library' });
-    await deleteCache(`books:recommendations:${userId}`);
   } catch (error) {
     logger.error(`Delete User Book Error: ${error.message}`);
     res.status(500).json({ error: 'Failed to delete book from library' });
   }
 };
 
+exports.getUserBookById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!isValidObjectId(id)) return res.status(400).json({ error: 'Invalid book ID' });
+
+    const userBook = await booksService.getUserBookById(req.userId, id);
+    if (!userBook) return res.status(404).json({ error: 'Book not found in library' });
+
+    res.json(userBook);
+  } catch (error) {
+    logger.error(`Get User Book By Id Error: ${error.message}`);
+    res.status(500).json({ error: 'Failed to fetch user book' });
+  }
+};
+
+exports.updateUserBook = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userBook = await booksService.updateUserBook(req.userId, id, req.body);
+    if (!userBook) return res.status(404).json({ error: 'Book not found in library' });
+
+    res.json(userBook);
+  } catch (error) {
+    logger.error(`Update User Book Error: ${error.message}`);
+    res.status(500).json({ error: 'Failed to update user book' });
+  }
+};
+
 exports.getLatestNote = async (req, res) => {
   try {
-    const userId = req.userId;
-    const latestBook = await UserBook.findOne({
-      userId,
-      notes: { $ne: null, $exists: true, $not: /^\s*$/ }
-    })
-      .sort({ updatedAt: -1 })
-      .populate('bookId');
-
+    const latestBook = await booksService.getLatestNote(req.userId);
     if (!latestBook || !latestBook.bookId) {
       return res.status(404).json({ error: 'No books with notes found' });
     }
@@ -258,72 +120,32 @@ exports.getLatestNote = async (req, res) => {
   }
 };
 
-exports.getUserBookById = async (req, res) => {
+exports.updateReadingProgress = async (req, res) => {
   try {
-    const userId = req.userId;
     const { id } = req.params;
+    const { pagesRead } = req.body;
 
-    if (!isValidObjectId(id)) {
-      return res.status(400).json({ error: 'Invalid book ID' });
+    if (!Number.isInteger(pagesRead) || pagesRead <= 0) {
+      return res.status(400).json({ error: 'pagesRead must be a positive integer' });
     }
 
-    const userBook = await UserBook.findOne({ _id: id, userId }).populate('bookId');
+    const result = await booksService.updateReadingProgress(req.userId, id, pagesRead);
 
-    if (!userBook) {
-      return res.status(404).json({ error: 'Book not found in library' });
-    }
+    if (result.notFound) return res.status(404).json({ error: 'Book not found' });
+    if (result.orphaned) return res.status(500).json({ error: 'Book metadata not found' });
+    if (result.alreadyCompleted) return res.status(400).json({ error: 'Cannot update progress on a completed book' });
 
-    res.json(userBook);
+    res.json(result);
   } catch (error) {
-    logger.error(`Get User Book By Id Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to fetch user book' });
-  }
-};
-
-exports.updateUserBook = async (req, res) => {
-  try {
-    const userId = req.userId;
-    const { id } = req.params;
-    const { status, rating, notes, tags, currentPage, bookId } = req.body;
-
-    const updateData = {};
-    if (status) updateData.status = status;
-    if (rating !== undefined) updateData.rating = rating;
-    if (notes !== undefined) updateData.notes = notes;
-    if (tags !== undefined) updateData.tags = tags;
-    if (currentPage !== undefined) updateData.currentPage = currentPage;
-
-    if (bookId && bookId.pageCount !== undefined) {
-        const currentUB = await UserBook.findOne({ _id: id, userId });
-        if (currentUB) {
-            await ExternalBookId.findByIdAndUpdate(currentUB.bookId, { pageCount: bookId.pageCount });
-        }
-    }
-
-    const userBook = await UserBook.findOneAndUpdate(
-      { _id: id, userId },
-      { $set: updateData },
-      { new: true }
-    ).populate('bookId');
-
-    if (!userBook) {
-      return res.status(404).json({ error: 'Book not found in library' });
-    }
-
-    res.json(userBook);
-  } catch (error) {
-    logger.error(`Update User Book Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to update user book' });
+    logger.error(`Update Reading Progress Error: ${error.message}`);
+    res.status(500).json({ error: 'Failed to update reading progress' });
   }
 };
 
 exports.uploadCover = async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
-    const relativePath = `/uploads/books/${req.file.filename}`;
-    res.json({ url: relativePath });
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    res.json({ url: `/uploads/books/${req.file.filename}` });
   } catch (error) {
     logger.error(`Upload Cover Error: ${error.message}`);
     res.status(500).json({ error: 'Failed to upload cover' });
@@ -332,25 +154,10 @@ exports.uploadCover = async (req, res) => {
 
 exports.addManualBook = async (req, res) => {
   try {
-    const { title, authors, thumbnail, description, pageCount, categories } = req.body;
+    const { title } = req.body;
+    if (!title) return res.status(400).json({ error: 'Title is required' });
 
-    if (!title) {
-      return res.status(400).json({ error: 'Title is required' });
-    }
-
-    const sourceId = `manual_${Date.now()}_${Math.round(Math.random() * 1E9)}`;
-
-    const externalBook = new ExternalBookId({
-      sourceId,
-      title,
-      authors: authors || [],
-      thumbnail,
-      description,
-      pageCount,
-      categories: categories || []
-    });
-    await externalBook.save();
-
+    const externalBook = await booksService.addManualBook(req.body);
     res.status(201).json(externalBook);
   } catch (error) {
     logger.error(`Add Manual Book Error: ${error.message}`);
@@ -360,103 +167,10 @@ exports.addManualBook = async (req, res) => {
 
 exports.getRecommendations = async (req, res) => {
   try {
-    const userId = req.userId;
-    const cacheKey = `books:recommendations:${userId}`;
-
-    const cached = await getCache(cacheKey);
-    if (cached) {
-      logger.info(`Cache hit for recommendations: user ${userId}`);
-      return res.json(cached);
-    }
-
-    const userBooks = await UserBook.find({ userId })
-      .populate('bookId')
-      .lean();
-
-    if (userBooks.length === 0) {
-      return res.json([]);
-    }
-
-    const authors = [...new Set(userBooks.flatMap(b => b.bookId?.authors ?? []))];
-    const titles = userBooks.map(b => b.bookId?.title).filter(Boolean);
-    const descriptions = userBooks.map(b => b.bookId?.description).filter(Boolean);
-    const tags = [...new Set(userBooks.flatMap(b => b.tags ?? []))];
-
-    const recommendations = await geminiService.getBookRecommendations({
-      authors, titles, descriptions, tags
-    });
-
-    await setCache(cacheKey, recommendations, RECOMMENDATIONS_CACHE_TTL);
+    const recommendations = await booksService.getRecommendations(req.userId);
     res.json(recommendations);
   } catch (error) {
     logger.error(`Get Recommendations Error: ${error.message}`);
     res.status(500).json({ error: 'Failed to get recommendations' });
-  }
-};
-exports.updateReadingProgress = async (req, res) => {
-  try {
-    const userId = req.userId;
-    const { id } = req.params;
-    const { pagesRead } = req.body;
-
-    if (!Number.isInteger(pagesRead) || pagesRead <= 0) {
-      return res.status(400).json({ error: 'pagesRead must be a positive integer' });
-    }
-
-    const userBook = await UserBook.findOne({ _id: id, userId }).populate('bookId');
-    if (!userBook) {
-      return res.status(404).json({ error: 'Book not found' });
-    }
-
-    if (!userBook.bookId) {
-      logger.error(`Orphaned UserBook: bookId population failed for UserBook ${id}`);
-      return res.status(500).json({ error: 'Book metadata not found' });
-    }
-
-    if (userBook.status === ReadingStatus.COMPLETED) {
-      return res.status(400).json({ error: 'Cannot update progress on a completed book' });
-    }
-
-    const totalPages = userBook.bookId.pageCount || 0;
-    const currentProgress = userBook.currentPage || 0;
-    const newPage = currentProgress + pagesRead;
-
-    const update = {};
-    if (totalPages > 0 && newPage >= totalPages) {
-      update.$set = {
-        currentPage: totalPages,
-        status: ReadingStatus.COMPLETED,
-        finishedAt: new Date()
-      };
-    } else {
-      update.$inc = { currentPage: pagesRead };
-    }
-
-    const updatedUserBook = await UserBook.findOneAndUpdate(
-      { _id: id, userId, status: { $ne: ReadingStatus.COMPLETED } },
-      update,
-      { new: true }
-    ).populate('bookId');
-
-    if (!updatedUserBook) {
-      return res.status(400).json({ error: 'Failed to update progress (book might be completed or deleted)' });
-    }
-
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const log = await ReadingLog.findOneAndUpdate(
-      { userId, userBookId: id, date: { $gte: startOfDay } },
-      {
-        $inc: { pagesRead },
-        $setOnInsert: { userId, userBookId: id, date: new Date() }
-      },
-      { upsert: true, new: true }
-    );
-
-    res.json({ userBook: updatedUserBook, log });
-  } catch (error) {
-    logger.error(`Update Reading Progress Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to update reading progress' });
   }
 };
