@@ -2,13 +2,20 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { GoalService } from '../../core/services/goal.service';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { LoaderComponent } from '../../shared/components/loader/loader.component';
-import * as UiActions from '../../shared/store/ui/ui.actions';
 import { GoalPrediction } from '../../shared/models/prediction.model';
 import { Goal } from '../../shared/models/goal.model';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { GoalService } from '../../core/services/goal.service';
+import * as GoalsActions from '../../shared/store/goals/goals.actions';
+import {
+  selectAchievedGoals,
+  selectArchivedGoals, selectArchivedGoalsLoading, selectGoalsLoading,
+  selectInProgressGoals,
+} from '../../shared/store/goals/goals.selector';
+
 
 @Component({
   selector: 'app-goals',
@@ -18,13 +25,18 @@ import { Goal } from '../../shared/models/goal.model';
   styleUrl: './goals.component.scss'
 })
 export class GoalsComponent implements OnInit {
-  private goalService = inject(GoalService);
-  private fb = inject(FormBuilder);
-  private store = inject(Store);
+  private readonly store = inject(Store);
+  private readonly fb = inject(FormBuilder);
+  private readonly goalService = inject(GoalService);
 
-  protected goals = signal<Goal[]>([]);
-  protected isLoading = signal(true);
-  protected isCreating = signal(false);
+  protected readonly inProgressGoals = toSignal(this.store.select(selectInProgressGoals), { initialValue: [] });
+  protected readonly achievedGoals = toSignal(this.store.select(selectAchievedGoals), { initialValue: [] });
+  protected readonly archivedGoals = toSignal(this.store.select(selectArchivedGoals), { initialValue: [] });
+  protected readonly isLoading = toSignal(this.store.select(selectGoalsLoading), { initialValue: false });
+  protected readonly isArchivedLoading = toSignal(this.store.select(selectArchivedGoalsLoading), { initialValue: false });
+
+  protected readonly isCreating = signal(false);
+  protected readonly showArchived = signal(false);
 
   protected predictions = signal<Record<string, {
     data: GoalPrediction | null;
@@ -33,7 +45,7 @@ export class GoalsComponent implements OnInit {
     error: boolean;
   }>>({});
 
-  protected goalForm = this.fb.group({
+  protected readonly goalForm = this.fb.group({
     name: ['', [Validators.required]],
     type: ['MONTH' as Goal['type'], [Validators.required]],
     goalType: ['BOOKS_COUNT' as Goal['goalType'], [Validators.required]],
@@ -42,19 +54,15 @@ export class GoalsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadGoals();
+    this.store.dispatch(GoalsActions.loadGoals());
   }
 
-  protected loadGoals(): void {
-    this.isLoading.set(true);
-    this.goalService.getGoals().subscribe({
-      next: (data) => {
-        this.goals.set(data);
-        this.isLoading.set(false);
-        this.predictions.set({});
-      },
-      error: () => this.isLoading.set(false)
-    });
+  protected toggleArchived(): void {
+    this.showArchived.update(v => !v);
+    // lazy-load archived goals only when first opened
+    if (this.showArchived() && this.archivedGoals().length === 0) {
+      this.store.dispatch(GoalsActions.loadArchivedGoals());
+    }
   }
 
   protected loadPrediction(goalId: string): void {
@@ -110,30 +118,22 @@ export class GoalsComponent implements OnInit {
       category: formValue.category || undefined
     };
 
-    this.isLoading.set(true);
-    this.goalService.createGoal(newGoal).subscribe({
-      next: () => {
-        this.loadGoals();
-        this.isCreating.set(false);
-        this.goalForm.reset({ type: 'MONTH', goalType: 'BOOKS_COUNT', targetCount: 1 });
-        this.store.dispatch(UiActions.showToast({
-          toastType: UiActions.ToastType.Success,
-          messageKey: 'TOAST.SUCCESS_GOAL_CREATE'
-        }));
-      },
-      error: () => {
-        this.isLoading.set(false);
-        this.store.dispatch(UiActions.showToast({
-          toastType: UiActions.ToastType.Error,
-          messageKey: 'TOAST.ERROR_GOAL_CREATE'
-        }));
-      }
-    });
+    this.store.dispatch(GoalsActions.createGoal({ goal: newGoal }));
+    this.isCreating.set(false);
+    this.goalForm.reset({ type: 'MONTH', goalType: 'BOOKS_COUNT', targetCount: 1 });
+  }
+
+  protected deactivateGoal(id: string): void {
+    this.store.dispatch(GoalsActions.toggleGoalActive({ id }));
+  }
+
+  protected reactivateGoal(id: string): void {
+    this.store.dispatch(GoalsActions.toggleGoalActive({ id }));
   }
 
   protected deleteGoal(id: string): void {
-    if (confirm('Are you sure you want to delete this goal?')) {
-      this.goalService.deleteGoal(id).subscribe(() => this.loadGoals());
+    if (confirm('Permanently delete this goal? This cannot be undone.')) {
+      this.store.dispatch(GoalsActions.deleteGoal({ id }));
     }
   }
 

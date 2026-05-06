@@ -127,7 +127,8 @@
     "LOADING": "Loading...",
     "SENDING": "Sent",
     "SAVE": "Save",
-    "CLOSE": "Close"
+    "CLOSE": "Close",
+    "DELETE": "Delete"
   },
   "AUTH": {
     "FORGOT_PASSWORD_TITLE": "Reset password",
@@ -255,6 +256,8 @@
     "SUCCESS_ADD_RECOMMENDATION": "Book added from recommendations",
     "SUCCESS_GOAL_CREATE": "Reading goal created successfully",
     "ERROR_GOAL_CREATE": "Failed to create reading goal",
+    "GOAL_REACTIVATED": "Goal reactivated",
+    "GOAL_DEACTIVATED": "Goal deactivated",
     "SUCCESS_PROGRESS_UPDATE": "Reading progress updated!",
     "SUCCESS_FOLDER_CREATE": "Folder created successfully",
     "ERROR_FOLDER_CREATE": "Failed to create folder",
@@ -268,7 +271,12 @@
     "SUBTITLE": "Set and track your reading targets",
     "CREATE_BUTTON": "Create Goal",
     "NEW_GOAL_TITLE": "New Reading Goal",
+    "DEACTIVATE": "Deactivate",
+    "REACTIVATE": "Reactivate",
     "ACHIEVED_LABEL": "Achieved!",
+    "ARCHIVED_LABEL": "Archived",
+    "ARCHIVED_EMPTY": "You have no archived goals yet",
+    "IN_PROGRESS_LABEL": "In Progress",
     "EMPTY_STATE": "You haven't set any goals yet.",
     "EMPTY_STATE_CTA": "Set Your First Goal",
     "DATE_FROM": "From",
@@ -305,6 +313,11 @@
       "BOOKS_PER_MONTH": "books/month needed",
       "AT_CURRENT_PACE": "At current pace",
       "DAYS": "days"
+    },
+    "SECTION": {
+      "IN_PROGRESS": "In Progress",
+      "ACHIEVED": "Achieved",
+      "ARCHIVED": "Archived"
     }
   }
 }

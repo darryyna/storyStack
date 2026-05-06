@@ -9,7 +9,7 @@ class GoalsService {
   }
 
   async getGoalsWithProgress(userId) {
-    const goals = await userGoalRepo.findByUser(userId);
+    const goals = await userGoalRepo.findByUser(userId); // only isActive: true
 
     const goalsWithProgress = await Promise.all(goals.map(async (goal) => {
       const currentCount = await this._calculateCurrentCount(userId, goal);
@@ -26,11 +26,32 @@ class GoalsService {
       return goalObj;
     }));
 
-    return goalsWithProgress;
+    // active goals first, achieved goals last
+    return goalsWithProgress.sort((a, b) => {
+      if (a.isAchieved === b.isAchieved) return 0;
+      return a.isAchieved ? 1 : -1;
+    });
+  }
+
+  async getArchivedGoals(userId) {
+    const goals = await userGoalRepo.findDeactivatedByUser(userId);
+    return goals.map(g => g.toJSON());
   }
 
   async deleteGoal(userId, id) {
     return userGoalRepo.deleteByUserAndId(userId, id);
+  }
+
+  // toggles isActive. if currently active → deactivate, if deactivated → reactivate
+  async toggleGoalActive(userId, id) {
+    const goal = await userGoalRepo.findByUserAndId(userId, id);
+    if (!goal) return null;
+
+    if (goal.isActive) {
+      return userGoalRepo.deactivateByUserAndId(userId, id);
+    } else {
+      return userGoalRepo.reactivateByUserAndId(userId, id);
+    }
   }
 
   async getGoalPrediction(userId, id) {

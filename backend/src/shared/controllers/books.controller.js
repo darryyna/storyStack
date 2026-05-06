@@ -1,176 +1,117 @@
 const booksService = require('../services/books.service');
 const { isValidObjectId } = require('../helpers/idValidationCheck');
 const logger = require('../configuration/logger');
+const { ValidationError, NotFoundError, ConflictError, AppError } = require('../errorsHandling/errors');
 
 exports.searchBooks = async (req, res) => {
-  try {
-    const { q } = req.query;
-    if (!q) return res.status(400).json({ error: 'Query parameter "q" is required' });
+  const { q } = req.query;
+  if (!q) throw new ValidationError('Query parameter "q" is required');
 
-    const books = await booksService.searchBooks(q);
-    res.json(books);
-  } catch (error) {
-    logger.error(`Search Books Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to search books' });
-  }
+  const books = await booksService.searchBooks(q);
+  res.json(books);
 };
 
 exports.addExternalBook = async (req, res) => {
-  try {
-    const { sourceId, title } = req.body;
-    if (!sourceId || !title) {
-      return res.status(400).json({ error: 'sourceId and title are required' });
-    }
-
-    const externalBook = await booksService.upsertExternalBook(req.body);
-    res.json(externalBook);
-  } catch (error) {
-    logger.error(`Add External Book Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to add external book' });
+  const { sourceId, title } = req.body;
+  if (!sourceId || !title) {
+    throw new ValidationError('sourceId and title are required');
   }
+
+  const externalBook = await booksService.upsertExternalBook(req.body);
+  res.json(externalBook);
 };
 
 exports.addUserBook = async (req, res) => {
-  try {
-    const { externalBookId } = req.body;
-    if (!externalBookId) return res.status(400).json({ error: 'externalBookId is required' });
-    if (!isValidObjectId(externalBookId)) return res.status(400).json({ error: 'Invalid externalBookId' });
+  const { externalBookId } = req.body;
+  if (!externalBookId) throw new ValidationError('externalBookId is required');
+  if (!isValidObjectId(externalBookId)) throw new ValidationError('Invalid externalBookId');
 
-    const result = await booksService.addUserBook(req.userId, req.body);
+  const result = await booksService.addUserBook(req.userId, req.body);
 
-    if (result.notFound) return res.status(404).json({ error: 'External book not found' });
-    if (result.conflict) return res.status(409).json({ error: 'Book already added to your library' });
+  if (result.notFound) throw new NotFoundError('External book not found');
+  if (result.conflict) throw new ConflictError('Book already added to your library');
 
-    res.status(201).json(result.userBook);
-  } catch (error) {
-    logger.error(`Add User Book Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to add book to user library' });
-  }
+  res.status(201).json(result.userBook);
 };
 
 exports.getUserBooks = async (req, res) => {
-  try {
-    const result = await booksService.getUserBooks(req.userId, req.query);
-    res.json(result);
-  } catch (error) {
-    logger.error(`Get User Books Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to fetch user books' });
-  }
+  const result = await booksService.getUserBooks(req.userId, req.query);
+  res.json(result);
 };
 
 exports.deleteUserBook = async (req, res) => {
-  try {
-    const { id } = req.params;
-    if (!isValidObjectId(id)) return res.status(400).json({ error: 'Invalid book ID' });
+  const { id } = req.params;
+  if (!isValidObjectId(id)) throw new ValidationError('Invalid book ID');
 
-    const deleted = await booksService.deleteUserBook(req.userId, id);
-    if (!deleted) return res.status(404).json({ error: 'Book not found in your library' });
+  const deleted = await booksService.deleteUserBook(req.userId, id);
+  if (!deleted) throw new NotFoundError('Book not found in your library');
 
-    res.json({ message: 'Book successfully deleted from library' });
-  } catch (error) {
-    logger.error(`Delete User Book Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to delete book from library' });
-  }
+  res.json({ message: 'Book successfully deleted from library' });
 };
 
 exports.getUserBookById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    if (!isValidObjectId(id)) return res.status(400).json({ error: 'Invalid book ID' });
+  const { id } = req.params;
+  if (!isValidObjectId(id)) throw new ValidationError('Invalid book ID');
 
-    const userBook = await booksService.getUserBookById(req.userId, id);
-    if (!userBook) return res.status(404).json({ error: 'Book not found in library' });
+  const userBook = await booksService.getUserBookById(req.userId, id);
+  if (!userBook) throw new NotFoundError('Book not found in library');
 
-    res.json(userBook);
-  } catch (error) {
-    logger.error(`Get User Book By Id Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to fetch user book' });
-  }
+  res.json(userBook);
 };
 
 exports.updateUserBook = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const userBook = await booksService.updateUserBook(req.userId, id, req.body);
-    if (!userBook) return res.status(404).json({ error: 'Book not found in library' });
+  const { id } = req.params;
+  const userBook = await booksService.updateUserBook(req.userId, id, req.body);
+  if (!userBook) throw new NotFoundError('Book not found in library');
 
-    res.json(userBook);
-  } catch (error) {
-    logger.error(`Update User Book Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to update user book' });
-  }
+  res.json(userBook);
 };
 
 exports.getLatestNote = async (req, res) => {
-  try {
-    const latestBook = await booksService.getLatestNote(req.userId);
-    if (!latestBook || !latestBook.bookId) {
-      return res.status(404).json({ error: 'No books with notes found' });
-    }
-
-    res.json({
-      bookId: latestBook._id,
-      bookTitle: latestBook.bookId.title,
-      lastNote: latestBook.notes,
-      timestamp: latestBook.updatedAt
-    });
-  } catch (error) {
-    logger.error(`Get Latest Note Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to fetch latest note' });
+  const latestBook = await booksService.getLatestNote(req.userId);
+  if (!latestBook || !latestBook.bookId) {
+    throw new NotFoundError('No books with notes found');
   }
+
+  res.json({
+    bookId: latestBook._id,
+    bookTitle: latestBook.bookId.title,
+    lastNote: latestBook.notes,
+    timestamp: latestBook.updatedAt
+  });
 };
 
 exports.updateReadingProgress = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { pagesRead } = req.body;
+  const { id } = req.params;
+  const { pagesRead } = req.body;
 
-    if (!Number.isInteger(pagesRead) || pagesRead <= 0) {
-      return res.status(400).json({ error: 'pagesRead must be a positive integer' });
-    }
-
-    const result = await booksService.updateReadingProgress(req.userId, id, pagesRead);
-
-    if (result.notFound) return res.status(404).json({ error: 'Book not found' });
-    if (result.orphaned) return res.status(500).json({ error: 'Book metadata not found' });
-    if (result.alreadyCompleted) return res.status(400).json({ error: 'Cannot update progress on a completed book' });
-
-    res.json(result);
-  } catch (error) {
-    logger.error(`Update Reading Progress Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to update reading progress' });
+  if (!Number.isInteger(pagesRead) || pagesRead <= 0) {
+    throw new ValidationError('pagesRead must be a positive integer');
   }
+
+  const result = await booksService.updateReadingProgress(req.userId, id, pagesRead);
+
+  if (result.notFound) throw new NotFoundError('Book not found');
+  if (result.orphaned) throw new AppError('Book metadata not found', 500);
+  if (result.alreadyCompleted) throw new ValidationError('Cannot update progress on a completed book');
+
+  res.json(result);
 };
 
 exports.uploadCover = async (req, res) => {
-  try {
-    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    res.json({ url: `/uploads/books/${req.file.filename}` });
-  } catch (error) {
-    logger.error(`Upload Cover Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to upload cover' });
-  }
+  if (!req.file) throw new ValidationError('No file uploaded');
+  res.json({ url: `/uploads/books/${req.file.filename}` });
 };
 
 exports.addManualBook = async (req, res) => {
-  try {
-    const { title } = req.body;
-    if (!title) return res.status(400).json({ error: 'Title is required' });
+  const { title } = req.body;
+  if (!title) throw new ValidationError('Title is required');
 
-    const externalBook = await booksService.addManualBook(req.body);
-    res.status(201).json(externalBook);
-  } catch (error) {
-    logger.error(`Add Manual Book Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to add manual book' });
-  }
+  const externalBook = await booksService.addManualBook(req.body);
+  res.status(201).json(externalBook);
 };
 
 exports.getRecommendations = async (req, res) => {
-  try {
-    const recommendations = await booksService.getRecommendations(req.userId);
-    res.json(recommendations);
-  } catch (error) {
-    logger.error(`Get Recommendations Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to get recommendations' });
-  }
+  const recommendations = await booksService.getRecommendations(req.userId);
+  res.json(recommendations);
 };

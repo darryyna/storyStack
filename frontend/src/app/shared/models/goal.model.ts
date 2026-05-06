@@ -9,5 +9,7 @@ export interface Goal {
   currentCount?: number;
   progressPercent?: number;
   isAchieved?: boolean;
+  isActive?: boolean;
+  deactivatedAt?: string;
   category?: string;
 }

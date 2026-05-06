@@ -1,46 +1,38 @@
 const goalsService = require('../services/goals.service');
 const logger = require('../configuration/logger');
+const { NotFoundError } = require('../errorsHandling/errors');
 
 exports.createGoal = async (req, res) => {
-  try {
-    const goal = await goalsService.createGoal(req.userId, req.body);
-    res.status(201).json(goal);
-  } catch (error) {
-    logger.error(`Create Goal Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to create goal' });
-  }
+  const goal = await goalsService.createGoal(req.userId, req.body);
+  res.status(201).json(goal);
 };
 
 exports.getGoals = async (req, res) => {
-  try {
-    const goals = await goalsService.getGoalsWithProgress(req.userId);
-    res.json(goals);
-  } catch (error) {
-    logger.error(`Get Goals Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to fetch goals' });
-  }
+  const goals = await goalsService.getGoalsWithProgress(req.userId);
+  res.json(goals);
+};
+
+exports.getArchivedGoals = async (req, res) => {
+  const goals = await goalsService.getArchivedGoals(req.userId);
+  res.json(goals);
 };
 
 exports.deleteGoal = async (req, res) => {
-  try {
-    const result = await goalsService.deleteGoal(req.userId, req.params.id);
-    if (!result) return res.status(404).json({ error: 'Goal not found' });
+  const result = await goalsService.deleteGoal(req.userId, req.params.id);
+  if (!result) throw new NotFoundError('Goal not found');
 
-    res.json({ message: 'Goal deleted successfully' });
-  } catch (error) {
-    logger.error(`Delete Goal Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to delete goal' });
-  }
+  res.json({ message: 'Goal deleted successfully' });
+};
+
+exports.toggleGoalActive = async (req, res) => {
+  const result = await goalsService.toggleGoalActive(req.userId, req.params.id);
+  if (!result) throw new NotFoundError('Goal not found');
+  res.json(result);
 };
 
 exports.getGoalPrediction = async (req, res) => {
-  try {
-    const result = await goalsService.getGoalPrediction(req.userId, req.params.id);
-    if (!result) return res.status(404).json({ error: 'Goal not found' });
+  const result = await goalsService.getGoalPrediction(req.userId, req.params.id);
+  if (!result) throw new NotFoundError('Goal not found');
 
-    res.json(result);
-  } catch (error) {
-    logger.error(`Get Goal Prediction Error: ${error.message}`);
-    res.status(500).json({ error: 'Failed to get goal prediction' });
-  }
+  res.json(result);
 };

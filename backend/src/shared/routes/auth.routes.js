@@ -2,6 +2,12 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/auth.controller');
 const rateLimit = require('express-rate-limit');
+const { asyncHandler } = require('../middlewares/errorHandler.middleware');
+const { validate } = require('../middlewares/validate.middleware');
+const { registerSchema,
+  loginSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema} = require('../validation/auth.schema');
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -40,7 +46,7 @@ const authLimiter = rateLimit({
  *       400:
  *         description: Bad request (e.g., invalid input, user already exists)
  */
-router.post('/register', authLimiter, authController.register);
+router.post('/register', authLimiter, validate(registerSchema), asyncHandler(authController.register));
 
 /**
  * @swagger
@@ -88,7 +94,7 @@ router.post('/register', authLimiter, authController.register);
  *       400:
  *         description: Bad request (e.g., missing email/password)
  */
-router.post('/login', authLimiter, authController.login);
+router.post('/login', authLimiter, validate(loginSchema), asyncHandler(authController.login));
 
 /**
  * @swagger
@@ -111,7 +117,7 @@ router.post('/login', authLimiter, authController.login);
  *       401:
  *         description: Unauthorized (e.g., invalid or expired refresh token)
  */
-router.post('/refresh', authController.refreshToken);
+router.post('/refresh', asyncHandler(authController.refreshToken));
 
 /**
  * @swagger
@@ -155,7 +161,7 @@ router.post('/logout', authController.logout);
  *       500:
  *         description: Server error
  */
-router.post('/forgot-password', authLimiter, authController.forgotPassword);
+router.post('/forgot-password', authLimiter, validate(forgotPasswordSchema), asyncHandler(authController.forgotPassword));
 
 /**
  * @swagger
@@ -189,6 +195,6 @@ router.post('/forgot-password', authLimiter, authController.forgotPassword);
  *       500:
  *         description: Server error
  */
-router.post('/reset-password', authLimiter, authController.resetPassword);
+router.post('/reset-password', authLimiter, validate(resetPasswordSchema), asyncHandler(authController.resetPassword));
 
 module.exports = router;

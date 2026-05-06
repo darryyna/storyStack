@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-const currentYear = new Date().getFullYear();
 const UserGoalSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -42,6 +41,15 @@ const UserGoalSchema = new mongoose.Schema({
     isAchieved: {
         type: Boolean,
         default: false
+    },
+    isActive: {
+        type: Boolean,
+        default: true,
+        index: true          // indexed — queries filter by this frequently
+    },
+    deactivatedAt: {
+        type: Date,
+        default: null
     }
 }, {
     timestamps: true
