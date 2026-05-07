@@ -10,6 +10,8 @@ router.use(auth);
 
 router.post('/', validate(createGoalSchema), asyncHandler(goalController.createGoal));
 router.get('/', asyncHandler(goalController.getGoals));
+router.get('/archived', asyncHandler(goalController.getArchivedGoals));
+router.patch('/:id/toggle-active', asyncHandler(goalController.toggleGoalActive));
 router.delete('/:id', asyncHandler(goalController.deleteGoal));
 router.get('/:id/prediction', asyncHandler(goalController.getGoalPrediction));
 

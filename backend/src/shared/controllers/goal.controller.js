@@ -1,5 +1,4 @@
 const goalsService = require('../services/goals.service');
-const logger = require('../configuration/logger');
 const { NotFoundError } = require('../errorsHandling/errors');
 
 exports.createGoal = async (req, res) => {
