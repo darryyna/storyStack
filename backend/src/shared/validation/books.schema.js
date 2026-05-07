@@ -4,7 +4,7 @@ const addExternalBookSchema = z.object({
   sourceId: z.string().min(1, 'sourceId is required'),
   title: z.string().min(1, 'title is required'),
   authors: z.array(z.string()).optional().default([]),
-  thumbnail: z.string().url().optional().nullable(),
+  thumbnail: z.string().url().or(z.literal('')).optional().nullable(),
   description: z.string().optional().nullable(),
   pageCount: z.number().int().positive().optional().nullable(),
   categories: z.array(z.string()).optional().default([]),

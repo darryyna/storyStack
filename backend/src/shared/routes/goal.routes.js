@@ -12,5 +12,7 @@ router.post('/', validate(createGoalSchema), asyncHandler(goalController.createG
 router.get('/', asyncHandler(goalController.getGoals));
 router.delete('/:id', asyncHandler(goalController.deleteGoal));
 router.get('/:id/prediction', asyncHandler(goalController.getGoalPrediction));
+router.get('/archived', asyncHandler(goalController.getArchivedGoals));
+router.patch('/:id/toggle-active', asyncHandler(goalController.toggleGoalActive));
 
 module.exports = router;

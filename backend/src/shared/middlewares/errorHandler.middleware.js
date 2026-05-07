@@ -1,12 +1,12 @@
 const { AppError } = require('../errorsHandling/errors');
 const logger = require('../configuration/logger');
 
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res) => {
   if (err instanceof AppError && err.isOperational) {
     return res.status(err.statusCode).json({ error: err.message, code: err.code });
   }
   if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
-    return res.status(403).json({ error: 'Invalid or expired token', code: 'INVALID_TOKEN' });
+    return res.status(401).json({ error: 'Invalid or expired token', code: 'INVALID_TOKEN' });
   }
   if (err.code === 11000) {
     const field = Object.keys(err.keyValue || {})[0] || 'field';
