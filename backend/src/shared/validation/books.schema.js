@@ -34,7 +34,7 @@ const updateProgressSchema = z.object({
 const addManualBookSchema = z.object({
   title: z.string().min(1, 'title is required'),
   authors: z.array(z.string()).optional().default([]),
-  thumbnail: z.string().optional().nullable(),
+  thumbnail: z.union([z.string().url(), z.literal(''), z.null()]).optional().nullable(),
   description: z.string().optional().nullable(),
   pageCount: z.number().int().positive().optional().nullable(),
   categories: z.array(z.string()).optional().default([]),

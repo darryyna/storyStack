@@ -64,7 +64,6 @@ class GoalsService {
 
     const [logsLast30, booksLast90, achievedGoalsCount] = await Promise.all([
       readingLogRepo.findByUserSince(userId, thirtyDaysAgo),
-      readingLogRepo.findByUserSince(userId, ninetyDaysAgo),
       userBookRepo.countCompletedSince(userId, ninetyDaysAgo),
       userGoalRepo.countAchieved(userId)
     ]);

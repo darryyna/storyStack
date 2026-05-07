@@ -1,6 +1,5 @@
 const booksService = require('../services/books.service');
 const { isValidObjectId } = require('../helpers/idValidationCheck');
-const logger = require('../configuration/logger');
 const { ValidationError, NotFoundError, ConflictError, AppError } = require('../errorsHandling/errors');
 
 exports.searchBooks = async (req, res) => {
@@ -114,4 +113,9 @@ exports.addManualBook = async (req, res) => {
 exports.getRecommendations = async (req, res) => {
   const recommendations = await booksService.getRecommendations(req.userId);
   res.json(recommendations);
+};
+
+exports.getCabinetPreview = async (req, res) => {
+  const preview = await booksService.getCabinetPreview(req.userId);
+  res.json(preview);
 };

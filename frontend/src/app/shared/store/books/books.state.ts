@@ -1,4 +1,4 @@
-import { Book, BookStatus, SearchBook } from '../../../core/models/book.model';
+import { Book, BookStatus, CabinetPreview, SearchBook } from '../../../core/models/book.model';
 
 export interface LatestNoteState {
   bookId: string;
@@ -23,6 +23,8 @@ export interface BooksState {
   selectedBook: Book | null;
   latestNote: LatestNoteState | null;
   recommendations: RecommendationsState;
+  cabinetPreview: CabinetPreview | null;
+  cabinetPreviewLoading: boolean;
   isLoading: boolean;
   isAdding: boolean;
   error: string;

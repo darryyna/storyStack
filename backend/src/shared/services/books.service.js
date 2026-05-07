@@ -223,6 +223,29 @@ class BooksService {
   async getUserBookById(userId, id) {
     return userBookRepo.findByUserAndId(userId, id);
   }
+
+  async getCabinetPreview(userId) {
+    const statuses = ['reading', 'planned', 'completed', 'dropped'];
+
+    const [countsByStatus, ...booksByStatus] = await Promise.all([
+      userBookRepo.countsByStatus(userId),
+      ...statuses.map(status =>
+        userBookRepo.findByUserWithFilters(
+          userId,
+          { userId, status },
+          { skip: 0, limit: 3 }
+        )
+      )
+    ]);
+
+    return {
+      countsByStatus,
+      reading:   booksByStatus[0],
+      planned:   booksByStatus[1],
+      completed: booksByStatus[2],
+      dropped:   booksByStatus[3],
+    };
+  }
 }
 
 module.exports = new BooksService();

@@ -12,11 +12,9 @@ import { ModalWindowComponent } from '../../shared/components/modal-window/modal
 import { Book, BookStatus, ManualBookModalData, SearchBook } from '../../core/models/book.model';
 import { ManualBookModalComponent } from './components/manual-book-modal/manual-book-modal.component';
 import * as BooksActions from '../../shared/store/books/books.actions';
-import { forkJoin } from 'rxjs';
-import { BooksService } from '../../core/services/books.service';
 import {
   selectAddedFromRecommendations, selectAddingFromRecommendations,
-  selectBooksLoading,
+  selectBooksLoading, selectCabinetPreview,
   selectCountsByStatus,
   selectLatestNote, selectRecommendations, selectRecommendationsLoading,
 } from '../../shared/store/books/books.selectors';
@@ -37,8 +35,9 @@ export class PersonalCabinetComponent implements OnInit {
   private readonly currentUser = toSignal(this.store.select(selectCurrentUser), { initialValue: undefined });
   protected readonly username = computed(() => this.currentUser()?.username ?? '');
 
-  private readonly booksService = inject(BooksService);
-  protected readonly previewBooks = signal<Partial<Record<BookStatus, Book[]>>>({});
+  protected readonly cabinetPreview = toSignal(
+    this.store.select(selectCabinetPreview), { initialValue: null }
+  );
   protected readonly isLoading = toSignal(this.store.select(selectBooksLoading), { initialValue: false });
   protected readonly latestNote = toSignal(this.store.select(selectLatestNote), { initialValue: null });
   protected readonly recommendations = toSignal(
@@ -79,12 +78,12 @@ export class PersonalCabinetComponent implements OnInit {
 
   protected readonly cabinetSections = computed(() => {
     const counts = this.countsByStatus();
-    const preview = this.previewBooks();
+    const preview = this.cabinetPreview();
 
     return this.SECTIONS.map(section => ({
       ...section,
       allBooksCount: counts ? counts[section.type] : 0,
-      books: preview[section.type] ?? [],
+      books: preview ? preview[section.type as keyof typeof preview] as Book[] ?? [] : [],
       isOpen: this.openSections().has(section.type),
     }));
   });
@@ -102,21 +101,7 @@ export class PersonalCabinetComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    forkJoin({
-      reading:   this.booksService.getUserBooks({ status: BookStatus.Reading,   limit: 3 }),
-      planned:   this.booksService.getUserBooks({ status: BookStatus.Planned,   limit: 3 }),
-      completed: this.booksService.getUserBooks({ status: BookStatus.Completed, limit: 3 }),
-      dropped:   this.booksService.getUserBooks({ status: BookStatus.Dropped,   limit: 3 }),
-    }).subscribe(results => {
-      this.previewBooks.set({
-        [BookStatus.Reading]:   results.reading.books,
-        [BookStatus.Planned]:   results.planned.books,
-        [BookStatus.Completed]: results.completed.books,
-        [BookStatus.Dropped]:   results.dropped.books,
-      });
-      this.store.dispatch(BooksActions.loadBooks({ filters: { limit: 1 } }));
-    });
-
+    this.store.dispatch(BooksActions.loadCabinetPreview());
     this.store.dispatch(BooksActions.loadLatestNote());
     this.store.dispatch(BooksActions.loadRecommendations());
   }

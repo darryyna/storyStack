@@ -12,6 +12,13 @@ export const selectTotalCount = createSelector(selectBooksState, state => state.
 export const selectCurrentPage = createSelector(selectBooksState, state => state.currentPage);
 export const selectTotalPages = createSelector(selectBooksState, state => state.totalPages);
 export const selectCountsByStatus = createSelector(selectBooksState, state => state.countsByStatus);
+export const selectCabinetPreview = createSelector(
+  selectBooksState, state => state.cabinetPreview
+);
+
+export const selectCabinetPreviewLoading = createSelector(
+  selectBooksState, state => state.cabinetPreviewLoading
+);
 
 // Selected Book
 export const selectSelectedBook = createSelector(selectBooksState, state => state.selectedBook);
