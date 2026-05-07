@@ -115,6 +115,31 @@ class UserBookRepository {
     ]);
   }
 
+
+  async countCompletedByCategory(userId, startDate, endDate, category) {
+    const result = await UserBook.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(userId),
+          status: ReadingStatus.COMPLETED,
+          finishedAt: { $gte: startDate, $lte: endDate }
+        }
+      },
+      {
+        $lookup: {
+          from: 'externalbookids',
+          localField: 'bookId',
+          foreignField: '_id',
+          as: 'bookDetails'
+        }
+      },
+      { $unwind: '$bookDetails' },
+      { $match: { 'bookDetails.categories': category } },
+      { $count: 'total' }
+    ]);
+    return result[0]?.total ?? 0;
+  }
+
   async countCompletedSince(userId, since) {
     return UserBook.countDocuments({
       userId,

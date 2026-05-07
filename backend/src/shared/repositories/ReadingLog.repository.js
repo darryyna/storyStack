@@ -1,4 +1,5 @@
 const ReadingLog = require('../models/ReadingLog.model');
+const mongoose = require('mongoose');
 
 class ReadingLogRepository {
   async upsertForToday(userId, userBookId, pagesRead) {
@@ -37,6 +38,43 @@ class ReadingLogRepository {
       },
       { $sort: { _id: 1 } }
     ]);
+  }
+
+  async sumPagesByCategory(userId, startDate, endDate, category) {
+    const result = await ReadingLog.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(userId),
+          date: { $gte: startDate, $lte: endDate }
+        }
+      },
+      {
+        $lookup: {
+          from: 'userbooks',
+          localField: 'userBookId',
+          foreignField: '_id',
+          as: 'userBook'
+        }
+      },
+      { $unwind: '$userBook' },
+      {
+        $lookup: {
+          from: 'externalbookids',
+          localField: 'userBook.bookId',
+          foreignField: '_id',
+          as: 'bookDetails'
+        }
+      },
+      { $unwind: '$bookDetails' },
+      { $match: { 'bookDetails.categories': category } },
+      {
+        $group: {
+          _id: null,
+          totalPages: { $sum: '$pagesRead' }
+        }
+      }
+    ]);
+    return result[0]?.totalPages ?? 0;
   }
 }
 

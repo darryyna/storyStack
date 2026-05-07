@@ -47,11 +47,9 @@ class GoalsService {
     const goal = await userGoalRepo.findByUserAndId(userId, id);
     if (!goal) return null;
 
-    if (goal.isActive) {
-      return userGoalRepo.deactivateByUserAndId(userId, id);
-    } else {
-      return userGoalRepo.reactivateByUserAndId(userId, id);
-    }
+    return goal.isActive
+      ? userGoalRepo.deactivateByUserAndId(userId, id)
+      : userGoalRepo.reactivateByUserAndId(userId, id);
   }
 
   async getGoalPrediction(userId, id) {
@@ -107,36 +105,18 @@ class GoalsService {
     };
   }
 
-  // private helper — calculates current count for any goal type
+  // calculates current count for any goal type
   async _calculateCurrentCount(userId, goal) {
     if (goal.goalType === 'BOOKS_COUNT') {
-
-      if (goal.category) {
-        const books = await userBookRepo.findCompletedInRange(userId, goal.startDate, goal.endDate);
-        return books.filter(b =>
-          b.bookId.categories && b.bookId.categories.includes(goal.category)
-        ).length;
-      }
-
-      return userBookRepo.countCompleted(userId, goal.startDate, goal.endDate);
+      return goal.category
+        ? userBookRepo.countCompletedByCategory(userId, goal.startDate, goal.endDate, goal.category)
+        : userBookRepo.countCompleted(userId, goal.startDate, goal.endDate);
     }
 
-    // PAGES_COUNT
-    const logs = await readingLogRepo.findByUserInRange(userId, goal.startDate, goal.endDate);
-
-    if (goal.category) {
-      const logBookIds = [...new Set(logs.map(l => l.userBookId))];
-      const books = await userBookRepo.findByIds(logBookIds, userId);
-      const categoryBookIds = books
-        .filter(b => b.bookId.categories && b.bookId.categories.includes(goal.category))
-        .map(b => b._id.toString());
-
-      return logs
-        .filter(l => categoryBookIds.includes(l.userBookId.toString()))
-        .reduce((sum, log) => sum + log.pagesRead, 0);
-    }
-
-    return logs.reduce((sum, log) => sum + log.pagesRead, 0);
+    return goal.category
+      ? readingLogRepo.sumPagesByCategory(userId, goal.startDate, goal.endDate, goal.category)
+      : readingLogRepo.findByUserInRange(userId, goal.startDate, goal.endDate)
+        .then(logs => logs.reduce((sum, l) => sum + l.pagesRead, 0));
   }
 }
 

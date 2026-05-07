@@ -9,12 +9,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AddBookModalComponent } from './components/add-book-modal/add-book-modal.component';
 import { ModalWindowComponent } from '../../shared/components/modal-window/modal-window.component';
-import { BookStatus, ManualBookModalData, SearchBook } from '../../core/models/book.model';
+import { Book, BookStatus, ManualBookModalData, SearchBook } from '../../core/models/book.model';
 import { ManualBookModalComponent } from './components/manual-book-modal/manual-book-modal.component';
 import * as BooksActions from '../../shared/store/books/books.actions';
+import { forkJoin } from 'rxjs';
+import { BooksService } from '../../core/services/books.service';
 import {
   selectAddedFromRecommendations, selectAddingFromRecommendations,
-  selectAllBooks,
   selectBooksLoading,
   selectCountsByStatus,
   selectLatestNote, selectRecommendations, selectRecommendationsLoading,
@@ -36,7 +37,8 @@ export class PersonalCabinetComponent implements OnInit {
   private readonly currentUser = toSignal(this.store.select(selectCurrentUser), { initialValue: undefined });
   protected readonly username = computed(() => this.currentUser()?.username ?? '');
 
-  protected readonly books = toSignal(this.store.select(selectAllBooks), { initialValue: [] });
+  private readonly booksService = inject(BooksService);
+  protected readonly previewBooks = signal<Partial<Record<BookStatus, Book[]>>>({});
   protected readonly isLoading = toSignal(this.store.select(selectBooksLoading), { initialValue: false });
   protected readonly latestNote = toSignal(this.store.select(selectLatestNote), { initialValue: null });
   protected readonly recommendations = toSignal(
@@ -77,17 +79,14 @@ export class PersonalCabinetComponent implements OnInit {
 
   protected readonly cabinetSections = computed(() => {
     const counts = this.countsByStatus();
-    const currentBooks = this.books();
+    const preview = this.previewBooks();
 
-    return this.SECTIONS.map(section => {
-      const sectionBooks = currentBooks.filter(b => b.status === section.type);
-      return {
-        ...section,
-        allBooksCount: counts ? counts[section.type] : 0,
-        books: sectionBooks.slice(0, 3),
-        isOpen: this.openSections().has(section.type),
-      };
-    });
+    return this.SECTIONS.map(section => ({
+      ...section,
+      allBooksCount: counts ? counts[section.type] : 0,
+      books: preview[section.type] ?? [],
+      isOpen: this.openSections().has(section.type),
+    }));
   });
 
   protected readonly countsByStatus = toSignal(
@@ -103,7 +102,21 @@ export class PersonalCabinetComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.store.dispatch(BooksActions.loadBooks({ filters: { limit: 100 } }));
+    forkJoin({
+      reading:   this.booksService.getUserBooks({ status: BookStatus.Reading,   limit: 3 }),
+      planned:   this.booksService.getUserBooks({ status: BookStatus.Planned,   limit: 3 }),
+      completed: this.booksService.getUserBooks({ status: BookStatus.Completed, limit: 3 }),
+      dropped:   this.booksService.getUserBooks({ status: BookStatus.Dropped,   limit: 3 }),
+    }).subscribe(results => {
+      this.previewBooks.set({
+        [BookStatus.Reading]:   results.reading.books,
+        [BookStatus.Planned]:   results.planned.books,
+        [BookStatus.Completed]: results.completed.books,
+        [BookStatus.Dropped]:   results.dropped.books,
+      });
+      this.store.dispatch(BooksActions.loadBooks({ filters: { limit: 1 } }));
+    });
+
     this.store.dispatch(BooksActions.loadLatestNote());
     this.store.dispatch(BooksActions.loadRecommendations());
   }
