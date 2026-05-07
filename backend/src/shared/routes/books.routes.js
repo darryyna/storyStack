@@ -3,7 +3,18 @@ const router = express.Router();
 const booksController = require('../controllers/books.controller');
 const auth = require('../middlewares/auth.middleware');
 const upload = require('../configuration/multer.config');
+const { asyncHandler } = require('../middlewares/errorHandler.middleware');
+const { validate } = require('../middlewares/validate.middleware');
+const {
+  addExternalBookSchema,
+  addUserBookSchema,
+  updateUserBookSchema,
+  updateProgressSchema,
+  addManualBookSchema,
+  searchQuerySchema,
+} = require('../validation/books.schema');
 
+router.use(auth);
 /**
  * @swagger
  * /api/books/search:
@@ -11,7 +22,7 @@ const upload = require('../configuration/multer.config');
  *     summary: Search for books
  *     description: Search for books using Google Books API.
  */
-router.get('/search', auth, booksController.searchBooks);
+router.get('/search', validate(searchQuerySchema, 'query'), asyncHandler(booksController.searchBooks));
 
 /**
  * @swagger
@@ -19,7 +30,7 @@ router.get('/search', auth, booksController.searchBooks);
  *   post:
  *     summary: Add external book
  */
-router.post('/external', auth, booksController.addExternalBook);
+router.post('/external', validate(addExternalBookSchema), asyncHandler(booksController.addExternalBook));
 
 /**
  * @swagger
@@ -27,7 +38,7 @@ router.post('/external', auth, booksController.addExternalBook);
  *   get:
  *     summary: Get latest user book note
  */
-router.get('/user-books/latest-note', auth, booksController.getLatestNote);
+router.get('/user-books/latest-note', asyncHandler(booksController.getLatestNote));
 
 /**
  * @swagger
@@ -76,7 +87,7 @@ router.get('/user-books/latest-note', auth, booksController.getLatestNote);
  *       500:
  *         description: Failed to get recommendations
  */
-router.get('/user-books/recommendations', auth, booksController.getRecommendations);
+router.get('/user-books/recommendations', asyncHandler(booksController.getRecommendations));
 
 /**
  * @swagger
@@ -84,7 +95,7 @@ router.get('/user-books/recommendations', auth, booksController.getRecommendatio
  *   get:
  *     summary: Get single user book
  */
-router.get('/user-books/:id', auth, booksController.getUserBookById);
+router.get('/user-books/:id', asyncHandler(booksController.getUserBookById));
 
 /**
  * @swagger
@@ -92,7 +103,7 @@ router.get('/user-books/:id', auth, booksController.getUserBookById);
  *   patch:
  *     summary: Update book in user library
  */
-router.patch('/user-books/:id', auth, booksController.updateUserBook);
+router.patch('/user-books/:id', validate(updateUserBookSchema), asyncHandler(booksController.updateUserBook));
 
 /**
  * @swagger
@@ -100,7 +111,7 @@ router.patch('/user-books/:id', auth, booksController.updateUserBook);
  *   patch:
  *     summary: Update reading progress
  */
-router.patch('/user-books/:id/progress', auth, booksController.updateReadingProgress);
+router.patch('/user-books/:id/progress', validate(updateProgressSchema), asyncHandler(booksController.updateReadingProgress));
 
 /**
  * @swagger
@@ -108,7 +119,7 @@ router.patch('/user-books/:id/progress', auth, booksController.updateReadingProg
  *   delete:
  *     summary: Delete book from user library
  */
-router.delete('/user-books/:id', auth, booksController.deleteUserBook);
+router.delete('/user-books/:id', asyncHandler(booksController.deleteUserBook));
 
 /**
  * @swagger
@@ -116,9 +127,9 @@ router.delete('/user-books/:id', auth, booksController.deleteUserBook);
  *   get:
  *     summary: Get user library
  */
-router.get('/user-books', auth, booksController.getUserBooks);
+router.get('/user-books', asyncHandler(booksController.getUserBooks));
 
-router.post('/user-books', auth, booksController.addUserBook);
+router.post('/user-books', validate(addUserBookSchema), asyncHandler(booksController.addUserBook));
 
 /**
  * @swagger
@@ -126,7 +137,7 @@ router.post('/user-books', auth, booksController.addUserBook);
  *   post:
  *     summary: Upload book cover image
  */
-router.post('/upload-cover', auth, upload.single('cover'), booksController.uploadCover);
+router.post('/upload-cover', upload.single('cover'), asyncHandler(booksController.uploadCover));
 
 /**
  * @swagger
@@ -134,6 +145,6 @@ router.post('/upload-cover', auth, upload.single('cover'), booksController.uploa
  *   post:
  *     summary: Add manual book entry
  */
-router.post('/manual', auth, booksController.addManualBook);
+router.post('/manual', validate(addManualBookSchema), asyncHandler(booksController.addManualBook));
 
 module.exports = router;

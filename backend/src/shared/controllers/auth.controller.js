@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const userRepo = require('../repositories/user.repository');
 const logger = require('../configuration/logger');
 const { sendPasswordResetEmail } = require('../services/email.service');
+const { ValidationError, ConflictError, UnauthorizedError, ForbiddenError } = require('../errorsHandling/errors');
 
 const verifyJwt = promisify(jwt.verify);
 
@@ -26,63 +27,53 @@ const REFRESH_COOKIE_OPTIONS = {
 };
 
 exports.register = async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
+  const { username, email, password } = req.body;
 
-    if (!username || !email || !password) {
-      return res.status(400).json({ error: 'Username, email and password are required' });
-    }
-
-    const [existingByUsername, existingByEmail] = await Promise.all([
-      userRepo.findByUsername(username),
-      userRepo.findByEmail(email)
-    ]);
-
-    if (existingByUsername) return res.status(409).json({ error: 'Username already taken' });
-    if (existingByEmail) return res.status(409).json({ error: 'Email already taken' });
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await userRepo.create({ username, email, password: hashedPassword });
-
-    const accessToken = generateAccessToken(newUser._id);
-    const refreshToken = generateRefreshToken(newUser._id);
-
-    res.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTIONS);
-    res.status(201).json({ message: 'User is created', accessToken });
-  } catch (err) {
-    logger.error(`Registration error: ${err.message}`);
-    res.status(400).json({ error: 'Error while registering', details: err.message });
+  if (!username || !email || !password) {
+    throw new ValidationError('Username, email and password are required');
   }
+
+  const [existingByUsername, existingByEmail] = await Promise.all([
+    userRepo.findByUsername(username),
+    userRepo.findByEmail(email)
+  ]);
+
+  if (existingByUsername) throw new ConflictError('Username already taken');
+  if (existingByEmail) throw new ConflictError('Email already taken');
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = await userRepo.create({ username, email, password: hashedPassword });
+
+  const accessToken = generateAccessToken(newUser._id);
+  const refreshToken = generateRefreshToken(newUser._id);
+
+  res.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTIONS);
+  res.status(201).json({ message: 'User is created', accessToken });
 };
 
 exports.login = async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    const user = await userRepo.findByUsername(username);
-    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+  const { username, password } = req.body;
+  const user = await userRepo.findByUsername(username);
+  if (!user) throw new UnauthorizedError('Invalid credentials');
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) throw new UnauthorizedError('Invalid credentials');
 
-    const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
+  const accessToken = generateAccessToken(user._id);
+  const refreshToken = generateRefreshToken(user._id);
 
-    res.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTIONS);
-    res.json({ accessToken });
-  } catch (err) {
-    logger.error(`Login error for user ${req.body?.username}: ${err.message}`);
-    res.status(500).json({ error: 'Login Error', details: err.message });
-  }
+  res.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTIONS);
+  res.json({ accessToken });
 };
 
 exports.refreshToken = async (req, res) => {
-  try {
-    const token = req.cookies.refreshToken;
-    if (!token) return res.status(401).json({ error: 'Refresh token required' });
+  const token = req.cookies.refreshToken;
+  if (!token) throw new UnauthorizedError('Refresh token required');
 
+  try {
     const decoded = await verifyJwt(token, process.env.REFRESH_TOKEN_SECRET);
     const user = await userRepo.findById(decoded.userId);
-    if (!user) return res.status(403).json({ error: 'User not found' });
+    if (!user) throw new ForbiddenError('User not found');
 
     const accessToken = generateAccessToken(decoded.userId);
     res.json({
@@ -91,10 +82,9 @@ exports.refreshToken = async (req, res) => {
     });
   } catch (err) {
     if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
-      return res.status(403).json({ error: 'Invalid refresh token' });
+      throw new ForbiddenError('Invalid refresh token');
     }
-    logger.error(`Token refresh failed: ${err.message}`);
-    res.status(500).json({ error: 'Token refresh failed', details: err.message });
+    throw err;
   }
 };
 
@@ -104,46 +94,36 @@ exports.logout = (req, res) => {
 };
 
 exports.forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email) return res.status(400).json({ error: 'Email is required' });
+  const { email } = req.body;
+  if (!email) throw new ValidationError('Email is required');
 
-    const user = await userRepo.findByEmail(email);
-    if (!user) return res.status(200).json({ message: 'If this email exists, a reset link was sent' });
+  const user = await userRepo.findByEmail(email);
+  if (!user) return res.status(200).json({ message: 'If this email exists, a reset link was sent' });
 
-    const token = crypto.randomBytes(32).toString('hex');
-    user.resetPasswordToken = token;
-    user.resetPasswordExpires = Date.now() + 60 * 60 * 1000;
-    await user.save();
+  const token = crypto.randomBytes(32).toString('hex');
+  user.resetPasswordToken = token;
+  user.resetPasswordExpires = Date.now() + 60 * 60 * 1000;
+  await user.save();
 
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
-    await sendPasswordResetEmail(email, resetUrl);
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+  await sendPasswordResetEmail(email, resetUrl);
 
-    res.status(200).json({ message: 'If this email exists, a reset link was sent' });
-  } catch (err) {
-    logger.error(`Forgot password error: ${err.message}`);
-    res.status(500).json({ error: 'Something went wrong' });
-  }
+  res.status(200).json({ message: 'If this email exists, a reset link was sent' });
 };
 
 exports.resetPassword = async (req, res) => {
-  try {
-    const { token, newPassword } = req.body;
-    if (!token || !newPassword) {
-      return res.status(400).json({ error: 'Token and new password are required' });
-    }
-
-    const user = await userRepo.findByResetToken(token);
-    if (!user) return res.status(400).json({ error: 'Invalid or expired token' });
-
-    user.password = await bcrypt.hash(newPassword, 10);
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-    await user.save();
-
-    res.status(200).json({ message: 'Password updated successfully' });
-  } catch (err) {
-    logger.error(`Reset password error: ${err.message}`);
-    res.status(500).json({ error: 'Something went wrong' });
+  const { token, newPassword } = req.body;
+  if (!token || !newPassword) {
+    throw new ValidationError('Token and new password are required');
   }
+
+  const user = await userRepo.findByResetToken(token);
+  if (!user) throw new ValidationError('Invalid or expired token');
+
+  user.password = await bcrypt.hash(newPassword, 10);
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+  await user.save();
+
+  res.status(200).json({ message: 'Password updated successfully' });
 };

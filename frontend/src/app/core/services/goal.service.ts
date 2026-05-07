@@ -16,6 +16,10 @@ export class GoalService {
         return this.http.get<Goal[]>(this.apiUrl);
     }
 
+    getArchivedGoals(): Observable<Goal[]> {
+      return this.http.get<Goal[]>(`${this.apiUrl}/archived`);
+    }
+
     createGoal(goal: Goal): Observable<Goal> {
         return this.http.post<Goal>(this.apiUrl, goal);
     }
@@ -24,7 +28,11 @@ export class GoalService {
         return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
 
-  getGoalPrediction(id: string): Observable<GoalPredictionResponse> {
-    return this.http.get<GoalPredictionResponse>(`${this.apiUrl}/${id}/prediction`);
-  }
+    toggleGoalActive(id: string): Observable<Goal> {
+        return this.http.patch<Goal>(`${this.apiUrl}/${id}/toggle-active`, {});
+    }
+
+    getGoalPrediction(id: string): Observable<GoalPredictionResponse> {
+        return this.http.get<GoalPredictionResponse>(`${this.apiUrl}/${id}/prediction`);
+    }
 }

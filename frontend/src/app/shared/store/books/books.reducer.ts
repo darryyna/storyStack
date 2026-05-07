@@ -97,10 +97,16 @@ export const booksReducer = createReducer(
         isAdding: true,
         error: ''
     })),
-    on(BooksActions.addBookSuccess, (state) => ({
-        ...state,
-        isAdding: false,
-    })),
+  on(BooksActions.addBookSuccess, (state, { book }) => ({
+      ...state,
+      isAdding: false,
+      books: [book, ...state.books],
+      totalCount: state.totalCount + 1,
+      countsByStatus: {
+        ...state.countsByStatus,
+        [book.status]: (state.countsByStatus[book.status] ?? 0) + 1
+      }
+  })),
     on(BooksActions.addBookFailure, (state, { error }) => ({
         ...state,
         isAdding: false,
@@ -111,12 +117,18 @@ export const booksReducer = createReducer(
         isLoading: true,
         error: ''
     })),
-    on(BooksActions.deleteBookSuccess, (state, { id }) => ({
+  on(BooksActions.deleteBookSuccess, (state, { id }) => {
+      const deleted = state.books.find(b => b.id === id);
+      return {
         ...state,
         books: state.books.filter(b => b.id !== id),
-        selectedBook: state.selectedBook?.id === id ? null : state.selectedBook,
-        isLoading: false
-    })),
+        totalCount: state.totalCount - 1,
+        countsByStatus: deleted ? {
+          ...state.countsByStatus,
+          [deleted.status]: Math.max(0, state.countsByStatus[deleted.status] - 1)
+        } : state.countsByStatus
+      };
+  }),
     on(BooksActions.deleteBookFailure, (state, { error }) => ({
         ...state,
         isLoading: false,

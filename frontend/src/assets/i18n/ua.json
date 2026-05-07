@@ -124,7 +124,8 @@
     "LOADING": "Загрузка...",
     "SENDING": "Відправлено",
     "SAVE": "Зберегти",
-    "CLOSE": "Закрити"
+    "CLOSE": "Закрити",
+    "DELETE": "Видалити"
   },
   "AUTH": {
     "FORGOT_PASSWORD_TITLE": "Скидання паролю",
@@ -243,6 +244,8 @@
     "SUCCESS_ADD_RECOMMENDATION": "Книгу додано з рекомендацій",
     "SUCCESS_GOAL_CREATE": "Ціль для читання успішно створена",
     "ERROR_GOAL_CREATE": "Не вдалося створити ціль",
+    "GOAL_REACTIVATED": "Ціль реактивована",
+    "GOAL_DEACTIVATED": "Ціль деактивована",
     "SUCCESS_PROGRESS_UPDATE": "Прогрес читання оновлено!",
     "SUCCESS_FOLDER_CREATE": "Папку успішно створено",
     "ERROR_FOLDER_CREATE": "Не вдалося створити папку",
@@ -263,7 +266,12 @@
     "SUBTITLE": "Встановлюйте та відстежуйте цілі читання",
     "CREATE_BUTTON": "Створити ціль",
     "NEW_GOAL_TITLE": "Нова ціль читання",
+    "DEACTIVATE": "Деактивувати",
+    "REACTIVATE": "Реактивувати",
     "ACHIEVED_LABEL": "Досягнуто!",
+    "ARCHIVED_LABEL": "Заархівовано",
+    "ARCHIVED_EMPTY": "Немає заархівованих цілей",
+    "IN_PROGRESS_LABEL": "В процесі",
     "EMPTY_STATE": "Ви ще не встановили жодної цілі.",
     "EMPTY_STATE_CTA": "Встановити першу ціль",
     "DATE_FROM": "З",
@@ -300,6 +308,11 @@
       "BOOKS_PER_MONTH": "книг/місяць потрібно",
       "AT_CURRENT_PACE": "При поточному темпі",
       "DAYS": "днів"
+    },
+    "SECTION": {
+      "IN_PROGRESS": "В процесі",
+      "ACHIEVED": "Досягнуто",
+      "ARCHIVED": "Архів"
     }
   }
 }

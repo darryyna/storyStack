@@ -21,6 +21,8 @@ import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { AuthInterceptor } from './app/core/interceptors/auth.interceptor';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { GoalsEffects } from './app/shared/store/goals/goals.effects';
+import { goalsReducer } from './app/shared/store/goals/goals.reducer';
 
 export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -38,13 +40,13 @@ bootstrapApplication(AppComponent, {
         loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] },
       }),
     ),
-    provideStore({ auth: authReducer, books: booksReducer, ui: uiReducer, folders: foldersReducer }),
+    provideStore({ auth: authReducer, books: booksReducer, ui: uiReducer, folders: foldersReducer, goals: goalsReducer }),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode(),
       autoPause: true,
     }),
-    provideEffects([AuthEffects, BooksEffects, UiEffects, FoldersEffects]),
+    provideEffects([AuthEffects, BooksEffects, UiEffects, FoldersEffects, GoalsEffects]),
     provideCharts(withDefaultRegisterables()),
   ],
 });

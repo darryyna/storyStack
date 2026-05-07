@@ -5,7 +5,6 @@ import { mergeMap, of } from 'rxjs';
 import * as BooksActions from './books.actions';
 import { BooksService } from '../../../core/services/books.service';
 import { PaginatedBooksResponse } from '../../../core/models/book.model';
-
 import * as UiActions from '../ui/ui.actions';
 
 @Injectable()
@@ -49,15 +48,12 @@ export class BooksEffects {
 
     addBookSuccess$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(BooksActions.addBookSuccess),
-            switchMap(({ book }) => [
-                BooksActions.loadBooks({ filters: { limit: 100 } }),
-                UiActions.showToast({
-                    toastType: UiActions.ToastType.Success,
-                    messageKey: 'TOAST.SUCCESS_ADD',
-                    params: { title: book.bookId?.title || '' }
-                })
-            ])
+          ofType(BooksActions.addBookSuccess),
+          map(({ book }) => UiActions.showToast({
+            toastType: UiActions.ToastType.Success,
+            messageKey: 'TOAST.SUCCESS_ADD',
+            params: { title: book.bookId?.title || '' }
+          }))
         )
     );
 
@@ -85,14 +81,11 @@ export class BooksEffects {
 
     deleteBookSuccess$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(BooksActions.deleteBookSuccess),
-            switchMap(() => [
-                BooksActions.loadBooks({ filters: { limit: 100 } }),
-                UiActions.showToast({
-                    toastType: UiActions.ToastType.Success,
-                    messageKey: 'TOAST.SUCCESS_DELETE'
-                })
-            ])
+          ofType(BooksActions.deleteBookSuccess),
+          map(() => UiActions.showToast({
+            toastType: UiActions.ToastType.Success,
+            messageKey: 'TOAST.SUCCESS_DELETE'
+          }))
         )
     );
 
@@ -230,13 +223,10 @@ export class BooksEffects {
   addBookFromRecommendationSuccess$ = createEffect(() =>
     this.actions$.pipe(
       ofType(BooksActions.addBookFromRecommendationSuccess),
-      switchMap(() => [
-        BooksActions.loadBooks({ filters: { limit: 100 } }),
-        UiActions.showToast({
-          toastType: UiActions.ToastType.Success,
-          messageKey: 'TOAST.SUCCESS_ADD_RECOMMENDATION'
-        })
-      ])
+      map(() => UiActions.showToast({
+        toastType: UiActions.ToastType.Success,
+        messageKey: 'TOAST.SUCCESS_ADD_RECOMMENDATION'
+      }))
     )
   );
 }

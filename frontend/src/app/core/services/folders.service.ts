@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -13,9 +13,8 @@ export interface AddBooksToFolderResponse {
   providedIn: 'root'
 })
 export class FoldersService {
-  private apiUrl = `${environment.apiUrl}/folders`;
-
-  constructor(private http: HttpClient) {}
+  private readonly apiUrl = `${environment.apiUrl}/folders`;
+  private readonly http = inject(HttpClient);
 
   getFolders(): Observable<Folder[]> {
     return this.http.get<Folder[]>(this.apiUrl);
