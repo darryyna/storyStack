@@ -203,7 +203,10 @@ export class BooksEffects {
     this.actions$.pipe(
       ofType(BooksActions.addBookFromRecommendation),
       mergeMap(({ book }) =>
-        this.booksService.addExternalBook(book).pipe(
+        this.booksService.addExternalBook({
+          ...book,
+          thumbnail: book.thumbnail || null
+        }).pipe(
           switchMap(externalBook =>
             this.booksService.addUserBook(externalBook.id).pipe(
               map(() => BooksActions.addBookFromRecommendationSuccess({
@@ -227,6 +230,23 @@ export class BooksEffects {
         toastType: UiActions.ToastType.Success,
         messageKey: 'TOAST.SUCCESS_ADD_RECOMMENDATION'
       }))
+    )
+  );
+
+  loadCabinetPreview$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(
+        BooksActions.loadCabinetPreview,
+        BooksActions.addBookSuccess,
+        BooksActions.addBookFromRecommendationSuccess,
+        BooksActions.deleteBookSuccess,
+      ),
+      switchMap(() =>
+        this.booksService.getCabinetPreview().pipe(
+          map(preview => BooksActions.loadCabinetPreviewSuccess({ preview })),
+          catchError(error => of(BooksActions.loadCabinetPreviewFailure({ error: error.message })))
+        )
+      )
     )
   );
 }

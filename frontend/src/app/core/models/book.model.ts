@@ -78,3 +78,11 @@ export interface ManualBookModalData {
   book?: SearchBook;
   isCustom?: boolean;
 }
+
+export interface CabinetPreview {
+  countsByStatus: Record<BookStatus, number>;
+  reading: Book[];
+  planned: Book[];
+  completed: Book[];
+  dropped: Book[];
+}

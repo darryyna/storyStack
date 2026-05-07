@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { Book, SearchBook, BookFilters, PaginatedBooksResponse } from '../../../core/models/book.model';
+import { Book, SearchBook, BookFilters, PaginatedBooksResponse, CabinetPreview } from '../../../core/models/book.model';
 
 export const loadBooks = createAction(
     '[Books] Load Books',
@@ -130,4 +130,16 @@ export const addBookFromRecommendationSuccess = createAction(
 export const addBookFromRecommendationFailure = createAction(
   '[Books] Add Book From Recommendation Failure',
   props<{ sourceId: string; error: string }>()
+);
+
+export const loadCabinetPreview = createAction('[Books] Load Cabinet Preview');
+
+export const loadCabinetPreviewSuccess = createAction(
+  '[Books] Load Cabinet Preview Success',
+  props<{ preview: CabinetPreview }>()
+);
+
+export const loadCabinetPreviewFailure = createAction(
+  '[Books] Load Cabinet Preview Failure',
+  props<{ error: string }>()
 );

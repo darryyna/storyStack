@@ -89,6 +89,9 @@ router.get('/user-books/latest-note', asyncHandler(booksController.getLatestNote
  */
 router.get('/user-books/recommendations', asyncHandler(booksController.getRecommendations));
 
+
+
+router.get('/user-books/cabinet-preview', asyncHandler(booksController.getCabinetPreview));
 /**
  * @swagger
  * /api/books/user-books/{id}:

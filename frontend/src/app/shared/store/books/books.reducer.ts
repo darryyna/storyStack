@@ -23,6 +23,8 @@ export const initialState: BooksState = {
     },
     selectedBook: null,
     latestNote: null,
+    cabinetPreview: null,
+    cabinetPreviewLoading: false,
     recommendations: initialRecommendationsState,
     isLoading: false,
     isAdding: false,
@@ -168,5 +170,19 @@ export const booksReducer = createReducer(
         ...state.recommendations,
         addingIds: state.recommendations.addingIds.filter(id => id !== sourceId),
       },
+    })),
+    on(BooksActions.loadCabinetPreview, state => ({
+      ...state,
+      cabinetPreviewLoading: true,
+    })),
+    on(BooksActions.loadCabinetPreviewSuccess, (state, { preview }) => ({
+      ...state,
+      cabinetPreview: preview,
+      cabinetPreviewLoading: false,
+      countsByStatus: preview.countsByStatus,
+    })),
+    on(BooksActions.loadCabinetPreviewFailure, state => ({
+      ...state,
+      cabinetPreviewLoading: false,
     })),
 );

@@ -2,7 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { SearchBook, Book, BookStatus, BookFilters, PaginatedBooksResponse } from '../models/book.model';
+import {
+  SearchBook,
+  Book,
+  BookStatus,
+  BookFilters,
+  PaginatedBooksResponse,
+  CabinetPreview,
+} from '../models/book.model';
 import { ExternalBookResponse } from '../../shared/models/book.model';
 
 @Injectable({
@@ -72,11 +79,15 @@ export class BooksService {
         return this.http.post<ExternalBookResponse>(`${this.apiUrl}/manual`, bookData);
     }
 
-  public getRecommendations(): Observable<SearchBook[]> {
-    return this.http.get<SearchBook[]>(`${this.apiUrl}/user-books/recommendations`);
-  }
+    public getRecommendations(): Observable<SearchBook[]> {
+      return this.http.get<SearchBook[]>(`${this.apiUrl}/user-books/recommendations`);
+    }
 
-  public updateReadingProgress(id: string, pagesRead: number): Observable<{ userBook: Book; log: unknown }> {
-    return this.http.patch<{ userBook: Book; log: unknown }>(`${this.apiUrl}/user-books/${id}/progress`, { pagesRead });
-  }
+    public updateReadingProgress(id: string, pagesRead: number): Observable<{ userBook: Book; log: unknown }> {
+      return this.http.patch<{ userBook: Book; log: unknown }>(`${this.apiUrl}/user-books/${id}/progress`, { pagesRead });
+    }
+
+    public getCabinetPreview(): Observable<CabinetPreview> {
+      return this.http.get<CabinetPreview>(`${this.apiUrl}/user-books/cabinet-preview`);
+    }
 }
