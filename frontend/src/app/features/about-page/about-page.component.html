@@ -45,10 +45,12 @@
       <li>{{ 'PARAGRAPHS.ABOUT-WHY-2' | translate }}</li>
       <li>{{ 'PARAGRAPHS.ABOUT-WHY-3' | translate }}</li>
     </ul>
+    @if (!(isAuthenticated())) {
     <div class="cta">
       <button routerLink="/" class="btn">
         {{ 'ACTIONS.START' | translate }}
       </button>
     </div>
+    }
   </div>
 </section>
