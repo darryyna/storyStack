@@ -314,5 +314,37 @@
       "ACHIEVED": "Досягнуто",
       "ARCHIVED": "Архів"
     }
+  },
+  "STATISTICS": {
+    "SUBTITLE": "Огляд вашої читацької подорожі",
+    "TOTAL_BOOKS": "Всього книг",
+    "BOOKS_READ": "Книг прочитано",
+    "PAGES_READ": "Сторінок прочитано",
+    "AVG_RATING": "Сер. рейтинг",
+    "GOALS_ACHIEVED": "Цілей досягнуто",
+    "READING_ACTIVITY": "Активність читання",
+    "ACTIVE_DAYS": "{{count}} активних днів",
+    "AVG_PAGES_DAY": "сер. {{count}} стор./день",
+    "PERIOD_30_DAYS": "30 днів",
+    "PERIOD_12_MONTHS": "12 місяців",
+    "PERSONAL_RECORD": "Особистий рекорд",
+    "MOST_PAGES_DAY": "Найбільше сторінок за день",
+    "PAGES": "сторінок",
+    "BEAT_RECORD": "Побийте свій рекорд сьогодні",
+    "CURRENT_STREAK": "Поточна серія",
+    "DAYS_IN_ROW": "днів поспіль",
+    "LONGEST_STREAK": "Найдовша серія: {{count}} днів",
+    "READ": "читав",
+    "TODAY": "сьогодні",
+    "TOP_GENRES": "Топ жанрів",
+    "BOOKS_PER_YEAR": "Книг на рік",
+    "READING_INSIGHTS": "Читацькі інсайти",
+    "BEST_MONTH": "Найкращий місяць",
+    "MOST_ACTIVE_DAY": "Найактивніший день",
+    "AVG_BOOK_LENGTH": "Сер. довжина книги",
+    "TOP_AUTHOR": "Топ автор",
+    "BOOKS_COUNT": "{{count}} книг",
+    "FAVORITE_TAGS": "Улюблені теги",
+    "NO_TAGS": "Тегів ще немає"
   }
 }

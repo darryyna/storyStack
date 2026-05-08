@@ -319,5 +319,37 @@
       "ACHIEVED": "Achieved",
       "ARCHIVED": "Archived"
     }
+  },
+  "STATISTICS": {
+    "SUBTITLE": "Overview of your reading journey",
+    "TOTAL_BOOKS": "Total Books",
+    "BOOKS_READ": "Books Read",
+    "PAGES_READ": "Pages Read",
+    "AVG_RATING": "Avg Rating",
+    "GOALS_ACHIEVED": "Goals Achieved",
+    "READING_ACTIVITY": "Reading Activity",
+    "ACTIVE_DAYS": "{{count}} active days",
+    "AVG_PAGES_DAY": "avg {{count}} pages/day",
+    "PERIOD_30_DAYS": "30 days",
+    "PERIOD_12_MONTHS": "12 months",
+    "PERSONAL_RECORD": "Personal record",
+    "MOST_PAGES_DAY": "Most pages in one day",
+    "PAGES": "pages",
+    "BEAT_RECORD": "Beat your record today",
+    "CURRENT_STREAK": "Current streak",
+    "DAYS_IN_ROW": "days in a row",
+    "LONGEST_STREAK": "Longest streak: {{count}} days",
+    "READ": "read",
+    "TODAY": "today",
+    "TOP_GENRES": "Top Genres",
+    "BOOKS_PER_YEAR": "Books per Year",
+    "READING_INSIGHTS": "Reading Insights",
+    "BEST_MONTH": "Best month",
+    "MOST_ACTIVE_DAY": "Most active day",
+    "AVG_BOOK_LENGTH": "Avg book length",
+    "TOP_AUTHOR": "Top author",
+    "BOOKS_COUNT": "{{count}} books",
+    "FAVORITE_TAGS": "Favorite Tags",
+    "NO_TAGS": "No tags yet"
   }
 }
