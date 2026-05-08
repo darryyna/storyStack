@@ -1,5 +1,4 @@
 const statisticsService = require('../services/statistics.service');
-const logger = require('../configuration/logger');
 
 exports.getGeneralStats = async (req, res) => {
   const stats = await statisticsService.getGeneralStats(req.userId);
@@ -24,4 +23,19 @@ exports.getActivityStats = async (req, res) => {
 exports.getBooksPerYearStats = async (req, res) => {
   const stats = await statisticsService.getBooksPerYearStats(req.userId);
   res.json(stats);
+};
+
+exports.getReadingRecord = async (req, res) => {
+  const record = await statisticsService.getReadingRecord(req.userId);
+  res.json(record);
+};
+
+exports.getReadingStreak = async (req, res) => {
+  const streak = await statisticsService.getReadingStreak(req.userId);
+  res.json(streak);
+};
+
+exports.getInsights = async (req, res) => {
+  const insights = await statisticsService.getInsights(req.userId);
+  res.json(insights);
 };

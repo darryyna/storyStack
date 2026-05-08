@@ -11,5 +11,8 @@ router.get('/genres', asyncHandler(statisticsController.getGenreStats));
 router.get('/authors', asyncHandler(statisticsController.getAuthorStats));
 router.get('/activity', asyncHandler(statisticsController.getActivityStats));
 router.get('/books-per-year', asyncHandler(statisticsController.getBooksPerYearStats));
+router.get('/record', asyncHandler(statisticsController.getReadingRecord));
+router.get('/streak', asyncHandler(statisticsController.getReadingStreak));
+router.get('/insights', asyncHandler(statisticsController.getInsights));
 
 module.exports = router;

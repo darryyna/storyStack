@@ -2,15 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-
-export interface GeneralStats {
-    totalBooks: number;
-    booksRead: number;
-    avgRating: number;
-    totalCurrentPages: number;
-    achievedGoals: number;
-    topTags: { _id: string; count: number }[];
-}
+import { GeneralStats, ReadingInsights, ReadingRecord, ReadingStreak } from '../../shared/models/statistic.model';
 
 @Injectable({
     providedIn: 'root'
@@ -37,5 +29,17 @@ export class StatisticsService {
 
     getBooksPerYearStats(): Observable<{ _id: number; count: number }[]> {
         return this.http.get<{ _id: number; count: number }[]>(`${this.apiUrl}/books-per-year`);
+    }
+
+    getReadingRecord(): Observable<ReadingRecord> {
+        return this.http.get<ReadingRecord>(`${this.apiUrl}/record`);
+    }
+
+    getReadingStreak(): Observable<ReadingStreak> {
+        return this.http.get<ReadingStreak>(`${this.apiUrl}/streak`);
+    }
+
+    getInsights(): Observable<ReadingInsights> {
+        return this.http.get<ReadingInsights>(`${this.apiUrl}/insights`);
     }
 }
