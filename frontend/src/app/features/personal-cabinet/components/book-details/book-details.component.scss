@@ -1,12 +1,12 @@
 @use '../../../../shared/styles/responsive.scss' as r;
 
 .details-container {
-  @include r.responsive-padding;
     padding: 16px;
     max-width: 1200px;
     margin: 0 auto;
     position: relative;
     min-height: 400px;
+    @include r.responsive-padding;
 
     @media (min-width: 768px) {
         padding: 32px;
@@ -47,6 +47,10 @@
 }
 
 .details-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+
   @include r.desktop {
     grid-template-columns: 360px 1fr;
     grid-template-areas:
@@ -61,9 +65,6 @@
       "main main"
       "tags notes";
   }
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 24px;
 
     @media (min-width: 1024px) {
         grid-template-columns: 400px 1fr;

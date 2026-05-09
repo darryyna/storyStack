@@ -52,6 +52,7 @@ export class BooksListComponent implements OnInit {
   protected searchFilter = signal<string>('');
   protected pageFilter = signal<number>(1);
   private searchSubject = new Subject<string>();
+  private tagSubject = new Subject<string>();
   protected selectedBookIds = signal<Set<string>>(new Set());
   protected showFolderDropdown = signal<boolean>(false);
   protected showCreateFolderModal = signal<boolean>(false);
@@ -63,6 +64,14 @@ export class BooksListComponent implements OnInit {
       takeUntilDestroyed()
     ).subscribe(value => {
       this.searchFilter.set(value);
+    });
+
+    this.tagSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      takeUntilDestroyed()
+    ).subscribe(value => {
+      this.tagFilter.set(value);
     });
 
     effect(() => {
@@ -139,6 +148,11 @@ export class BooksListComponent implements OnInit {
   protected onSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.searchSubject.next(value);
+  }
+
+  protected onTagChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.tagSubject.next(value);
   }
 
   ngOnInit(): void {
@@ -234,6 +248,7 @@ export class BooksListComponent implements OnInit {
     this.statusFilter.set('');
     this.ratingFilter.set(null);
     this.tagFilter.set('');
+    this.searchFilter.set('');
     this.pageFilter.set(1);
   }
 

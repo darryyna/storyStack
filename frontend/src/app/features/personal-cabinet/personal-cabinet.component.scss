@@ -1,8 +1,8 @@
 @use '../../shared/styles/responsive.scss' as r;
 
 .cabinet-container {
-  @include r.responsive-padding;
   padding: 16px;
+  @include r.responsive-padding;
 
   @media (min-width: 768px) {
     padding: 32px;
@@ -32,6 +32,11 @@
 }
 
 .stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-bottom: 50px;
+
   @include r.tablet-up {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -39,10 +44,6 @@
   @include r.desktop {
     grid-template-columns: repeat(4, 1fr);
   }
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-  margin-bottom: 50px;
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
@@ -418,6 +419,10 @@
 }
 
 .recommendations-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+
   @include r.tablet-up {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -425,9 +430,6 @@
   @include r.desktop {
     grid-template-columns: repeat(3, 1fr);
   }
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);

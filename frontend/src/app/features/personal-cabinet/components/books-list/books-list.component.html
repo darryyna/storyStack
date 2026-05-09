@@ -37,7 +37,7 @@
 
     <div class="filter-group">
       <label>{{ 'FILTERS.TAGS' | translate }}</label>
-      <input type="text" [ngModel]="tagFilter()" (ngModelChange)="tagFilter.set($event)" [placeholder]="'PLACEHOLDERS.FILTER_TAGS' | translate"
+      <input type="text" [value]="tagFilter()" (input)="onTagChange($event)" [placeholder]="'PLACEHOLDERS.FILTER_TAGS' | translate"
         class="modern-input" />
     </div>
 
@@ -45,7 +45,7 @@
       <label>{{ 'FILTERS.SEARCH' | translate }}</label>
       <div class="search-input-wrapper">
         <mat-icon>search</mat-icon>
-        <input type="text" [placeholder]="'PLACEHOLDERS.SEARCH_BOOKS' | translate"
+        <input type="text" [value]="searchFilter()" [placeholder]="'PLACEHOLDERS.SEARCH_BOOKS' | translate"
                class="modern-input" (input)="onSearch($event)" />
       </div>
     </div>

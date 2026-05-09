@@ -1,10 +1,10 @@
 @use '../../shared/styles/responsive.scss' as r;
 
 .stats-container {
-  @include r.responsive-padding;
     padding: 24px;
     max-width: 1200px;
     margin: 0 auto;
+    @include r.responsive-padding;
 }
 
 .stats-header {
@@ -139,12 +139,13 @@
 }
 
 .secondary-grid {
-  @include r.desktop {
-    grid-template-columns: 380px 1fr;
-  }
     display: grid;
     grid-template-columns: 1fr;
     gap: 24px;
+
+  @include r.desktop {
+    grid-template-columns: 380px 1fr;
+  }
 
     @media (min-width: 992px) {
         grid-template-columns: 400px 1fr;

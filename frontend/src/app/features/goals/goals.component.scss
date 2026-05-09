@@ -1,10 +1,10 @@
 @use '../../shared/styles/responsive.scss' as r;
 
 .goals-container {
-  @include r.responsive-padding;
   padding: 24px;
   max-width: 900px;
   margin: 0 auto;
+  @include r.responsive-padding;
 }
 
 .goals-header {

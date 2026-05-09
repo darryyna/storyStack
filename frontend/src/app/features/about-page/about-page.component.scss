@@ -107,6 +107,12 @@ h2 {
 }
 
 .features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  max-width: 1500px;
+  margin: 0 auto;
+
   @include r.tablet-up {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -114,11 +120,6 @@ h2 {
   @include r.desktop {
     grid-template-columns: repeat(4, 1fr);
   }
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
-  max-width: 1500px;
-  margin: 0 auto;
 }
 
 .feature-card {
