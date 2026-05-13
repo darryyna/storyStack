@@ -7,37 +7,37 @@ const options = {
     info: {
       title: 'StoryStack API',
       version: '1.0.0',
-      description: 'StoryStack endpoints documentation',
+      description: 'Full documentation of StoryStack backend endpoints',
     },
-    servers: [
-      {
-        url: 'http://localhost:3000',
-        description: 'Development server',
-      },
-    ],
+    servers: [{
+      url: 'http://localhost:3000',
+      description: 'Development server',
+    }],
     components: {
       securitySchemes: {
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT',
-          description: 'Enter your JWT access token here (e.g., Bearer YOUR_TOKEN)'
-        }
-      }
+          description: 'JWT access token. Use format **Bearer <token>**',
+        },
+      },
     },
     tags: [
-      {
-        name: 'Auth',
-        description: 'Authentication endpoints'
-      }
-    ]
+      { name: 'Auth', description: 'Authentication and user management' },
+      { name: 'Books', description: 'Search external books, manage personal library and recommendations' },
+      { name: 'Goals', description: 'Reading goals CRUD and AI predictions' },
+      { name: 'Statistics', description: 'Reading statistics, activity and insights' },
+      { name: 'Folders', description: 'Folder CRUD and book organization' },
+    ],
   },
   apis: [
     path.join(__dirname, '../routes/*.js'),
-    path.join(__dirname, '../controllers/*.js')
+    path.join(__dirname, '../controllers/*.js'),
   ],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
 
 module.exports = swaggerSpec;
+
