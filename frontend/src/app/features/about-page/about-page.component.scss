@@ -1,6 +1,14 @@
 @use '../../shared/styles/button.scss' as *;
 @use '../../shared/styles/responsive.scss' as r;
 
+:host {
+  --primary-base: var(--purple-base);
+  --primary-hover: var(--purple-hover);
+  --primary-active: var(--purple-active);
+  --primary-soft: var(--purple-soft);
+  --primary-light: var(--purple-light);
+}
+
 section {
   opacity: 0;
   transform: translateY(40px);
@@ -22,9 +30,9 @@ section.visible {
   overflow: hidden;
 
   background:
-    radial-gradient(circle at 20% 30%, rgba(107,78,49,0.35), transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(107,78,49,0.25), transparent 45%),
-    linear-gradient(135deg, #1a1a1a 0%, #2b2118 100%);
+    radial-gradient(circle at 20% 30%, rgba(109,74,255,0.35), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(109,74,255,0.25), transparent 45%),
+    linear-gradient(135deg, #1a1a1a 0%, #16102b 100%);
 
   @include r.mobile {
     min-height: 55vh;
@@ -37,7 +45,7 @@ section.visible {
   position: absolute;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(107,78,49,0.35), transparent 70%);
+  background: radial-gradient(circle, rgba(109,74,255,0.35), transparent 70%);
   top: -200px;
   right: -200px;
   filter: blur(80px);

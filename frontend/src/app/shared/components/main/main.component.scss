@@ -1,9 +1,21 @@
 @use '../../styles/button.scss';
 @use '../../styles/responsive.scss' as r;
 
+:host {
+  --primary-base: var(--purple-base);
+  --primary-hover: var(--purple-hover);
+  --primary-active: var(--purple-active);
+  --primary-soft: var(--purple-soft);
+  --primary-light: var(--purple-light);
+}
+
 .hero-section {
-  background: linear-gradient(rgba(107, 78, 49, 0.2), rgba(107, 78, 49, 0.4)),
-  url("../../../../assets/images/hero-section.jpg") no-repeat center/cover;
+  background:
+    linear-gradient(
+        rgba(55, 65, 81, 0.45),
+        rgba(17, 24, 39, 0.65)
+    ),
+    url("../../../../assets/images/hero-section.jpg") no-repeat center/cover;
   min-height: 80vh;
   display: flex;
   align-items: center;
@@ -11,7 +23,9 @@
   position: relative;
   margin-top: 0;
 
-  @include r.mobile { min-height: 60vh; }
+  @include r.mobile {
+    min-height: 60vh;
+  }
 }
 
 .hero-content {
@@ -19,7 +33,9 @@
   max-width: 900px;
   padding: 32px;
 
-  @include r.mobile { padding: 24px 16px; }
+  @include r.mobile {
+    padding: 24px 16px;
+  }
 }
 
 .hero-title {
@@ -28,7 +44,9 @@
   margin-bottom: 24px;
   line-height: 1.1;
 
-  @include r.mobile { margin-bottom: 16px; }
+  @include r.mobile {
+    margin-bottom: 16px;
+  }
 }
 
 .hero-desc {
@@ -36,14 +54,18 @@
   margin-bottom: 40px;
   opacity: 0.9;
 
-  @include r.mobile { margin-bottom: 28px; }
+  @include r.mobile {
+    margin-bottom: 28px;
+  }
 }
 
 .advantages-section {
   padding: 96px 32px;
   background: var(--background-surface);
 
-  @include r.mobile { padding: 56px 16px; }
+  @include r.mobile {
+    padding: 56px 16px;
+  }
 }
 
 .advantages-title {
@@ -61,7 +83,9 @@
   margin: 0 auto;
   list-style: none;
 
-  @include r.mobile { gap: 16px; }
+  @include r.mobile {
+    gap: 16px;
+  }
 }
 
 .list-item {
@@ -74,7 +98,10 @@
 
   @include r.mobile {
     padding: 20px;
-    p { font-size: 16px; }
+
+    p {
+      font-size: 16px;
+    }
   }
 
   &:hover {
@@ -115,7 +142,9 @@
   font-weight: 800;
   margin-bottom: 24px;
 
-  @include r.mobile { font-size: 26px; }
+  @include r.mobile {
+    font-size: 26px;
+  }
 }
 
 .qa-section p {
@@ -123,7 +152,10 @@
   margin-bottom: 40px;
   color: var(--text-light);
 
-  @include r.mobile { font-size: 15px; margin-bottom: 24px; }
+  @include r.mobile {
+    font-size: 15px;
+    margin-bottom: 24px;
+  }
 }
 
 .input-section {

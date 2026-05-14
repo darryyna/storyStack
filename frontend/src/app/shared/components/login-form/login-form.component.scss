@@ -1,4 +1,10 @@
 :host {
+  --primary-base: var(--purple-base);
+  --primary-hover: var(--purple-hover);
+  --primary-active: var(--purple-active);
+  --primary-soft: var(--purple-soft);
+  --primary-light: var(--purple-light);
+
   display: block;
   width: 100%;
 }
@@ -53,7 +59,7 @@
   &.active {
     background: var(--primary-base);
     color: var(--primary-soft);
-    box-shadow: 0 4px 16px rgba(74, 111, 143, 0.3);
+    box-shadow: 0 4px 16px rgba(109, 74, 255, 0.3);
   }
 }
 
@@ -102,7 +108,7 @@ input {
 
   &:focus {
     border-color: var(--primary-base);
-    box-shadow: 0 0 0 3px rgba(74, 111, 143, 0.25);
+    box-shadow: 0 0 0 3px rgba(109, 74, 255, 0.25);
     outline: none;
   }
 }
@@ -155,12 +161,12 @@ form > button {
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   margin-top: 16px;
-  box-shadow: 0 4px 16px rgba(74, 111, 143, 0.25);
+  box-shadow: 0 4px 16px rgba(109, 74, 255, 0.25);
 
   &:hover {
     background: var(--primary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(74, 111, 143, 0.4);
+    box-shadow: 0 12px 32px rgba(109, 74, 255, 0.4);
   }
 
   &:disabled {

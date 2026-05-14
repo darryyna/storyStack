@@ -8,6 +8,10 @@
 
 
 .footer {
+  --primary-base: var(--purple-base);
+  --primary-hover: var(--purple-hover);
+  --primary-light: var(--purple-light);
+
   background: linear-gradient(to top, var(--primary-base), var(--primary-hover));
   color: var(--primary-light);
   padding: 48px 32px;
