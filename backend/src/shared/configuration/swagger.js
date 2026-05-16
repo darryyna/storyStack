@@ -13,6 +13,7 @@ const options = {
       url: 'http://localhost:3000',
       description: 'Development server',
     }],
+    security: [{ bearerAuth: [] }],
     components: {
       securitySchemes: {
         bearerAuth: {

@@ -1,7 +1,6 @@
 const request = require('supertest');
 const app = require('../../src/app');
 const userRepo = require('../../src/shared/repositories/user.repository');
-const emailService = require('../../src/shared/services/email.service');
 const bcrypt = require('bcryptjs');
 
 jest.mock('../../src/shared/repositories/user.repository');
