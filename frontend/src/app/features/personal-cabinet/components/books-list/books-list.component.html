@@ -1,0 +1,232 @@
+<div class="list-container">
+  <header class="list-header">
+    <div class="header-left">
+      <button mat-icon-button class="back-btn" (click)="backToCabinet()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1>{{ 'HEADERS.BOOK_COLLECTION' | translate }} </h1>
+    </div>
+    <button mat-stroked-button color="warn" class="reset-btn" (click)="resetFilters()">
+      {{ 'ACTIONS.RESET_FILTERS' | translate }}
+    </button>
+  </header>
+
+  <section class="filters-section">
+    <div class="filter-group">
+      <label>{{ 'FILTERS.STATUS' | translate }}</label>
+      <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)" class="modern-select">
+        <option value="">{{ 'FILTERS.ALL_STATUSES' | translate }}</option>
+        @for (status of statuses; track status) {
+        <option [value]="status">{{ 'readingStatus.' + status | translate }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>{{ 'FILTERS.RATING' | translate }}</label>
+      <div class="rating-filter">
+        <button *ngFor="let r of ratings" (click)="ratingFilter.set(r)" [class.active]="ratingFilter() === r"
+          class="rating-btn">
+          {{ r }} ★
+        </button>
+        @if (ratingFilter()) {
+        <button class="clear-rating" (click)="ratingFilter.set(null)">✕</button>
+        }
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label>{{ 'FILTERS.TAGS' | translate }}</label>
+      <input type="text" [value]="tagFilter()" (input)="onTagChange($event)" [placeholder]="'PLACEHOLDERS.FILTER_TAGS' | translate"
+        class="modern-input" />
+    </div>
+
+    <div class="filter-group search-filter">
+      <label>{{ 'FILTERS.SEARCH' | translate }}</label>
+      <div class="search-input-wrapper">
+        <mat-icon>search</mat-icon>
+        <input type="text" [value]="searchFilter()" [placeholder]="'PLACEHOLDERS.SEARCH_BOOKS' | translate"
+               class="modern-input" (input)="onSearch($event)" />
+      </div>
+    </div>
+  </section>
+
+  <section class="folders-area">
+    <div class="folders-header">
+      <button class="create-folder-btn" (click)="openCreateFolderModal()">
+        <mat-icon>add</mat-icon>
+        {{ 'PERSONAL_CABINET.CREATE_FOLDER' | translate }}
+      </button>
+    </div>
+    <div class="folders-list">
+      @for (folder of folders(); track folder.id) {
+      <div class="folder-chip" [style.border-left-color]="folder.colorLabel"
+        (click)="statusFilter.set('folder:' + folder.id)">
+        <mat-icon [style.color]="folder.colorLabel">folder</mat-icon>
+        <span class="folder-name">{{ folder.name }}</span>
+        <button class="delete-folder-btn" (click)="deleteFolder(folder.id!, $event)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      }
+    </div>
+  </section>
+
+  <section class="table-section" [class.loading]="isLoading()">
+    <app-loader [isLoading]="isLoading()"></app-loader>
+
+    @if (selectedBookIds().size > 0) {
+    <div class="selection-actions">
+      <span class="selection-count">{{ selectedBookIds().size }} books selected</span>
+      <div class="folder-dropdown-container">
+        <button mat-flat-button color="primary" (click)="toggleFolderDropdown()">
+          <mat-icon>folder</mat-icon>
+          {{ 'PERSONAL_CABINET.ADD_TO_FOLDER' | translate }}
+        </button>
+        @if (showFolderDropdown()) {
+        <div class="folder-dropdown">
+          <div class="folder-item create-new" (click)="openCreateFolderModal()">
+            <span>{{ 'FOLDER_MODAL.NEW_FOLDER' | translate }}</span>
+          </div>
+          <div class="folder-divider"></div>
+          @for (folder of folders(); track folder.id) {
+          <div class="folder-item" (click)="addToFolder(folder.id!)">
+            <mat-icon [style.color]="folder.colorLabel">folder</mat-icon>
+            <span>{{ folder.name }}</span>
+          </div>
+          }
+          <div class="folder-divider"></div>
+          <div class="folder-item remove-folder" (click)="addToFolder(null)">
+            <mat-icon>folder_off</mat-icon>
+            <span>{{ 'PERSONAL_CABINET.REMOVE_FROM_FOLDER' | translate }}</span>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+
+    @if ((books().length) > 0) {
+    <div class="modern-table-wrapper">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th class="col-checkbox">
+              <input type="checkbox" [checked]="isAllSelected" (change)="toggleSelectAll($event)" />
+            </th>
+            <th>{{ 'TABLE.TITLE' | translate }}</th>
+            <th>{{ 'TABLE.AUTHOR' | translate }}</th>
+            <th>{{ 'TABLE.STATUS' | translate }}</th>
+            <th>{{ 'TABLE.PROGRESS' | translate }}</th>
+            <th>{{ 'TABLE.RATING' | translate }}</th>
+            <th>{{ 'TABLE.TAGS' | translate }}</th>
+            <th>{{ 'TABLE.FOLDER' | translate }}</th>
+            <th>{{ 'TABLE.ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (book of books(); track book.id) {
+          <tr class="clickable-row" (click)="viewBook(book.id)" [class.selected]="isBookSelected(book.id)">
+            <td class="col-checkbox" (click)="$event.stopPropagation()">
+              <input type="checkbox" [checked]="isBookSelected(book.id)" (change)="toggleSelectBook(book.id)" />
+            </td>
+            <td class="col-title">
+              <div class="book-title-cell">
+                @if (book.bookId.thumbnail) {
+                <img [src]="book.bookId.thumbnail | resolveUrl" class="book-thumb" [alt]="book.bookId.title" />
+                } @else {
+                <div class="book-thumb-placeholder">
+                  <mat-icon>book</mat-icon>
+                </div>
+                }
+                <span>{{ book.bookId.title }}</span>
+              </div>
+            </td>
+            <td>{{ book.bookId.authors?.join(', ') }}</td>
+            <td>
+              <span class="status-badge" [attr.data-status]="book.status">
+                {{ 'readingStatus.' + book.status | translate }}
+              </span>
+            </td>
+            <td>
+              <div class="progress-cell">
+                <span>{{ book.currentPage || 0 }} / {{ book.bookId.pageCount || 0 }}</span>
+                <div class="mini-progress-bar" *ngIf="book.bookId.pageCount">
+                  <div class="progress-fill" [style.width.%]="(book.currentPage || 0) / book.bookId.pageCount * 100">
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="rating-cell" *ngIf="book.rating">★ {{ book.rating }}</span>
+              <span *ngIf="!book.rating">-</span>
+            </td>
+            <td>
+              <div class="tags-list">
+                @for (tag of book.tags; track tag) {
+                <span class="tag-badge">{{ tag }}</span>
+                }
+                <span *ngIf="!book.tags?.length">-</span>
+              </div>
+            </td>
+            <td>
+              @if (book.folderId) {
+                <span class="folder-cell-badge" [style.border-left-color]="book.folderId.colorLabel">
+                  {{ book.folderId.name }}
+                </span>
+              } @else {
+                <span class="muted-dash">-</span>
+              }
+            </td>
+            <td class="col-actions">
+              @if (book.folderId) {
+              <button class="action-btn remove-from-folder" (click)="removeFromFolder(book.id, $event)"
+                [title]="'PERSONAL_CABINET.REMOVE_FROM_FOLDER' | translate">
+                <mat-icon>folder_off</mat-icon>
+              </button>
+              }
+              <button class="action-btn delete" (click)="deleteBook(book.id, $event)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (totalPages() > 1) {
+      <footer class="table-footer">
+        <div class="pagination-info">
+          Showing {{ books().length || 0 }} of {{ totalCount() }} books
+        </div>
+        <div class="pagination-controls">
+          <button class="page-btn" [disabled]="currentPage() === 1" (click)="goToPage(currentPage() - 1)">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <span class="page-indicator">
+            {{ currentPage() }} / {{ totalPages() }}
+          </span>
+          <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="goToPage(currentPage() + 1)">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      </footer>
+      }
+    </div>
+    } @else if (!isLoading()) {
+    <div class="empty-state">
+      <mat-icon>book</mat-icon>
+      <p>{{ 'BOOKS_LIST.NO_BOOKS_FOUND' | translate }}</p>
+    </div>
+    }
+  </section>
+</div>
+
+
+
+<ng-template #confirmDeleteModal let-data>
+  <app-modal-window [title]="'PERSONAL_CABINET.DELETE_CONFIRM_TITLE'"
+    [description]="'PERSONAL_CABINET.DELETE_CONFIRM_DESC'" (confirmed)="onConfirmDelete(data.id)"
+    (cancelled)="onCancelDelete()">
+  </app-modal-window>
+</ng-template>

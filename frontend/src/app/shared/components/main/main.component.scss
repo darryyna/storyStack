@@ -1,0 +1,234 @@
+@use '../../styles/button.scss';
+@use '../../styles/responsive.scss' as r;
+
+:host {
+  --primary-base: var(--purple-base);
+  --primary-hover: var(--purple-hover);
+  --primary-active: var(--purple-active);
+  --primary-soft: var(--purple-soft);
+  --primary-light: var(--purple-light);
+}
+
+.hero-section {
+  background:
+    linear-gradient(
+        rgba(55, 65, 81, 0.45),
+        rgba(17, 24, 39, 0.65)
+    ),
+    url("../../../../assets/images/hero-section.jpg") no-repeat center/cover;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-top: 0;
+
+  @include r.mobile {
+    min-height: 60vh;
+  }
+}
+
+.hero-content {
+  text-align: center;
+  max-width: 900px;
+  padding: 32px;
+
+  @include r.mobile {
+    padding: 24px 16px;
+  }
+}
+
+.hero-title {
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 800;
+  margin-bottom: 24px;
+  line-height: 1.1;
+
+  @include r.mobile {
+    margin-bottom: 16px;
+  }
+}
+
+.hero-desc {
+  font-size: clamp(18px, 3vw, 24px);
+  margin-bottom: 40px;
+  opacity: 0.9;
+
+  @include r.mobile {
+    margin-bottom: 28px;
+  }
+}
+
+.advantages-section {
+  padding: 96px 32px;
+  background: var(--background-surface);
+
+  @include r.mobile {
+    padding: 56px 16px;
+  }
+}
+
+.advantages-title {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.section-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  list-style: none;
+
+  @include r.mobile {
+    gap: 16px;
+  }
+}
+
+.list-item {
+  background: var(--background-section);
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  transition: all 0.4s ease;
+
+  @include r.mobile {
+    padding: 20px;
+
+    p {
+      font-size: 16px;
+    }
+  }
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(107, 78, 49, 0.15);
+  }
+
+  p {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+.qa-section {
+  padding: 96px 32px;
+  background: var(--background-section);
+  border-radius: 24px;
+  max-width: 1100px;
+  margin: 50px auto 96px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+
+  @include r.mobile {
+    padding: 40px 16px;
+    margin: 24px 16px 56px;
+    border-radius: 16px;
+  }
+}
+
+.qa-wrapper {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.qa-title {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 800;
+  margin-bottom: 24px;
+
+  @include r.mobile {
+    font-size: 26px;
+  }
+}
+
+.qa-section p {
+  font-size: 19px;
+  margin-bottom: 40px;
+  color: var(--text-light);
+
+  @include r.mobile {
+    font-size: 15px;
+    margin-bottom: 24px;
+  }
+}
+
+.input-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  max-width: 500px;
+  margin: 0 auto 20px;
+  border-radius: 50px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: var(--primary-light);
+
+  @include r.mobile {
+    flex-direction: column;
+    border-radius: 12px;
+    background: transparent;
+    box-shadow: none;
+    gap: 10px;
+
+    .input-field {
+      border-radius: 50px;
+      padding: 14px 20px;
+      border: 1px solid var(--border-default);
+    }
+
+    .send-btn {
+      border-radius: 50px !important;
+      width: 100%;
+      padding: 14px;
+    }
+  }
+
+  .input-field {
+    flex: 1;
+    min-width: 0;
+    padding: 16px 24px;
+    border: none;
+    background: var(--primary-light);
+    font-size: 16px;
+    color: var(--text-primary);
+    border-radius: 50px 0 0 50px;
+
+    &::placeholder {
+      color: var(--text-light);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: inset 0 0 0 2px var(--primary-base);
+    }
+  }
+
+  .send-btn {
+    flex-shrink: 0;
+    width: auto;
+    padding: 0 30px;
+    border-radius: 0 50px 50px 0;
+    white-space: nowrap;
+  }
+}
+
+.btn {
+  height: 56px;
+  width: 15%;
+
+  @include r.mobile {
+    height: auto;
+    padding: 14px 28px;
+    width: auto;
+  }
+}
+
+.send-btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}

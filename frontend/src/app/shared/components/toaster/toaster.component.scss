@@ -1,0 +1,95 @@
+.toaster-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.toast-item {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 320px;
+    max-width: 450px;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--background-section);
+    border: 1px solid var(--border-default);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    transform: translateX(120%);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    &.visible {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    .toast-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+
+        mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    .toast-content {
+        flex: 1;
+
+        .message {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+    }
+
+    &.success {
+        border-left: 4px solid var(--state-success);
+
+        .toast-icon {
+            background: rgba(52, 211, 153, 0.1);
+            color: var(--state-success);
+        }
+    }
+
+    &.error {
+        border-left: 4px solid var(--state-error);
+
+        .toast-icon {
+            background: rgba(255, 77, 79, 0.1);
+            color: var(--state-error);
+        }
+    }
+
+    &.warning {
+        border-left: 4px solid var(--state-warning);
+
+        .toast-icon {
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--state-warning);
+        }
+    }
+
+    &.info {
+        border-left: 4px solid var(--accent-base);
+
+        .toast-icon {
+            background: rgba(109, 74, 255, 0.1);
+            color: var(--accent-base);
+        }
+    }
+}

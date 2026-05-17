@@ -1,0 +1,22 @@
+<div class="modal-backdrop" (click)="onCancel()"></div>
+
+<div class="modal-container" (click)="$event.stopPropagation()">
+  <h2 class="modal-title">{{ title() | translate }}</h2>
+
+  <div class="modal-content">
+    @if (description()) {
+      <p class="modal-description">{{ description()! | translate }}</p>
+    }
+    <ng-content></ng-content>
+  </div>
+
+  <div class="modal-actions">
+    <button class="btn btn-cancel" (click)="onCancel()">
+      {{ cancelLabel() | translate }}
+    </button>
+
+    <button class="btn btn-confirm" (click)="onConfirm()">
+      {{ confirmLabel() | translate }}
+    </button>
+  </div>
+</div>

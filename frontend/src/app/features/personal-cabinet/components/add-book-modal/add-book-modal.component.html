@@ -1,0 +1,62 @@
+<div class="modal-container">
+  <div class="modal-header">
+    <h2>{{ 'PERSONAL_CABINET.ADD_BOOK_TITLE' | translate }}</h2>
+  </div>
+
+  <div class="modal-body">
+    <div class="search-container">
+      <div class="form-group">
+        <label class="form-label">{{ 'PERSONAL_CABINET.SEARCH_PLACEHOLDER' | translate }}</label>
+        <div class="input-with-icon">
+          <input type="text" class="form-input" [placeholder]="'PERSONAL_CABINET.SEARCH_PLACEHOLDER' | translate"
+            [formControl]="searchControl">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </div>
+
+        @if (filteredBooks().length > 0 && !selectedBook()) {
+        <div class="autocomplete-dropdown">
+          @for (book of filteredBooks(); track book.id) {
+          <div class="dropdown-item" (click)="onBookClick(book)">
+            <span class="book-title">{{ book.title }}</span>
+            @if (book.authors.length) {
+            <span class="book-authors"> — {{ book.authors.join(', ') }}</span>
+            }
+          </div>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="manual-entry-link">
+        <button type="button" class="btn btn-primary" (click)="onAddManually()">
+          {{ 'MANUAL_ENTRY.TITLE' | translate }}
+        </button>
+      </div>
+    </div>
+
+    @if (selectedBook()) {
+    <div class="book-preview-card">
+      <img [src]="selectedBook()!.thumbnail | resolveUrl" [alt]="selectedBook()!.title">
+      <div class="preview-info">
+        <h3>{{ selectedBook()!.title }}</h3>
+        <p class="preview-authors">{{ selectedBook()!.authors.join(', ') }}</p>
+        <p class="preview-pages" *ngIf="selectedBook()!.pageCount">
+          <mat-icon>menu_book</mat-icon> {{ selectedBook()!.pageCount }} pages
+        </p>
+        <p class="preview-desc" *ngIf="selectedBook()!.description">{{ selectedBook()!.description }}</p>
+      </div>
+    </div>
+    }
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="onCancel()">{{ 'ACTIONS.CANCEL' | translate }}</button>
+    <button type="button" class="btn btn-primary" [disabled]="!selectedBook() || isLoading()" (click)="onAddBook()">
+      {{ 'ACTIONS.ADD' | translate }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,322 @@
+@use '../../styles/responsive.scss' as r;
+
+.header {
+  --primary-base: var(--purple-base);
+  --primary-hover: var(--purple-hover);
+  --primary-active: var(--purple-active);
+  --primary-soft: var(--purple-soft);
+  --primary-light: var(--purple-light);
+  --header-specific-color: #161625;
+
+  background-color: var(--header-specific-color);
+  color: var(--primary-light);
+  padding: 16px 32px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: background-color 0.3s ease;
+
+  @include r.mobile {
+    padding: 12px 16px;
+  }
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.logo {
+  height: 48px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+
+  @include r.mobile { height: 36px; }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.burger-btn {
+  height: 32px;
+  width: 32px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    margin-right: 12px;
+  }
+
+  .username {
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--background-section);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+  padding: 8px;
+  min-width: 200px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: fadeIn 0.3s ease;
+
+  @include r.mobile {
+    left: auto;
+    right: 0;
+    min-width: 200px;
+
+    .dropdown-item { font-size: 14px; padding: 8px 12px; }
+  }
+
+  .dropdown-item {
+    padding: 10px 14px;
+    background: transparent;
+    color: var(--text-primary);
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+    text-decoration: none;
+    box-sizing: border-box;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+    }
+  }
+
+  .dropdown-divider {
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+    margin: 4px 8px;
+    opacity: 0.5;
+  }
+}
+
+.mobile-nav {
+  --header-specific-color: #161625;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--header-specific-color);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.4s ease-out;
+
+  @include r.xs-only {
+    padding: 16px 12px;
+    gap: 12px;
+  }
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-item {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background 0.3s ease, color 0.3s ease;
+  text-decoration: none;
+  color: var(--text-primary);
+
+  @include r.mobile {
+    font-size: 15px;
+    padding: 10px 12px;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--primary-light);
+  }
+}
+
+.custom-language-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--background-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+  min-width: 80px;
+  justify-content: center;
+
+  @include r.mobile {
+    padding: 6px 12px;
+    min-width: 68px;
+  }
+
+  &:hover,
+  &:focus {
+    background: var(--background-section);
+    border-color: var(--primary-base);
+    box-shadow: 0 0 0 3px rgba(109, 74, 255, 0.25);
+    outline: none;
+  }
+
+  .selected-lang {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .arrow-icon {
+    font-size: 19px;
+    color: var(--text-secondary);
+    transition: transform 0.3s ease;
+  }
+
+  &[aria-expanded="true"] .arrow-icon {
+    transform: rotate(180deg);
+  }
+}
+
+.language-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 8px;
+  background: var(--background-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  list-style: none;
+  padding: 8px 0;
+  z-index: 1000;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease;
+
+  .language-option {
+    padding: 12px 20px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &[aria-selected="true"] {
+      background: rgba(109, 74, 255, 0.15);
+      color: var(--primary-soft);
+      font-weight: 600;
+    }
+
+    &:hover {
+      background: var(--primary-base);
+      color: var(--primary-soft);
+    }
+  }
+}
+
+.signup-btn {
+  border-radius: 50px;
+  border: none;
+  padding: 12px 24px;
+  background: var(--primary-hover);
+  color: var(--primary-light);
+  font-weight: 600;
+  transition: all 0.4s ease;
+
+  @include r.mobile {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(107, 78, 49, 0.2);
+  }
+}
+
+.dark-theme {
+  .header {
+    background-color: var(--primary-base);
+  }
+
+  .mobile-nav {
+    background-color: var(--background-section);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 767px) {
+  .custom-language-select {
+    padding: 6px 13px;
+    font-size: 14px;
+    min-width: 70px;
+  }
+}

@@ -1,0 +1,45 @@
+@use '../../styles/responsive' as r;
+
+:host {
+  display: block;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+
+.footer {
+  --primary-base: var(--purple-base);
+  --primary-hover: var(--purple-hover);
+  --primary-light: var(--purple-light);
+
+  background: linear-gradient(to top, var(--primary-base), var(--primary-hover));
+  color: var(--primary-light);
+  padding: 48px 32px;
+  text-align: center;
+  font-size: 14px;
+
+  @include r.mobile {
+    padding: 32px 16px;
+  }
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  max-width: 1440px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+
+  @include r.tablet-up {
+    flex-direction: row;
+    gap: 24px;
+  }
+}
+
+p {
+  margin: 0;
+  opacity: 0.9;
+}
