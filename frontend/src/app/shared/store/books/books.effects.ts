@@ -209,8 +209,9 @@ export class BooksEffects {
         }).pipe(
           switchMap(externalBook =>
             this.booksService.addUserBook(externalBook.id).pipe(
-              map(() => BooksActions.addBookFromRecommendationSuccess({
-                sourceId: book.id
+              map((addedBook) => BooksActions.addBookFromRecommendationSuccess({
+                sourceId: book.id,
+                addedBook
               }))
             )
           ),

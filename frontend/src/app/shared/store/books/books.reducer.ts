@@ -156,8 +156,13 @@ export const booksReducer = createReducer(
         addingIds: [...state.recommendations.addingIds, book.id],
       },
     })),
-    on(BooksActions.addBookFromRecommendationSuccess, (state, { sourceId }) => ({
+    on(BooksActions.addBookFromRecommendationSuccess, (state, { sourceId, addedBook }) => ({
       ...state,
+      totalCount: state.totalCount + 1,
+      countsByStatus: {
+        ...state.countsByStatus,
+        [addedBook.status]: (state.countsByStatus[addedBook.status] ?? 0) + 1
+      },
       recommendations: {
         ...state.recommendations,
         addingIds: state.recommendations.addingIds.filter(id => id !== sourceId),

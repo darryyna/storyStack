@@ -192,7 +192,9 @@
               <span class="progress-percent">{{ goal.progressPercent }}%</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" [style.width.%]="goal.progressPercent"></div>
+              <div class="progress-fill"
+                   [style.width.%]="goal.progressPercent ?? 0">
+              </div>
             </div>
             <div class="goal-dates">
               <span>{{ 'GOALS.DATE_FROM' | translate }}: {{ goal.startDate | date:'shortDate' }}</span>

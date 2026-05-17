@@ -124,7 +124,7 @@ export const addBookFromRecommendation = createAction(
 
 export const addBookFromRecommendationSuccess = createAction(
   '[Books] Add Book From Recommendation Success',
-  props<{ sourceId: string }>()
+  props<{ sourceId: string; addedBook: Book }>()
 );
 
 export const addBookFromRecommendationFailure = createAction(
